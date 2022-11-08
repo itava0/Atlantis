@@ -1,17 +1,16 @@
 {
     "compilerOptions": {
-        "experimentalDecorators": true,
-        "baseUrl": ".",
-        "paths": {
-            "c/hello": [
-                "hello/hello.js"
-            ]
-        }
+        "experimentalDecorators": true
     },
     "include": [
         "**/*",
         "../../../../.sfdx/typings/lwc/**/*.d.ts"
     ],
+    "paths": {
+        "c/*": [
+            "*"
+        ]
+    },
     "typeAcquisition": {
         "include": [
             "jest"
