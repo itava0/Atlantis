@@ -1,0 +1,10 @@
+<template>
+    <lightning-button variant="brand" label="Property Grid" onclick={handleTileList}></lightning-button>
+    <lightning-button variant="success" label="Property Map" onclick={handleListMap}></lightning-button>
+    <template if:true={showTileList}>
+        <c-property-tile-list></c-property-tile-list>
+    </template>
+    <template if:true={showListMap}>
+        <c-property-list-map></c-property-list-map>
+    </template>
+</template>

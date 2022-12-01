@@ -1,0 +1,30 @@
+<template>
+    <div class="slds-card slds-var-p-around_small">
+        <template if:true={properties.data}>
+            <div class="slds-align_absolute-center">
+                <lightning-button variant="brand" label="Refresh Properties" onclick={updateMarkers}></lightning-button>
+            </div>
+            <br>
+            <!--<template for:each={properties.data.records} for:item="property">
+                <div key={property.Id}>
+                    <p>{property.Name}</p>
+                </div>
+            </template>-->
+            <lightning-map
+                map-markers={mapMarkers}
+                zoom-level={zoomLevel}
+                list-view={listView}
+                onmarkerselect={handleMarkerSelect}
+                selected-marker-value={selectedMarkerValue}
+                center={center}
+            >
+            </lightning-map>
+        </template>
+        <template if:true={properties.error}>
+            <c-error-panel
+                friendly-message="Error retrieving data"
+                errors={properties.error}
+            ></c-error-panel>
+        </template>
+    </div>
+</template>

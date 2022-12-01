@@ -1,0 +1,140 @@
+<template>
+    <lightning-card title="Filters" icon-name="standard:calibration">
+        <lightning-button
+            slot="actions"
+            label="Reset"
+            onclick={handleReset}
+        ></lightning-button>
+
+        <div class="slds-var-m-around_medium">
+            <lightning-input
+                label="Search Address"
+                type="text"
+                value={searchKey}
+                onchange={handleSearchKeyChange}
+            ></lightning-input>
+            <lightning-combobox
+                label="Property Type"
+                value={recordType}
+                placeholder = "Select Property Type"
+                options={options}
+                onchange={handleRecordTypeChange}
+            ></lightning-combobox>
+            <lightning-slider
+                label="Max Rent"
+                step="1000"
+                min="0"
+                max="50000"
+                value={maxPrice}
+                onchange={handleMaxPriceChange}
+            ></lightning-slider>
+            <lightning-slider
+                label="Min Rating"
+                step="1"
+                min="0"
+                max="5"
+                value={minRating}
+                onchange={handleMinRatingChange}
+            ></lightning-slider>
+            <div class="slds-grid">
+                <div class="slds-col">
+                    <lightning-slider
+                        label="Min Bedrooms"
+                        step="1"
+                        min="0"
+                        max="10"
+                        value={minBedrooms}
+                        onchange={handleMinBedroomsChange}
+                    ></lightning-slider>
+                </div>
+                <div class="slds-col">
+                    <lightning-slider
+                        label="Min Bathrooms"
+                        step="1"
+                        min="0"
+                        max="10"
+                        value={minBathrooms}
+                        onchange={handleMinBathroomsChange}
+                    ></lightning-slider>
+                </div>
+            </div>
+        </div>
+
+        <div class="slds-var-m-around_medium">
+            <p><strong>Limit by Max Distance</strong></p>
+            <lightning-input type="text" label="Enter street: " onchange={handleStreetChange}></lightning-input>
+            <lightning-input type="text" label="Enter city: " onchange={handleCityChange}></lightning-input>
+            <!--<lightning-input type="text" label="Enter state: " onchange={handleStateChange}></lightning-input>-->
+            <div class="slds-grid">
+                <div class="slds-col">
+                    <div class="slds-form-element">
+                        <label class="slds-form-element__label" for="select-01">Enter state: </label>
+                        <div class="slds-form-element__control">
+                          <div class="slds-select_container">
+                            <select class="slds-select" id="select-01" onchange={handleStateChange}>
+                              <option value="Georgia">Georgia</option>
+                              <option value="Alabama">Alabama</option>
+                              <option value="Alaska">Alaska</option>
+                              <option value="Arizona">Arizona</option>
+                              <option value="Arkansas">Arkansas</option>
+                              <option value="California">California</option>
+                              <option value="Colorado">Colorado</option>
+                              <option value="Connecticut">Connecticut</option>
+                              <option value="Delaware">Delaware</option>
+                              <option value="Florida">Florida</option>
+                              <option value="Hawaii">Hawaii</option>
+                              <option value="Idaho">Idaho</option>
+                              <option value="Illinois">Illinois</option>
+                              <option value="Indiana">Indiana</option>
+                              <option value="Iowa">Iowa</option>
+                              <option value="Kansas">Kansas</option>
+                              <option value="Kentucky">Kentucky</option>
+                              <option value="Louisiana">Louisiana</option>
+                              <option value="Maine">Maine</option>
+                              <option value="Maryland">Maryland</option>
+                              <option value="Massachusetts">Massachusetts</option>
+                              <option value="Michigan">Michigan</option>
+                              <option value="Minnesota">Minnesota</option>
+                              <option value="Mississippi">Mississippi</option>
+                              <option value="Missouri">Missouri</option>
+                              <option value="Montana">Montana</option>
+                              <option value="Nebraska">Nebraska</option>
+                              <option value="Nevada">Nevada</option>
+                              <option value="New Hampshire">New Hampshire</option>
+                              <option value="New Jersey">New Jersey</option>
+                              <option value="New Mexico">New Mexico</option>
+                              <option value="New York">New York</option>
+                              <option value="North Carolina">North Carolina</option>
+                              <option value="North Dakota">North Dakota</option>
+                              <option value="Ohio">Ohio</option>
+                              <option value="Oklahoma">Oklahoma</option>
+                              <option value="Oregon">Oregon</option>
+                              <option value="Pennsylvania">Pennsylvania</option>
+                              <option value="Rhode Island">Rhode Island</option>
+                              <option value="South Carolina">South Carolina</option>
+                              <option value="South Dakota">South Dakota</option>
+                              <option value="Tennessee">Tennessee</option>
+                              <option value="Texas">Texas</option>
+                              <option value="Utah">Utah</option>
+                              <option value="Vermont">Vermont</option>
+                              <option value="Virginia">Virginia</option>
+                              <option value="Washington">Washington</option>
+                              <option value="West Virginia">West Virginia</option>
+                              <option value="Wisconsin">Wisconsin</option>
+                              <option value="Wyoming">Wyoming</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+                <div class="slds-col">
+                    <lightning-input type="text" label="Enter postal code: " onchange={handlePostalCodeChange}></lightning-input>  
+                </div>
+            </div>
+            <lightning-input type="number" label="Enter max distance (mi): " onchange={handleDistanceChange}></lightning-input>
+            <br>
+            <lightning-button variant="brand" label="Geo Address" onclick={geoAddress}></lightning-button>
+            <lightning-button variant="success" label="Get Distance" onclick={getDistance}></lightning-button>
+        </div>
+    </lightning-card>
+</template>

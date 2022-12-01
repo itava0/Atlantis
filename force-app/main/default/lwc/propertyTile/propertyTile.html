@@ -1,0 +1,22 @@
+<template>
+    <a onclick={handlePropertySelected}>
+        <!-- Below line throws an error in VSCode, but runs properly when pushed -->
+        <div class="tile" style={backgroundImageStyle}>
+            <div
+                class="lower-third slds-var-p-horizontal_x-small slds-var-p-vertical_xx-small slds-text-color_inverse"
+            >
+                <h1 class="truncate slds-text-heading_small">
+                    <strong>{property.Billing_Street__c}</strong>
+                </h1>
+                <p>Beds: {property.Bedrooms__c} - Baths: {property.Bathrooms__c} - Rent: ${property.Rent__c}</p>
+                <p>
+                    <lightning-formatted-number
+                        format-style="currency"
+                        currency-code="USD"
+                        value={property.Market_Price__c}
+                    ></lightning-formatted-number>
+                </p>
+            </div>
+        </div>
+    </a>
+</template>

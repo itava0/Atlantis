@@ -1,0 +1,15 @@
+<template>
+    <div class="slds-align_absolute-center">
+        <template if:true={isPropertyOwner}>
+            <template if:true={recordTypeId}>
+                <p><strong>This user is a property owner. Data to come!</strong></p>
+            </template>
+            <template if:false={recordTypeId}>
+                <p><strong>An error has occurred in verifying user is a property owner. :(</strong></p>
+            </template>
+        </template>
+        <template if:false={isPropertyOwner}>
+            <p><strong>This user is NOT a property owner. TODO: Audience settings to make sure button above only appears for property owners.</strong></p>
+        </template>
+    </div>
+</template>

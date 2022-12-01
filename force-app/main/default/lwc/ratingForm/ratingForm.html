@@ -1,0 +1,20 @@
+<template>
+    <lightning-card title="Update Rating">
+        <!--<p>User ID: {userId}</p>-->
+        <lightning-record-view-form record-id={recordId} object-api-name={ratingObj}>
+            <div class="slds-var-m-around_small">
+                <lightning-output-field field-name={user}></lightning-output-field>
+            </div>
+            <div class="slds-var-m-around_small">
+                <lightning-output-field field-name={property}></lightning-output-field>
+            </div>
+        </lightning-record-view-form>
+        <lightning-record-edit-form record-id={recordId} object-api-name={ratingObj} onsuccess={handleSuccess} onerror={handleError}>
+            <div class="slds-var-m-around_small">
+                <lightning-input-field field-name={score}></lightning-input-field>
+            </div>
+            <lightning-button class="slds-m-top_small" variant="brand" type="submit" name="update" label="Update"></lightning-button>
+            <lightning-button label="Delete" variant="destructive" onclick={handleDelete} value={recordId}></lightning-button>
+        </lightning-record-edit-form>
+    </lightning-card>
+</template>
