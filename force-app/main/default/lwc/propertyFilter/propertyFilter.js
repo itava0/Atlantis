@@ -9,7 +9,8 @@ import getProperties from '@salesforce/apex/getProperties.getAllProperties';
 
 const DELAY = 350;
 const MAX_PRICE = 50000;
-const RADIUS = 395;
+const RADIUS = 6378137;
+const METERS_IN_MILE = 1609.344;
 
 export default class PropertyFilter extends LightningElement {
     searchKey = '';
@@ -41,13 +42,18 @@ export default class PropertyFilter extends LightningElement {
     distances = [];
     streets = [];
     cities = [];
+    streetsAll = [];
+    citiesAll = [];
     distance;
+    belowAll;
     lat1;
     lon1;
     lat2;
     lon2;
-    dlon;
-    dlat;
+    φ1;
+    φ2;
+    Δφ;
+    Δλ;
     a;
     c;
 
@@ -64,12 +70,15 @@ export default class PropertyFilter extends LightningElement {
     }
 
     handleReset() {
+        // Reset filters
         this.searchKey = '';
         this.recordType = 'Any';
         this.maxPrice = MAX_PRICE;
         this.minBedrooms = 0;
         this.minBathrooms = 0;
         this.minRating = 0;
+        this.streets = [];
+        this.cities = [];
         this.fireChangeEvent();
     }
 
@@ -117,7 +126,9 @@ export default class PropertyFilter extends LightningElement {
                 maxPrice: this.maxPrice,
                 minBedrooms: this.minBedrooms,
                 minBathrooms: this.minBathrooms,
-                minRating: this.minRating
+                minRating: this.minRating,
+                streets: this.streets,
+                cities: this.cities
             };
             publish(this.messageContext, FILTERSCHANGEMC, filters);
         }, DELAY);
@@ -154,6 +165,7 @@ export default class PropertyFilter extends LightningElement {
         this.streets = [];
         this.cities = [];
         this.distances = [];
+        this.belowAll = true;
 
         // Check Addresses and If Match, Calculate Distance
         for (let i = 0; i < 5; i++) {
@@ -166,9 +178,9 @@ export default class PropertyFilter extends LightningElement {
                         this.lat2 = this.properties[j].Geolocation__Latitude__s;
                         this.lon2 = this.properties[j].Geolocation__Longitude__s;
                         this.distance = this.calculateDistance(this.lat1, this.lon1, this.lat2, this.lon2);
-                        // console.log("DISTANCE", this.properties[j].Billing_Street__c, this.properties[j].Billing_City__c, this.distance);
-                        this.streets.push(this.properties[j].Billing_Street__c);
-                        this.cities.push(this.properties[j].Billing_City__c);
+                        console.log("DISTANCE", this.properties[j].Billing_Street__c, this.properties[j].Billing_City__c, this.distance);
+                        this.streetsAll.push(this.properties[j].Billing_Street__c);
+                        this.citiesAll.push(this.properties[j].Billing_City__c);
                         this.distances.push(this.distance);
                     }
                 }
@@ -181,10 +193,17 @@ export default class PropertyFilter extends LightningElement {
         if (this.distances.length > 0) {
             for (let k = 0; k < this.properties.length; k++) {
                 if (this.distances[k] <= this.evtDistance) {
-                    console.log("IN RANGE", this.streets[k], this.cities[k], this.distances[k]);
+                    this.belowAll = false;
+                    console.log("IN RANGE", this.streetsAll[k], this.citiesAll[k], this.distances[k]);
+                    this.streets.push(this.properties[k].Billing_Street__c);
+                    this.cities.push(this.properties[k].Billing_City__c);
                 } else {
                     // console.log("OUT OF RANGE", this.streets[k], this.cities[k], this.distances[k]);
                 }
+            }
+            if (this.belowAll) {
+                this.streets.push('Not a Real Address');
+                this.cities.push('Not a Real City');
             }
         } else {
             console.log("PLEASE GEO ADDRESS")
@@ -195,6 +214,15 @@ export default class PropertyFilter extends LightningElement {
             })
             this.dispatchEvent(toastEvt);
         }
+
+        // Filter Out All Properties if Below Every Distance
+        if (this.distances.length > 0) {
+            for (let n = 0; n < this.distances.length; n++) {
+                
+            }
+        }
+
+        this.fireChangeEvent();
     }
 
     // Fetch Address Records
@@ -225,6 +253,21 @@ export default class PropertyFilter extends LightningElement {
 
     // Math: Calculate Distance Given Two Sets of Geo Coordinates
     calculateDistance(lat1, lon1, lat2, lon2) {
+        this.φ1 = lat1 * Math.PI/180;
+        this.φ2 = lat2 * Math.PI/180;
+        this.Δφ = (lat2 - lat1) * Math.PI/180;
+        this.Δλ = (lon2 - lon1) * Math.PI/180;
+
+        this.a = Math.sin(this.Δφ / 2) * Math.sin(this.Δφ / 2) + 
+                 Math.cos(this.φ1 / 2) * Math.cos(this.φ2) *
+                 Math.sin(this.Δλ / 2) * Math.sin(this.Δλ / 2);
+        
+        this.c = 2 * Math.atan2(Math.sqrt(this.a), Math.sqrt(1 - this.a));
+
+        return ((RADIUS * this.c) / METERS_IN_MILE);
+
+
+        /*
         // Convert degrees to radians
         lat1 = lat1 * Math.PI / 180;
         lon1 = lon1 * Math.PI / 180;
@@ -240,6 +283,7 @@ export default class PropertyFilter extends LightningElement {
         this.c = 2 * Math.asin(Math.sqrt(this.a));
         
         return (this.c * RADIUS);
+        */
     }
 
     handleStreetChange(event) {

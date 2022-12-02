@@ -21,6 +21,8 @@ export default class PropertyTileList extends LightningElement {
     minBedrooms = 0;
     minBathrooms = 0;
     minRating = 0;
+    streets = [];
+    cities = [];
 
     @wire(MessageContext)
     messageContext;
@@ -32,6 +34,8 @@ export default class PropertyTileList extends LightningElement {
         minBedrooms: '$minBedrooms',
         minBathrooms: '$minBathrooms',
         minRating: '$minRating',
+        streets: '$streets',
+        cities: '$cities',
         pageSize: '$pageSize',
         pageNumber: '$pageNumber'
     })
@@ -59,6 +63,8 @@ export default class PropertyTileList extends LightningElement {
         this.minBedrooms = filters.minBedrooms;
         this.minBathrooms = filters.minBathrooms;
         this.minRating = filters.minRating;
+        this.streets = filters.streets;
+        this.cities = filters.cities;
     }
 
     handlePreviousPage() {

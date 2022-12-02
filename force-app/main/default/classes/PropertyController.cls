@@ -10,6 +10,8 @@ public without sharing class PropertyController {
      * @param minBedrooms Minimum number of bedrooms
      * @param minBathrooms Minimum number of bathrooms
      * @param minRating Minimum score (rating)
+     * @param streets Streets array (that matches a set distance)
+     * @param cities Cities array (that matches a set distance)
      * @param pageSize Number of properties per page
      * @param pageNumber Page number
      * @return PagedResult object holding the paged and filtered list of properties
@@ -22,6 +24,8 @@ public without sharing class PropertyController {
         Integer minBedrooms,
         Integer minBathrooms,
         Integer minRating,
+        String[] streets,
+        String[] cities,
         Integer pageSize,
         Integer pageNumber
     ) {
@@ -39,119 +43,121 @@ public without sharing class PropertyController {
 
         String searchPattern = '%' + searchKey + '%';
         Integer offset = (safePageNumber - 1) * safePageSize;
+        String[] filterStreets = new List<String>();
+        String[] filterCities = new List<String>();
 
         PagedResult result = new PagedResult();
         result.pageSize = safePageSize;
         result.pageNumber = safePageNumber;
 
         if (recordType != null && recordType != 'Any') {
-            result.totalItemCount = [
-                SELECT COUNT()
-                FROM Property__c
-                WHERE
-                    (Name LIKE :searchPattern
-                    OR Billing_Street__c LIKE :searchPattern
-                    OR Billing_City__c LIKE :searchPattern
-                    OR Billing_State__c LIKE :searchPattern
-                    OR Billing_Postal_Code__c LIKE :searchPattern
-                    OR RecordType.Name LIKE :searchPattern)
-                    AND RecordType.Name = :recordType
-                    AND Rent__c <= :safeMaxPrice
-                    AND Bedrooms__c >= :safeMinBedrooms
-                    AND Bathrooms__c >= :safeMinBathrooms
-                    AND Score__c >= :safeMinRating
-                    AND Status__c = 'Available'
-            ];
-            result.records = [
-                SELECT
-                    Id,
-                    Billing_Street__c,
-                    Billing_City__c,
-                    Billing_State__c,
-                    Billing_Postal_Code__c,
-                    Billing_Country__c,
-                    Rent__c,
-                    Bathrooms__c,
-                    Bedrooms__c,
-                    Geolocation__Latitude__s,
-                    Geolocation__Longitude__s,
-                    Name,
-                    Picture__c,
-                    Thumbnail__c,
-                    Score__c,
-                    Status__c
-                FROM Property__c
-                WHERE
-                    (Name LIKE :searchPattern
-                    OR Billing_Street__c LIKE :searchPattern
-                    OR Billing_City__c LIKE :searchPattern
-                    OR Billing_State__c LIKE :searchPattern
-                    OR Billing_Postal_Code__c LIKE :searchPattern
-                    OR RecordType.Name LIKE :searchPattern)
-                    AND RecordType.Name = :recordType
-                    AND Rent__c <= :safeMaxPrice
-                    AND Bedrooms__c >= :safeMinBedrooms
-                    AND Bathrooms__c >= :safeMinBathrooms
-                    AND Score__c >= :safeMinRating
-                    AND Status__c = 'Available'
-                WITH SECURITY_ENFORCED
-                ORDER BY Rent__c
-                LIMIT :safePageSize
-                OFFSET :offset
-            ];
+            if (streets.size() > 0) {
+                // VARIATION 1: Record Type Filter = YES, Distance Filter = YES
+                result.totalItemCount = [
+                    SELECT COUNT()
+                    FROM Property__c
+                    WHERE
+                        (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern
+                        OR Billing_State__c LIKE :searchPattern OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern)
+                        AND RecordType.Name = :recordType AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms
+                        AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Billing_Street__c IN :streets AND Billing_City__c IN :cities
+                ];
+                result.records = [
+                    SELECT
+                        Id, Billing_Street__c, Billing_City__c, Billing_State__c, Billing_Postal_Code__c, Billing_Country__c, Rent__c, Bathrooms__c, Bedrooms__c,
+                        Geolocation__Latitude__s, Geolocation__Longitude__s, Name, Picture__c, Score__c, Status__c
+                    FROM Property__c
+                    WHERE
+                        (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern
+                        OR Billing_State__c LIKE :searchPattern OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern)
+                        AND RecordType.Name = :recordType AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms
+                        AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Billing_Street__c IN :streets AND Billing_City__c IN :cities
+                    WITH SECURITY_ENFORCED
+                    ORDER BY Rent__c
+                    LIMIT :safePageSize
+                    OFFSET :offset
+                ];
+            } else {
+                // VARIATION 2: Record Type Filter = YES, Distance Filter = NO
+                result.totalItemCount = [
+                    SELECT COUNT()
+                        FROM Property__c
+                        WHERE
+                            (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern
+                            OR Billing_State__c LIKE :searchPattern OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern)
+                            AND RecordType.Name = :recordType AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms
+                            AND Score__c >= :safeMinRating AND Status__c = 'Available'
+                    ];
+                    result.records = [
+                        SELECT
+                            Id, Billing_Street__c, Billing_City__c, Billing_State__c, Billing_Postal_Code__c, Billing_Country__c, Rent__c, Bathrooms__c, Bedrooms__c,
+                            Geolocation__Latitude__s, Geolocation__Longitude__s, Name, Picture__c, Score__c, Status__c
+                        FROM Property__c
+                        WHERE
+                            (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern
+                            OR Billing_State__c LIKE :searchPattern OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern)
+                            AND RecordType.Name = :recordType AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms
+                            AND Score__c >= :safeMinRating AND Status__c = 'Available'
+                        WITH SECURITY_ENFORCED
+                        ORDER BY Rent__c
+                        LIMIT :safePageSize
+                        OFFSET :offset
+                    ];
+            }
         } else {
-            result.totalItemCount = [
-                SELECT COUNT()
-                FROM Property__c
-                WHERE
-                    (Name LIKE :searchPattern
-                    OR Billing_Street__c LIKE :searchPattern
-                    OR Billing_City__c LIKE :searchPattern
-                    OR Billing_State__c LIKE :searchPattern
-                    OR Billing_Postal_Code__c LIKE :searchPattern
-                    OR RecordType.Name LIKE :searchPattern)
-                    AND Rent__c <= :safeMaxPrice
-                    AND Bedrooms__c >= :safeMinBedrooms
-                    AND Bathrooms__c >= :safeMinBathrooms
-                    AND Score__c >= :safeMinRating
-                    AND Status__c = 'Available'
-            ];
-            result.records = [
-                SELECT
-                    Id,
-                    Billing_Street__c,
-                    Billing_City__c,
-                    Billing_State__c,
-                    Billing_Postal_Code__c,
-                    Billing_Country__c,
-                    Rent__c,
-                    Bathrooms__c,
-                    Bedrooms__c,
-                    Geolocation__Latitude__s,
-                    Geolocation__Longitude__s,
-                    Name,
-                    Picture__c,
-                    Thumbnail__c,
-                    Score__c,
-                    Status__c
-                FROM Property__c
-                WHERE
-                    (Name LIKE :searchPattern
-                    OR Billing_Street__c LIKE :searchPattern
-                    OR Billing_City__c LIKE :searchPattern
-                    OR Billing_State__c LIKE :searchPattern
-                    OR Billing_Postal_Code__c LIKE :searchPattern
-                    OR RecordType.Name LIKE :searchPattern)
-                    AND Rent__c <= :safeMaxPrice
-                    AND Bedrooms__c >= :safeMinBedrooms
-                    AND Bathrooms__c >= :safeMinBathrooms
-                    AND Score__c >= :safeMinRating
-                    AND Status__c = 'Available'
-                WITH SECURITY_ENFORCED
-                ORDER BY Rent__c
-                LIMIT :safePageSize
-                OFFSET :offset
-            ];
+            if (streets.size() > 0) {
+                // VARIATION 3: Record Type Filter = NO, Distance Filter = YES
+                result.totalItemCount = [
+                    SELECT COUNT()
+                    FROM Property__c
+                    WHERE
+                        (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern
+                        OR Billing_State__c LIKE :searchPattern OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern)
+                        AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms
+                        AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Billing_Street__c IN :streets AND Billing_City__c IN :cities
+                ];
+                result.records = [
+                    SELECT
+                        Id, Billing_Street__c, Billing_City__c, Billing_State__c, Billing_Postal_Code__c, Billing_Country__c, Rent__c, Bathrooms__c, Bedrooms__c,
+                        Geolocation__Latitude__s, Geolocation__Longitude__s, Name, Picture__c, Score__c, Status__c
+                    FROM Property__c
+                    WHERE
+                        (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern
+                        OR Billing_State__c LIKE :searchPattern OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern)
+                        AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms
+                        AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Billing_Street__c IN :streets AND Billing_City__c IN :cities
+                    WITH SECURITY_ENFORCED
+                    ORDER BY Rent__c
+                    LIMIT :safePageSize
+                    OFFSET :offset
+                ];
+            } else {
+                // VARIATION 4: Record Type Filter = NO, Distance Filter = NO
+                result.totalItemCount = [
+                    SELECT COUNT()
+                    FROM Property__c
+                    WHERE
+                        (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern
+                        OR Billing_State__c LIKE :searchPattern OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern)
+                        AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms
+                        AND Score__c >= :safeMinRating AND Status__c = 'Available'
+                ];
+                result.records = [
+                    SELECT
+                        Id, Billing_Street__c, Billing_City__c, Billing_State__c, Billing_Postal_Code__c, Billing_Country__c, Rent__c, Bathrooms__c, Bedrooms__c,
+                        Geolocation__Latitude__s, Geolocation__Longitude__s, Name, Picture__c, Score__c, Status__c
+                    FROM Property__c
+                    WHERE
+                        (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern
+                        OR Billing_State__c LIKE :searchPattern OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern)
+                        AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms
+                        AND Score__c >= :safeMinRating AND Status__c = 'Available'
+                    WITH SECURITY_ENFORCED
+                    ORDER BY Rent__c
+                    LIMIT :safePageSize
+                    OFFSET :offset
+                ];
+            }
         }
         
 

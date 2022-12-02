@@ -14,6 +14,7 @@ const PAGE_SIZE = 9;
 
 export default class PropertyListMap extends LightningElement {
 
+    apiUrl = "https://ipwho.is/";
     mapMarkers;
     zoomLevel;
     listView;
@@ -24,6 +25,7 @@ export default class PropertyListMap extends LightningElement {
     pageNumber = 1;
     pageSize = PAGE_SIZE;
     mapMarkers = [];
+    markersRendered;
 
     searchKey = '';
     recordType = 'Any';
@@ -31,6 +33,8 @@ export default class PropertyListMap extends LightningElement {
     minBedrooms = 0;
     minBathrooms = 0;
     minRating = 0;
+    streets = [];
+    cities = [];
 
     @wire(MessageContext)
     messageContext;
@@ -42,6 +46,8 @@ export default class PropertyListMap extends LightningElement {
         minBedrooms: '$minBedrooms',
         minBathrooms: '$minBathrooms',
         minRating: '$minRating',
+        streets: '$streets',
+        cities: '$cities',
         pageSize: '$pageSize',
         pageNumber: '$pageNumber'
     })
@@ -56,10 +62,12 @@ export default class PropertyListMap extends LightningElement {
             }
         );
 
-        this.center = {
-            location: {
-                Latitude: '33.753746',
-                Longitude: '-84.386330'
+        if(!this.getLocation()) {
+            this.center = {
+                location: {
+                    Latitude: '33.753746',
+                    Longitude: '-84.386330'
+                }
             }
         }
 
@@ -68,6 +76,7 @@ export default class PropertyListMap extends LightningElement {
         this.listView = "hidden";
     }
 
+ 
 
 
     updateMarkers() {
@@ -75,9 +84,9 @@ export default class PropertyListMap extends LightningElement {
         // console.log("EMPTY MARKERS: ", JSON.stringify(this.mapMarkers));
         // console.log("RECORDS TO ADD: ", JSON.stringify(this.properties.data.records.length));
         
-        refreshApex(this.properties);
+        refreshApex(this.wiredProperties);
 
-        console.log('TEST: ', this.properties.data);
+        // console.log('TEST: ', this.properties.data);
         if (this.properties) {
             if (this.properties.data) {
                 if (this.properties.data.records) {
@@ -117,6 +126,8 @@ export default class PropertyListMap extends LightningElement {
         this.minBedrooms = filters.minBedrooms;
         this.minBathrooms = filters.minBathrooms;
         this.minRating = filters.minRating;
+        this.streets = filters.streets;
+        this.cities = filters.cities;
         // this.updateMarkers();
     }
 
@@ -129,4 +140,39 @@ export default class PropertyListMap extends LightningElement {
         const message = { propertyId: this.selectedMarkerValue };
         publish(this.messageContext, PROPERTYSELECTEDMC, message);
     }
+
+    getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                //this.location.latitude = position.coords.latitude;
+                //this.location.longitude = position.coords.longitude;
+                console.log(position.coords.latitude);
+                console.log(position.coords.longitude);
+                this.center = {
+                    location: {
+                        Latitude: position.coords.latitude,
+                        Longitude: position.coords.longitude
+                    }
+                }
+                return true;
+            });
+        } else {
+            fetch(this.apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                this.center = {
+                    location: {
+                        Latitude: data.latitude,
+                        Longitude: data.longitude
+                    }
+                }
+                return true;
+            })
+            .catch(error => {
+                console.log(error);
+                return false;
+            });
+        }
+    }
+
 }

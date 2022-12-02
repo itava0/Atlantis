@@ -25,5 +25,13 @@
         <description>Minimum Rating</description>
         <fieldName>minRating</fieldName>
     </lightningMessageFields>
+    <lightningMessageFields>
+        <description>Streets</description>
+        <fieldName>streets</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <description>Cities</description>
+        <fieldName>cities</fieldName>
+    </lightningMessageFields>
     <masterLabel>Filters Change Message Channel</masterLabel>
 </LightningMessageChannel>

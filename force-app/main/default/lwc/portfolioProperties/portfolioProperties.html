@@ -1,15 +1,34 @@
 <template>
-    <div class="slds-align_absolute-center">
         <template if:true={isPropertyOwner}>
             <template if:true={recordTypeId}>
-                <p><strong>This user is a property owner. Data to come!</strong></p>
+                <div class="slds-align_absolute-center">
+                    <p><strong>This user is a property owner. See data below:</strong></p>
+                </div>
+                <template if:true={myProperties}>
+                    <template for:each={myProperties} for:item="property">
+                        <div key={property.Id} class="slds-box">
+                            <p>Street: {property.Billing_Street__c}</p><br>
+                            <p>City: {property.Billing_City__c}</p><br>
+                            <p>State: {property.Billing_State__c}</p><br>
+                            <p>Postal Code: {property.Billing_Postal_Code__c}</p><br>
+                            <p>Country: {property.Billing_Country__c}</p><br>
+                            <p>Geolocation: {property.Geolocation__Latitude__s}, {property.Geolocation__Longitude__s}</p><br>
+                            <p>Score: {property.Score__c}</p><br>
+                            <p>Rating: {property.Rating__c}</p><br>
+                            <p>Picture: <img src={property.Picture__c} style="max-width:600px;width:100%"></p><br>
+                            <p>Type: {property.RecordType.Name}</p><br>
+                        </div>
+                    </template>
+                </template>
+                <template if:false={myProperties}>
+                    <p><strong>This user is a property owner, but has no properties. Check out the Property Explorer.</strong></p>
+                </template>
             </template>
             <template if:false={recordTypeId}>
                 <p><strong>An error has occurred in verifying user is a property owner. :(</strong></p>
             </template>
         </template>
         <template if:false={isPropertyOwner}>
-            <p><strong>This user is NOT a property owner. TODO: Audience settings to make sure button above only appears for property owners.</strong></p>
+            <p><strong>This user is NOT a property owner. TODO: Some variables or settings to make sure button above only appears for property owners. Might be handled with portals next sprint.</strong></p>
         </template>
-    </div>
 </template>
