@@ -1,0 +1,84 @@
+<template>
+    <template if:true={isTenant}>
+        <template if:true={recordTypeId}>
+            <div class="slds-align_absolute-center">
+                <!--<p><strong>Welcome, tenant!</strong></p>-->
+            </div>
+            <template if:true={myProperties}>
+                <article class="slds-card">
+                    <div class="slds-card__header slds-grid">
+                      <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                        <div class="slds-media__figure">
+                          <span class="slds-icon_container slds-icon-standard-account" title="property">
+                            <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                              
+                            </svg>
+                            <span class="slds-assistive-text">property</span>
+                          </span>
+                        </div>
+                        <div class="slds-media__body slds-align_absolute-center">
+                            <template if:false={oneProperty}>
+                                <h2 class="slds-card__header-title">
+                                    Welcome, {userFirstName} {userLastName}!<br>You have {numProperties} properties.
+                                </h2>
+                            </template>
+                            <template if:true={oneProperty}>
+                                <h2 class="slds-card__header-title">
+                                    Welcome, {userFirstName} {userLastName}!<br>You have {numProperties} property.
+                                </h2>
+                            </template>
+                        </div>
+                      </header>
+                    </div>
+                    <div class="slds-card__body slds-card__body_inner">
+                        <template for:each={myProperties} for:item="property">
+                            <div key={property.Id} class="slds-box">
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_1-of-4">
+                                        <img src={property.Picture__c} style="max-width:600px;width:100%;max-height:400px;height:100%;object-fit:contain">
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4">
+                                        <p><strong>Type:</strong> {property.RecordType.Name}</p>
+                                        <p><strong>Name:</strong> {property.Name}</p>
+                                        <p><strong>Status:</strong> {property.Status__c}</p>
+                                        <p><strong>Street:</strong> {property.Billing_Street__c}</p>
+                                        <p><strong>City:</strong> {property.Billing_City__c}</p>
+                                        <p><strong>State:</strong> {property.Billing_State__c}</p>
+                                        <p><strong>Postal Code:</strong> {property.Billing_Postal_Code__c}</p>
+                                        <p><strong>Country:</strong> {property.Billing_Country__c}</p>
+                                        <p><strong>Geolocation:</strong> {property.Geolocation__Latitude__s}, {property.Geolocation__Longitude__s}</p>
+                                        <c-nav-button property-id={property.Id}></c-nav-button>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4">
+                                        <p><strong>Market Price:</strong> ${property.Market_Price__c}</p>
+                                        <p><strong>Rent:</strong> ${property.Rent__c}</p>
+                                        <p><strong>Date Listed:</strong> {property.Date_Listed__c}</p>
+                                        <p><strong>Days On Market:</strong> {property.Days_On_Market__c}</p>
+                                        <p><strong>Bedrooms:</strong> {property.Bedrooms__c}</p>
+                                        <p><strong>Bathrooms:</strong> {property.Bathrooms__c}</p>
+                                        <p><strong>Balconies:</strong> {property.Balconies__c}</p>
+                                        <p><strong>Showers:</strong> {property.Showers__c}</p>
+                                        <p><strong>Year Built:</strong> {property.Year_Built__c}</p>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-4">
+                                        <!--<lightning-formatted-rich-text value={property.Rating__c}></lightning-formatted-rich-text>-->
+                                        <c-rating-form record-id={property.Id}></c-rating-form>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </article>
+            </template>
+            <template if:false={myProperties}>
+                <p><strong>This user is a tenant, but has no property. Check out the Property Explorer.</strong></p>
+            </template>
+        </template>
+        <template if:false={recordTypeId}>
+            <p><strong>An error has occurred in verifying user is a tenant. :(</strong></p>
+        </template>
+    </template>
+    <template if:false={isTenant}>
+        <!--<p><strong>This user is NOT a tenant.</strong></p>-->
+    </template>
+</template>

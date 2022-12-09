@@ -11,6 +11,12 @@
         <target>lightningCommunity__Page</target>
     </targets>
     <targetConfigs>
+        <targetConfig targets="lightning__AppPage">
+            <supportedFormFactors>
+                <supportedFormFactor type="Large" />
+                <supportedFormFactor type="Small" />
+            </supportedFormFactors>
+        </targetConfig>
         <targetConfig targets="lightning__RecordPage">
             <objects>
                 <object>Property__c</object>
@@ -19,6 +25,14 @@
                 <supportedFormFactor type="Large" />
                 <supportedFormFactor type="Small" />
             </supportedFormFactors>
+        </targetConfig>
+        <targetConfig targets="lightningCommunity__Default">
+            <property
+        name="recordId"
+        type="String"
+        label="Record ID"
+        default="{!recordId}"
+      /> 
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

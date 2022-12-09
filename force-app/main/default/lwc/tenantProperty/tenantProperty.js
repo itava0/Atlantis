@@ -1,16 +1,17 @@
 import { LightningElement, wire, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import getContact from '@salesforce/apex/getProperties.getContactFromUser';
 import getAccount from '@salesforce/apex/getProperties.getAccountFromContact';
 import getRecordType from '@salesforce/apex/getProperties.getTypeFromAccount';
-import getPropertyOwners from '@salesforce/apex/getProperties.getPropertyOwnersFromAccount';
+import getTenants from '@salesforce/apex/getProperties.getTenantsFromAccount';
 import getProperties from '@salesforce/apex/getProperties.getPortfolioProperties';
 import USER_ID from '@salesforce/user/Id';
 
-// Property Owner record types IDs; first is person account, second is standard account
-const PROPERTY_OWNER_ID = '012Dn000000gsCuIAI';
-const PROPERTY_OWNER_ID_2 = '012Dn000000giXgIAI';
+// Tenant record types IDs; first is person account, second is standard account
+const TENANT_ID = '012Dn000000gsCzIAI';
+const TENANT_ID_2 = '012Dn000000gfNnIAI';
 
-export default class PortfolioProperties extends LightningElement {
+export default class PortfolioProperties extends NavigationMixin(LightningElement) {
     // Wired query information
     @track wiredProperties = [];
     @track properties = [];
@@ -21,20 +22,20 @@ export default class PortfolioProperties extends LightningElement {
     @track contacts = [];
     @track wiredAccounts = [];
     @track accounts = [];
-    @track wiredPropertyOwners = [];
-    @track propertyOwners = [];
+    @track wiredTenants = [];
+    @track tenants = [];
 
     // Results from wired queries
     @track userId = USER_ID;
     @track contactId;
     @track accountId;
     @track recordTypeId;
-    @track propertyOwnerIds = [];
+    @track tenantIds = [];
     @track propertyIds = [];
 
     // User and property information
     @track myProperties = [];
-    isPropertyOwner = false;
+    isTenant = false;
     userFirstName;
     userLastName;
     numProperties = 0;
@@ -73,7 +74,7 @@ export default class PortfolioProperties extends LightningElement {
         }
     }
 
-    // Get Record Type Name from Account, Checking if Property Owner
+    // Get Record Type Name from Account, Checking if Tenant
     @wire (getRecordType, {accId : "$accountId"}) getRecordType(result) {
         this.wiredAccounts = result;
 
@@ -81,8 +82,8 @@ export default class PortfolioProperties extends LightningElement {
             this.accounts = result.data;
             console.log("RECORDTYPEID", this.accounts[0].RecordTypeId);
             this.recordTypeId = this.accounts[0].RecordTypeId;
-            if (this.recordTypeId == PROPERTY_OWNER_ID || this.recordTypeId == PROPERTY_OWNER_ID_2) {
-                this.isPropertyOwner=true;
+            if (this.recordTypeId == TENANT_ID || this.recordTypeId == TENANT_ID_2) {
+                this.isTenant=true;
             }
             this.error = undefined;
         } else if (result.error) {
@@ -91,38 +92,38 @@ export default class PortfolioProperties extends LightningElement {
         }
     }
 
-    // Get Property Owners from Account
-    @wire (getPropertyOwners, {accId : "$accountId"}) getPropertyOwners(result) {
-        this.wiredPropertyOwners = result;
+    // Get Tenants from Account
+    @wire (getTenants, {accId : "$accountId"}) getTenants(result) {
+        this.wiredTenants = result;
 
         if (result.data) {
-            this.propertyOwners = result.data;
-            this.propertyOwnerIds = [];
-            if (this.propertyOwners.length > 0) {
-                for (let i = 0; i < this.propertyOwners.length; i++) {
-                    console.log("PROPERTYOWNER", i, this.propertyOwners[i].Id);
-                    console.log("PROPERTY", i, this.propertyOwners[i].Property__c);
-                    this.propertyOwnerIds.push(this.propertyOwners[i].Id);
-                    this.propertyIds.push(this.propertyOwners[i].Property__c);
+            this.tenants = result.data;
+            this.tenantIds = [];
+            if (this.tenants.length > 0) {
+                for (let i = 0; i < this.tenants.length; i++) {
+                    console.log("TENANT", i, this.tenants[i].Id);
+                    console.log("PROPERTY", i, this.tenants[i].Property__c);
+                    this.tenantIds.push(this.tenants[i].Id);
+                    this.propertyIds.push(this.tenants[i].Property__c);
                 }
             }
             this.error = undefined;
         } else if (result.error) {
             this.error = result.error;
-            this.propertyOwners = [];
+            this.tenants = [];
         }
     }
 
     // Fetch Property Records
-    @wire (getProperties, {propOwnerIds : "$propertyOwnerIds"}) getProperties(result) {
+    @wire (getProperties, {propOwnerIds : "$tenantIds"}) getProperties(result) {
         this.wiredProperties = result;
         if (result.data) {
             this.properties = result.data;
             if (this.properties.length > 0) {
                 for (let i = 0; i < this.properties.length; i++) {
-                    for (let j = 0; j < this.propertyOwners.length; j++) {
-                        if (this.properties[i].Id == this.propertyOwners[j].Property__c) {
-                            // If a property is found belonging to property owner, add it to the list
+                    for (let j = 0; j < this.tenants.length; j++) {
+                        if (this.properties[i].Id == this.tenants[j].Property__c) {
+                            // If a property is found belonging to tenant, add it to the list
                             this.numProperties++;
                             if (this.numProperties == 1) {
                                 this.oneProperty = true;

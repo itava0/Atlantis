@@ -1,6 +1,12 @@
 <template>
-    <lightning-button variant="brand" label="Property Grid" onclick={handleTileList}></lightning-button>
-    <lightning-button variant="success" label="Property Map" onclick={handleListMap}></lightning-button>
+    <div class="slds-grid">
+        <div class="slds-col slds-align_absolute-center slds-p-bottom_small">
+            <lightning-button variant="brand" icon-name="utility:tile_card_list" label="Property Grid" onclick={handleTileList} style="display: grid; width: 100%"></lightning-button>
+        </div>
+        <div class="slds-col slds-align_absolute-center slds-p-bottom_small">
+            <lightning-button variant="success" icon-name="utility:location" label="Property Map" onclick={handleListMap} style="display: grid; width: 100%"></lightning-button>
+        </div>
+    </div>
     <template if:true={showTileList}>
         <c-property-tile-list></c-property-tile-list>
     </template>

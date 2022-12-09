@@ -1,20 +1,85 @@
 <template>
-    <lightning-card title="Update Rating">
-        <!--<p>User ID: {userId}</p>-->
-        <lightning-record-view-form record-id={recordId} object-api-name={ratingObj}>
-            <div class="slds-var-m-around_small">
-                <lightning-output-field field-name={user}></lightning-output-field>
+  <lightning-card>
+    <lightning-record-view-form
+      record-id={recordId}
+      object-api-name={propertyObj}
+    >
+      <div class="slds-var-m-around_small">
+        <template if:false={wasDeleted}>
+          <div class="slds-grid">
+            <div class="slds-col">
+              <p><strong>Overall Rating:</strong></p>
+              <lightning-output-field
+                field-name={overallRating}
+                variant="label-hidden"
+              ></lightning-output-field>
             </div>
-            <div class="slds-var-m-around_small">
-                <lightning-output-field field-name={property}></lightning-output-field>
+            <div class="slds-col">
+              <p><strong>Users:</strong></p>
+              <lightning-output-field
+                field-name={countRating}
+                variant="label-hidden"
+              ></lightning-output-field>
             </div>
-        </lightning-record-view-form>
-        <lightning-record-edit-form record-id={recordId} object-api-name={ratingObj} onsuccess={handleSuccess} onerror={handleError}>
-            <div class="slds-var-m-around_small">
-                <lightning-input-field field-name={score}></lightning-input-field>
-            </div>
-            <lightning-button class="slds-m-top_small" variant="brand" type="submit" name="update" label="Update"></lightning-button>
-            <lightning-button label="Delete" variant="destructive" onclick={handleDelete} value={recordId}></lightning-button>
-        </lightning-record-edit-form>
-    </lightning-card>
+          </div>
+        </template>
+      </div>
+    </lightning-record-view-form>
+    <template if:false={hasRating}>
+      <lightning-record-edit-form
+        object-api-name={ratingObj}
+        onsubmit={handleSubmit}
+        onsuccess={handleSuccess}
+      >
+        <div class="slds-var-m-around_small">
+          <p><strong>Enter Rating:</strong></p>
+          <lightning-input-field
+            field-name={score}
+            onchange={handleScoreChange}
+            variant="label-hidden"
+          ></lightning-input-field>
+        </div>
+        <div
+          class="slds-var-m-around_small slds-var-p-horizontal_medium slds-align_absolute-center"
+        >
+          <lightning-button
+            label="Submit Rating"
+            icon-name="utility:save"
+            variant="success"
+            type="submit"
+            name="update"
+          ></lightning-button>
+        </div>
+      </lightning-record-edit-form>
+    </template>
+    <template if:true={hasRating}>
+      <lightning-record-edit-form
+        record-id={ratingId}
+        object-api-name={ratingObj}
+        onsuccess={handleSuccess}
+      >
+        <div class="slds-var-m-around_small">
+          <p><strong>My Rating:</strong></p>
+          <lightning-input-field
+            field-name={score}
+            variant="label-hidden"
+          ></lightning-input-field>
+        </div>
+        <lightning-button
+          label="Update Rating"
+          icon-name="utility:edit"
+          variant="brand"
+          type="submit"
+          name="update"
+        ></lightning-button>
+        <lightning-button
+          label="Delete Rating"
+          icon-name="utility:delete"
+          variant="destructive"
+          onclick={handleDelete}
+          value={ratingId}
+        ></lightning-button>
+      </lightning-record-edit-form>
+    </template>
+  </lightning-card>
 </template>

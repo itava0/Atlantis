@@ -1,178 +1,262 @@
-import { LightningElement, wire } from 'lwc';
-import { refreshApex } from '@salesforce/apex'
+import { LightningElement, wire, track } from "lwc";
+import { refreshApex } from "@salesforce/apex";
 import {
-    publish,
-    subscribe,
-    unsubscribe,
-    MessageContext
-} from 'lightning/messageService';
-import FILTERSCHANGEMC from '@salesforce/messageChannel/FiltersChange__c';
-import PROPERTYSELECTEDMC from '@salesforce/messageChannel/PropertySelected__c';
-import getPagedPropertyList from '@salesforce/apex/PropertyController.getPagedPropertyList';
+  publish,
+  subscribe,
+  unsubscribe,
+  MessageContext
+} from "lightning/messageService";
+import FILTERSCHANGEMC from "@salesforce/messageChannel/FiltersChange__c";
+import PROPERTYSELECTEDMC from "@salesforce/messageChannel/PropertySelected__c";
+import GOTUSERLOCATIONMC from "@salesforce/messageChannel/GotUserLocation__c";
+import getPagedPropertyList from "@salesforce/apex/PropertyController.getPagedPropertyList";
+//import ReverseGeocodeApex from "@salesforce/apex/ReverseGeocodingService.ReverseGeocode";
 
 const PAGE_SIZE = 9;
 
 export default class PropertyListMap extends LightningElement {
+  // Address and geolocation information
+  apiUrl = "https://ipwho.is/";
+  locGot = false;
+  userAddress;
+  zoomLevel;
+  listView;
+  center;
+  newMapMarker;
+  selectedMarkerValue;
+  geoLat = 0;
+  geoLong = 0;
+  mapIcon = {
+    path: "M6.1299-28.3483H5.7798C6.8433-29.5843 7.49-31.1861 7.49-32.9398 7.4899-36.8334 4.3219-40 .4305-40-3.4625-40-6.6279-36.8334-6.6279-32.9398-6.6279-31.1861-5.9802-29.5843-4.9186-28.3483H-5.2696C-7.2341-28.3483-8.8322-26.7486-8.8322-24.7838V-13.0733C-8.8322-11.1085-7.234-9.51-5.2696-9.51H-5.1324V3.297C-5.1324 5.3302-4.0627 6.8615-2.644 6.8615H3.5028C4.9236 6.8615 5.9936 5.3303 5.9936 3.297V-9.51H6.1299C8.0941-9.51 9.6938-11.1084 9.6938-13.0733V-24.7839C9.6932-26.7486 8.094-28.3483 6.1299-28.3483Z",
+    fillColor: "#ea4335",
+    fillOpacity: 1
+  };
 
-    apiUrl = "https://ipwho.is/";
-    mapMarkers;
-    zoomLevel;
-    listView;
-    center;
-    newMapMarker;
-    selectedMarkerValue;
+  // For filters and marker information
+  pageNumber = 1;
+  pageSize = PAGE_SIZE;
+  mapMarkers = [];
+  markersRendered;
+  searchKey = "";
+  recordType = "Any";
+  maxPrice = 50000;
+  minBedrooms = 0;
+  minBathrooms = 0;
+  minRating = 0;
+  streets = [];
+  cities = [];
+  distance = 0;
 
-    pageNumber = 1;
-    pageSize = PAGE_SIZE;
-    mapMarkers = [];
-    markersRendered;
+  @track properties;
+  @track curProperties;
+  @track error;
 
-    searchKey = '';
-    recordType = 'Any';
-    maxPrice = 50000;
-    minBedrooms = 0;
-    minBathrooms = 0;
-    minRating = 0;
-    streets = [];
-    cities = [];
+  @wire(MessageContext)
+  messageContext;
 
-    @wire(MessageContext)
-    messageContext;
+  // Gets property list, repeatedly updated from filters
+  @wire(getPagedPropertyList, {
+    searchKey: "$searchKey",
+    recordType: "$recordType",
+    maxPrice: "$maxPrice",
+    minBedrooms: "$minBedrooms",
+    minBathrooms: "$minBathrooms",
+    minRating: "$minRating",
+    streets: "$streets",
+    cities: "$cities",
+    pageSize: "$pageSize",
+    pageNumber: "$pageNumber"
+  })
+  getPagedPropertyList(result) {
+    this.properties = result;
+    if (result.data) {
+      this.curProperties = result.data;
+      if (this.locGot) this.updateMarkers();
+      else this.getLocation();
+      this.error = undefined;
+    } else if (result.error) {
+      this.error = result.error;
+      this.curProperties = [];
+    }
+  }
 
-    @wire(getPagedPropertyList, {
-        searchKey: '$searchKey',
-        recordType: '$recordType',
-        maxPrice: '$maxPrice',
-        minBedrooms: '$minBedrooms',
-        minBathrooms: '$minBathrooms',
-        minRating: '$minRating',
-        streets: '$streets',
-        cities: '$cities',
-        pageSize: '$pageSize',
-        pageNumber: '$pageNumber'
-    })
-    properties;
+  connectedCallback() {
+    this.subscription = subscribe(
+      this.messageContext,
+      FILTERSCHANGEMC,
+      (message) => {
+        this.handleFilterChange(message);
+      }
+    );
 
-    connectedCallback() {
-        this.subscription = subscribe(
-            this.messageContext,
-            FILTERSCHANGEMC,
-            (message) => {
-                this.handleFilterChange(message);
-            }
-        );
+    this.center = {
+      location: {
+        Latitude: "33.753746",
+        Longitude: "-84.386330"
+      }
+    };
 
-        if(!this.getLocation()) {
-            this.center = {
-                location: {
-                    Latitude: '33.753746',
-                    Longitude: '-84.386330'
-                }
-            }
+    this.mapMarkers = [];
+    this.zoomLevel = 11;
+    this.listView = "hidden";
+  }
+
+  updateMarkers() {
+    // Reset map markers and refresh properties
+    this.mapMarkers = [];
+    refreshApex(this.properties);
+
+    // Multiple checks for information (otherwise, errors when anything was null)
+    if (this.properties) {
+      if (this.properties.data) {
+        if (this.properties.data.records) {
+          for (let i = 0; i < this.properties.data.records.length; i++) {
+            // Create a new map marker using property's geolocation values
+            this.newMapMarker = {
+              location: {
+                // Street: this.properties.data.records[i].Billing_Street__c,
+                // City: this.properties.data.records[i].Billing_City__c,
+                // State: this.properties.data.records[i].Billing_State__c,
+                // PostalCode: this.properties.data.records[i].Billing_Postal_Code__c,
+                // Country: this.properties.data.records[i].Billing_Country__c
+                Latitude:
+                  this.properties.data.records[i].Geolocation__Latitude__s,
+                Longitude:
+                  this.properties.data.records[i].Geolocation__Longitude__s
+              },
+              value: this.properties.data.records[i].Id,
+              title: this.properties.data.records[i].Billing_Street__c,
+              description:
+                this.properties.data.records[i].Billing_City__c +
+                ", " +
+                this.properties.data.records[i].Billing_State__c +
+                " " +
+                this.properties.data.records[i].Billing_Postal_Code__c
+            };
+            this.mapMarkers.push(this.newMapMarker);
+          }
         }
-
-        this.mapMarkers = [];
-        this.zoomLevel = 11;
-        this.listView = "hidden";
+      }
     }
-
- 
-
-
-    updateMarkers() {
-        this.mapMarkers = [];
-        // console.log("EMPTY MARKERS: ", JSON.stringify(this.mapMarkers));
-        // console.log("RECORDS TO ADD: ", JSON.stringify(this.properties.data.records.length));
-        
-        refreshApex(this.wiredProperties);
-
-        // console.log('TEST: ', this.properties.data);
-        if (this.properties) {
-            if (this.properties.data) {
-                if (this.properties.data.records) {
-                    for (let i = 0; i < this.properties.data.records.length; i++) {
-                        this.newMapMarker = {
-                            location: {
-                                // Street: this.properties.data.records[i].Billing_Street__c,
-                                // City: this.properties.data.records[i].Billing_City__c,
-                                // State: this.properties.data.records[i].Billing_State__c,
-                                // PostalCode: this.properties.data.records[i].Billing_Postal_Code__c,
-                                // Country: this.properties.data.records[i].Billing_Country__c
-                                Latitude: this.properties.data.records[i].Geolocation__Latitude__s,
-                                Longitude: this.properties.data.records[i].Geolocation__Longitude__s 
-                            },
-                            value: this.properties.data.records[i].Id,
-                            title: this.properties.data.records[i].Billing_Street__c,
-                            description: this.properties.data.records[i].Billing_City__c + ', ' + this.properties.data.records[i].Billing_State__c + ' ' + this.properties.data.records[i].Billing_Postal_Code__c
-                        };
-                        this.mapMarkers.push(this.newMapMarker);
-                    };
-                }
-            }            
-        }
-        
+    // If found, uses user's current location to display special marker, as well as circle outlining range set by inputted distance
+    if (this.locGot) {
+      this.newMapMarker = {
+        location: {
+          Latitude: this.geoLat,
+          Longitude: this.geoLong
+        },
+        value: "userLocation",
+        title: "Your Location",
+        mapIcon: this.mapIcon
+      };
+      this.mapMarkers.push(this.newMapMarker);
+      this.newMapMarker = {
+        location: {
+          Latitude: this.geoLat,
+          Longitude: this.geoLong
+        },
+        type: "Circle",
+        radius: this.distance * 1609.344,
+        strokeColor: "#0000FF",
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: "#0000F0",
+        fillOpacity: 0.35
+      };
+      this.mapMarkers.push(this.newMapMarker);
     }
-    
+  }
 
-    disconnectedCallback() {
-        unsubscribe(this.subscription);
-        this.subscription = null;
+  disconnectedCallback() {
+    unsubscribe(this.subscription);
+    this.subscription = null;
+  }
+
+  // Updates values whenever filters have been changed
+  handleFilterChange(filters) {
+    this.searchKey = filters.searchKey;
+    this.recordType = filters.recordType;
+    this.maxPrice = filters.maxPrice;
+    this.minBedrooms = filters.minBedrooms;
+    this.minBathrooms = filters.minBathrooms;
+    this.minRating = filters.minRating;
+    this.streets = filters.streets;
+    this.cities = filters.cities;
+    this.distance = filters.distance;
+    this.geoLat = filters.latitude;
+    this.geoLong = filters.longitude;
+
+    this.locGot = true;
+
+    refreshApex(this.properties);
+  }
+
+  // When property marker selected
+  handleMarkerSelect(event) {
+    if (event.target.selectedMarkerValue !== "userLocation") {
+      this.selectedMarkerValue = event.target.selectedMarkerValue;
+      this.handlePropertySelected();
     }
+  }
 
-    handleFilterChange(filters) {
-        this.searchKey = filters.searchKey;
-        this.recordType = filters.recordType;
-        this.maxPrice = filters.maxPrice;
-        this.minBedrooms = filters.minBedrooms;
-        this.minBathrooms = filters.minBathrooms;
-        this.minRating = filters.minRating;
-        this.streets = filters.streets;
-        this.cities = filters.cities;
-        // this.updateMarkers();
-    }
+  // Message channel to other components when a property is selected
+  handlePropertySelected() {
+    const message = { propertyId: this.selectedMarkerValue };
+    publish(this.messageContext, PROPERTYSELECTEDMC, message);
+  }
 
-    handleMarkerSelect(event) {
-        this.selectedMarkerValue = event.target.selectedMarkerValue;
-        this.handlePropertySelected();
-    }
-
-    handlePropertySelected(event) {
-        const message = { propertyId: this.selectedMarkerValue };
-        publish(this.messageContext, PROPERTYSELECTEDMC, message);
-    }
-
-    getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                //this.location.latitude = position.coords.latitude;
-                //this.location.longitude = position.coords.longitude;
-                console.log(position.coords.latitude);
-                console.log(position.coords.longitude);
-                this.center = {
-                    location: {
-                        Latitude: position.coords.latitude,
-                        Longitude: position.coords.longitude
-                    }
-                }
-                return true;
+  // Attempts to retrieve user's current geolocation
+  getLocation() {
+    console.log("Getting location...");
+    navigator.permissions.query({ name: "geolocation" }).then((geoStatus) => {
+      if (geoStatus.state === "granted") {
+        navigator.geolocation.getCurrentPosition((position) => {
+          this.geoLat = position.coords.latitude;
+          this.geoLong = position.coords.longitude;
+          console.log("WEB: " + this.geoLat + " " + this.geoLong);
+          publish(this.messageContext, GOTUSERLOCATIONMC, {
+            latitude: this.geoLat,
+            longitude: this.geoLong
+          });
+          this.locGot = true;
+          this.updateMarkers();
+        });
+      } else {
+        fetch(this.apiUrl)
+          .then((response) => response.json())
+          .then((data) => {
+            this.geoLat = data.latitude;
+            this.geoLong = data.longitude;
+            console.log("API: " + this.geoLat + " " + this.geoLong);
+            publish(this.messageContext, GOTUSERLOCATIONMC, {
+              latitude: this.geoLat,
+              longitude: this.geoLong
             });
-        } else {
-            fetch(this.apiUrl)
-            .then(response => response.json())
-            .then(data => {
-                this.center = {
-                    location: {
-                        Latitude: data.latitude,
-                        Longitude: data.longitude
-                    }
-                }
-                return true;
-            })
-            .catch(error => {
-                console.log(error);
-                return false;
-            });
-        }
-    }
+            this.locGot = true;
+            this.updateMarkers();
+          })
+          .catch((error) => {
+            console.log(error);
+            this.updateMarkers();
+            return false;
+          });
+      }
+    });
+  }
 
+  //reverse geolocate with opencage
+  ReverseGeocode() {
+    console.log("ReverseGeocode: " + this.geoLat + " " + this.geoLong);
+    //ReverseGeocodeApex({ latitude: this.geoLat, longitude: this.geoLong })
+    //  .then(async (result) => {
+    //    
+    //    this.userAddress = result;
+    //    console.log("Sending message: " + this.userAddress);
+    //    
+    //  })
+    //  .catch((error) => {
+    //    console.log(error);
+    //    this.updateMarkers();
+    //  });
+  }
 }

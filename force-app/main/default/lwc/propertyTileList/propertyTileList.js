@@ -1,4 +1,4 @@
-import { LightningElement, wire } from 'lwc';
+import { LightningElement, wire, track } from 'lwc';
 import {
     publish,
     subscribe,
@@ -24,6 +24,10 @@ export default class PropertyTileList extends LightningElement {
     streets = [];
     cities = [];
 
+    @track properties;
+    @track curProperties;
+    @track error;
+
     @wire(MessageContext)
     messageContext;
 
@@ -39,7 +43,16 @@ export default class PropertyTileList extends LightningElement {
         pageSize: '$pageSize',
         pageNumber: '$pageNumber'
     })
-    properties;
+    getPagedPropertyList(result) {
+        this.properties = result;
+        if (result.data) {
+            this.curProperties = result.data;
+            this.error = undefined;
+        } else if (result.error) {
+            this.error = result.error;
+            this.curProperties = [];
+        }
+    };
 
     connectedCallback() {
         this.subscription = subscribe(

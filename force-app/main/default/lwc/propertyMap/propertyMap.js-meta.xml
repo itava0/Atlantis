@@ -25,5 +25,8 @@
                 <supportedFormFactor type="Small" />
             </supportedFormFactors>
         </targetConfig>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="recordId" type="String" label="Record ID" default="{!recordId}"></property> 
+        </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

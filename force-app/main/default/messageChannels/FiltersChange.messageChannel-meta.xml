@@ -33,5 +33,9 @@
         <description>Cities</description>
         <fieldName>cities</fieldName>
     </lightningMessageFields>
+    <lightningMessageFields>
+        <description>Map Markers</description>
+        <fieldName>mapMarkers</fieldName>
+    </lightningMessageFields>
     <masterLabel>Filters Change Message Channel</masterLabel>
 </LightningMessageChannel>
