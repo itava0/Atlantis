@@ -1,21 +1,55 @@
+<!-- sldsValidatorIgnore -->
 <template>
-    <lightning-card title={address} icon-name="custom:custom106">
-        <template if:true={markers}>
-            <lightning-map
-                map-markers={markers}
-                zoom-level={zoomLevel}
-            ></lightning-map>
-            <template if:true={error}>
-                <c-error-panel
-                    friendly-message="Error retrieving map"
-                    errors={error}
-                ></c-error-panel>
-            </template>
-        </template>
-        <template if:false={markers}>
-            <c-error-panel
-                friendly-message="Select a property to see its location"
-            ></c-error-panel>
-        </template>
-    </lightning-card>
+  <lightning-card title={address} icon-name="custom:custom106">
+    <template if:true={markers}>
+      <lightning-map
+        map-markers={markers}
+        zoom-level={zoomLevel}
+        center={center}
+        list-view="hidden"
+      ></lightning-map>
+      <fieldset class="slds-form-element slds-align_absolute-center slds-var-m-around_x-small">
+        <legend class="slds-form-element__legend slds-form-element__label">Filter by Connection Type</legend>
+        <div class="slds-form-element__control">
+          <div class="slds-checkbox_button-group">
+            <span class="slds-button slds-checkbox_button">
+              <input type="checkbox" id="Tesla" value="Tesla" name="checkbox" onchange={handleChange} />
+              <label class="slds-checkbox_button__label" for="Tesla">
+                <span class="slds-checkbox_faux">Tesla</span>
+              </label>
+            </span>
+            <span class="slds-button slds-checkbox_button">
+              <input type="checkbox" id="CHAdeMO" value="CHAdeMO" name="checkbox" onchange={handleChange} />
+              <label class="slds-checkbox_button__label" for="CHAdeMO">
+                <span class="slds-checkbox_faux">CHAdeMO</span>
+              </label>
+            </span>
+            <span class="slds-button slds-checkbox_button">
+              <input type="checkbox" id="CSS" value="CSS" name="checkbox" onchange={handleChange} />
+              <label class="slds-checkbox_button__label" for="CSS">
+                <span class="slds-checkbox_faux">CSS</span>
+              </label>
+            </span>
+            <span class="slds-button slds-checkbox_button">
+              <input type="checkbox" id="J1772" value="J1772" name="checkbox" onchange={handleChange} />
+              <label class="slds-checkbox_button__label" for="J1772">
+                <span class="slds-checkbox_faux">J1772</span>
+              </label>
+            </span>
+          </div>
+        </div>
+      </fieldset>
+      <template if:true={error}>
+        <c-error-panel
+          friendly-message="Error retrieving map"
+          errors={error}
+        ></c-error-panel>
+      </template>
+    </template>
+    <template if:false={markers}>
+      <c-error-panel
+        friendly-message="Select a property to see its location"
+      ></c-error-panel>
+    </template>
+  </lightning-card>
 </template>

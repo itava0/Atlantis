@@ -4,7 +4,7 @@
                 <div class="slds-align_absolute-center">
                     <!--<p><strong>Welcome, property owner!</strong></p>-->
                 </div>
-                <template if:true={myProperties}>
+                <template if:true={searchedProperties}>
                     <article class="slds-card">
                         <div class="slds-card__header slds-grid">
                           <header class="slds-media slds-media_center slds-has-flexi-truncate">
@@ -33,7 +33,21 @@
                           </header>
                         </div>
                         <div class="slds-card__body slds-card__body_inner">
-                            <template for:each={myProperties} for:item="property">
+                            <lightning-input type="text" label ="Search Portfolio by Name, Address, or Type:" onchange={handleSearch} style="margin-bottom:10px"></lightning-input>
+                            <div class="slds-align_absolute-center" style="margin-bottom:10px">
+                                <lightning-button icon-name="utility:shortcuts" variant="brand-outline" label="Reset Search" onclick={handleClear} style="margin-right:10px"></lightning-button>
+                                <lightning-button icon-name="utility:text" variant="brand-outline" label="Sort by Name" onclick={handleSortName} style="margin-right:10px"></lightning-button>
+                                <lightning-button icon-name="utility:rating" variant="brand-outline" label="Sort by Rating" onclick={handleSortRating} style="margin-right:10px"></lightning-button>
+                                <lightning-button icon-name="utility:money" variant="brand-outline" label="Sort by Rent" onclick={handleSortRent} style="margin-right:10px"></lightning-button>
+                                <lightning-button icon-name="utility:moneybag" variant="brand-outline" label="Sort by Market Price" onclick={handleSortMarketPrice} style="margin-right:10px"></lightning-button>
+                                <lightning-button icon-name="utility:monthlyview" variant="brand-outline" label="Sort by Date Listed" onclick={handleSortDateListed}></lightning-button>
+                            </div>
+                            <template if:true={amountFound}>
+                                <div class="slds-align_absolute-center" style="margin-bottom:6px">
+                                    <p>{amountFound} result(s) found</p>
+                                </div>
+                            </template>
+                            <template for:each={searchedProperties} for:item="property">
                                 <div key={property.Id} class="slds-box">
                                     <div class="slds-grid slds-gutters">
                                         <div class="slds-col slds-size_1-of-4">
@@ -73,7 +87,7 @@
                         </div>
                     </article>
                 </template>
-                <template if:false={myProperties}>
+                <template if:false={searchedProperties}>
                     <p><strong>This user is a property owner, but has no properties. Check out the Property Explorer.</strong></p>
                 </template>
             </template>

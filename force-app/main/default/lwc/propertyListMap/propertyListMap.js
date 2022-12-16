@@ -12,7 +12,7 @@ import GOTUSERLOCATIONMC from "@salesforce/messageChannel/GotUserLocation__c";
 import getPagedPropertyList from "@salesforce/apex/PropertyController.getPagedPropertyList";
 //import ReverseGeocodeApex from "@salesforce/apex/ReverseGeocodingService.ReverseGeocode";
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 12;
 
 export default class PropertyListMap extends LightningElement {
   // Address and geolocation information
@@ -28,7 +28,7 @@ export default class PropertyListMap extends LightningElement {
   geoLong = 0;
   mapIcon = {
     path: "M6.1299-28.3483H5.7798C6.8433-29.5843 7.49-31.1861 7.49-32.9398 7.4899-36.8334 4.3219-40 .4305-40-3.4625-40-6.6279-36.8334-6.6279-32.9398-6.6279-31.1861-5.9802-29.5843-4.9186-28.3483H-5.2696C-7.2341-28.3483-8.8322-26.7486-8.8322-24.7838V-13.0733C-8.8322-11.1085-7.234-9.51-5.2696-9.51H-5.1324V3.297C-5.1324 5.3302-4.0627 6.8615-2.644 6.8615H3.5028C4.9236 6.8615 5.9936 5.3303 5.9936 3.297V-9.51H6.1299C8.0941-9.51 9.6938-11.1084 9.6938-13.0733V-24.7839C9.6932-26.7486 8.094-28.3483 6.1299-28.3483Z",
-    fillColor: "#ea4335",
+    fillColor: "#FFFF11",
     fillOpacity: 1
   };
 
@@ -111,29 +111,32 @@ export default class PropertyListMap extends LightningElement {
       if (this.properties.data) {
         if (this.properties.data.records) {
           for (let i = 0; i < this.properties.data.records.length; i++) {
-            // Create a new map marker using property's geolocation values
-            this.newMapMarker = {
-              location: {
-                // Street: this.properties.data.records[i].Billing_Street__c,
-                // City: this.properties.data.records[i].Billing_City__c,
-                // State: this.properties.data.records[i].Billing_State__c,
-                // PostalCode: this.properties.data.records[i].Billing_Postal_Code__c,
-                // Country: this.properties.data.records[i].Billing_Country__c
-                Latitude:
-                  this.properties.data.records[i].Geolocation__Latitude__s,
-                Longitude:
-                  this.properties.data.records[i].Geolocation__Longitude__s
-              },
-              value: this.properties.data.records[i].Id,
-              title: this.properties.data.records[i].Billing_Street__c,
-              description:
-                this.properties.data.records[i].Billing_City__c +
-                ", " +
-                this.properties.data.records[i].Billing_State__c +
-                " " +
-                this.properties.data.records[i].Billing_Postal_Code__c
-            };
-            this.mapMarkers.push(this.newMapMarker);
+            if(this.properties.data.records[i].Geolocation__Latitude__s && this.properties.data.records[i].Geolocation__Longitude__s){
+              // Create a new map marker using property's geolocation values
+              console.log(this.properties.data.records[i].Name, this.properties.data.records[i].Geolocation__Latitude__s);
+              this.newMapMarker = {
+                location: {
+                  // Street: this.properties.data.records[i].Billing_Street__c,
+                  // City: this.properties.data.records[i].Billing_City__c,
+                  // State: this.properties.data.records[i].Billing_State__c,
+                  // PostalCode: this.properties.data.records[i].Billing_Postal_Code__c,
+                  // Country: this.properties.data.records[i].Billing_Country__c
+                  Latitude:
+                    this.properties.data.records[i].Geolocation__Latitude__s,
+                  Longitude:
+                    this.properties.data.records[i].Geolocation__Longitude__s
+                },
+                value: this.properties.data.records[i].Id,
+                title: this.properties.data.records[i].Billing_Street__c,
+                description:
+                  this.properties.data.records[i].Billing_City__c +
+                  ", " +
+                  this.properties.data.records[i].Billing_State__c +
+                  " " +
+                  this.properties.data.records[i].Billing_Postal_Code__c
+              };
+              this.mapMarkers.push(this.newMapMarker);
+            }
           }
         }
       }
@@ -209,7 +212,8 @@ export default class PropertyListMap extends LightningElement {
   getLocation() {
     console.log("Getting location...");
     navigator.permissions.query({ name: "geolocation" }).then((geoStatus) => {
-      if (geoStatus.state === "granted") {
+      console.log(geoStatus.state);
+      if (geoStatus.state === "granted" || geoStatus.state === "prompt") {
         navigator.geolocation.getCurrentPosition((position) => {
           this.geoLat = position.coords.latitude;
           this.geoLong = position.coords.longitude;
@@ -242,21 +246,5 @@ export default class PropertyListMap extends LightningElement {
           });
       }
     });
-  }
-
-  //reverse geolocate with opencage
-  ReverseGeocode() {
-    console.log("ReverseGeocode: " + this.geoLat + " " + this.geoLong);
-    //ReverseGeocodeApex({ latitude: this.geoLat, longitude: this.geoLong })
-    //  .then(async (result) => {
-    //    
-    //    this.userAddress = result;
-    //    console.log("Sending message: " + this.userAddress);
-    //    
-    //  })
-    //  .catch((error) => {
-    //    console.log(error);
-    //    this.updateMarkers();
-    //  });
   }
 }

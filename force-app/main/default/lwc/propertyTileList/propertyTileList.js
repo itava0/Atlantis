@@ -8,8 +8,9 @@ import {
 import FILTERSCHANGEMC from '@salesforce/messageChannel/FiltersChange__c';
 import PROPERTYSELECTEDMC from '@salesforce/messageChannel/PropertySelected__c';
 import getPagedPropertyList from '@salesforce/apex/PropertyController.getPagedPropertyList';
+// import PropertyModal from 'c/propertyModal';
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 12;
 
 export default class PropertyTileList extends LightningElement {
     pageNumber = 1;
@@ -89,7 +90,17 @@ export default class PropertyTileList extends LightningElement {
     }
 
     handlePropertySelected(event) {
+        // this.handleModal();
         const message = { propertyId: event.detail };
         publish(this.messageContext, PROPERTYSELECTEDMC, message);
     }
+
+    // Modal to show property summary
+    // async handleModal() {
+    //     await PropertyModal.open({
+    //         size: 'small',
+    //         description: 'description',
+    //         content: 'content',
+    //     });
+    // }
 }

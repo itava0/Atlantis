@@ -212,9 +212,9 @@ export default class PropertyFilter extends LightningElement {
     // being called within a delay of DELAY. This is to avoid a very large number of Apex
     // method calls in components listening to this event.
     window.clearTimeout(this.delayTimeout);
-    // eslint-disable-next-line @lwc/lwc/no-async-operation
 
     // Sends variables, primarily for filters, through message channel
+    // eslint-disable-next-line @lwc/lwc/no-async-operation
     this.delayTimeout = setTimeout(() => {
       const filters = {
         searchKey: this.searchKey,

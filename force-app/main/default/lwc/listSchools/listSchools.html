@@ -1,0 +1,145 @@
+<template>
+    <lightning-card title="Schools">
+        <div class="slds-var-m-around_small">
+            <lightning-input type="text" label="Enter ZIP code to find schools in or around that ZIP:" onchange={handlePostalCodeChange} value={curPostalCode}></lightning-input>
+            <lightning-button variant="brand" icon-name="utility:search" onclick={getNearbySchools} label="Search"></lightning-button>
+            <template if:true={showTable}>
+              <template if:true={schools}>
+                <table aria-multiselectable="true" class="slds-table slds-table_bordered slds-table_fixed-layout slds-table_resizable-cols" role="grid" aria-label="Example advanced table of Opportunities in actionable mode with ascending column sorting">
+                    <thead>
+                      <tr class="slds-line-height_reset">
+                        <th aria-label="School Name" aria-sort="ascending" class="slds-is-resizable slds-is-sortable slds-is-sorted slds-is-sorted_asc slds-cell_action-mode" scope="col">
+                          <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                            <span class="slds-assistive-text">Sort by: </span>
+                            <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                              <span class="slds-truncate" title="School Name">School Name</span>
+                              <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon " aria-hidden="true">
+                                  <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown"></use>
+                                </svg>
+                              </span>
+                            </div>
+                          </a>
+                          <span class="slds-assistive-text" aria-live="polite" aria-atomic="true">Sorted ascending</span>
+                          <div class="slds-resizable">
+                            <input type="range" aria-label="School Name column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-554" max="1000" min="20" tabindex="0" />
+                            <span class="slds-resizable__handle">
+                              <span class="slds-resizable__divider"></span>
+                            </span>
+                          </div>
+                        </th>
+                        <th aria-label="Type" aria-sort="none" class="slds-is-resizable slds-is-sortable slds-cell_action-mode" scope="col">
+                          <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                            <span class="slds-assistive-text">Sort by: </span>
+                            <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                              <span class="slds-truncate" title="Type">Type</span>
+                              <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon " aria-hidden="true">
+                                  <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown"></use>
+                                </svg>
+                              </span>
+                            </div>
+                          </a>
+                          <div class="slds-resizable">
+                            <input type="range" aria-label="Type column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-555" max="1000" min="20" tabindex="0" />
+                            <span class="slds-resizable__handle">
+                              <span class="slds-resizable__divider"></span>
+                            </span>
+                          </div>
+                        </th>
+                        <th aria-label="Location" aria-sort="none" class="slds-is-resizable slds-is-sortable slds-cell_action-mode" scope="col">
+                          <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                            <span class="slds-assistive-text">Sort by: </span>
+                            <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                              <span class="slds-truncate" title="Location">Location</span>
+                              <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon " aria-hidden="true">
+                                  <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown"></use>
+                                </svg>
+                              </span>
+                            </div>
+                          </a>
+                          <div class="slds-resizable">
+                            <input type="range" aria-label="Location column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-556" max="1000" min="20" tabindex="0" />
+                            <span class="slds-resizable__handle">
+                              <span class="slds-resizable__divider"></span>
+                            </span>
+                          </div>
+                        </th>
+                        <th aria-label="Rating" aria-sort="none" class="slds-is-resizable slds-is-sortable slds-cell_action-mode" scope="col">
+                          <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                            <span class="slds-assistive-text">Sort by: </span>
+                            <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                              <span class="slds-truncate" title="Rating">Rating</span>
+                              <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon " aria-hidden="true">
+                                  <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown"></use>
+                                </svg>
+                              </span>
+                            </div>
+                          </a>
+                          <div class="slds-resizable">
+                            <input type="range" aria-label="Rating column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-557" max="1000" min="20" tabindex="0" />
+                            <span class="slds-resizable__handle">
+                              <span class="slds-resizable__divider"></span>
+                            </span>
+                          </div>
+                        </th>
+                        <th aria-label="Google Maps" aria-sort="none" class="slds-is-resizable slds-is-sortable slds-cell_action-mode" scope="col">
+                          <a class="slds-th__action slds-text-link_reset" href="#" role="button" tabindex="0">
+                            <span class="slds-assistive-text">Sort by: </span>
+                            <div class="slds-grid slds-grid_vertical-align-center slds-has-flexi-truncate">
+                              <span class="slds-truncate" title="Google Maps">Google Maps</span>
+                              <span class="slds-icon_container slds-icon-utility-arrowdown">
+                                <svg class="slds-icon slds-icon-text-default slds-is-sortable__icon " aria-hidden="true">
+                                  <use xlink:href="/assets/icons/utility-sprite/svg/symbols.svg#arrowdown"></use>
+                                </svg>
+                              </span>
+                            </div>
+                          </a>
+                          <div class="slds-resizable">
+                            <input type="range" aria-label="Google Maps column width" class="slds-resizable__input slds-assistive-text" id="cell-resize-handle-558" max="1000" min="20" tabindex="0" />
+                            <span class="slds-resizable__handle">
+                              <span class="slds-resizable__divider"></span>
+                            </span>
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={schools} for:item="school">
+                            <tr aria-selected="false" class="slds-hint-parent" key={school.slug_id}>
+                                <th class="slds-cell_action-mode" scope="row">
+                                  <div class="slds-truncate" title="School Name">
+                                    <div class="slds-truncate" title="School Name"><strong>{school.name}</strong></div>
+                                  </div>
+                                </th>
+                                <td class="slds-cell_action-mode" role="gridcell">
+                                  <div class="slds-truncate" title="Type">{school.type}</div>
+                                </td>
+                                <td class="slds-cell_action-mode" role="gridcell">
+                                  <div class="slds-truncate" title="Location">{school.city}, {school.state}</div>
+                                </td>
+                                <td class="slds-cell_action-mode" role="gridcell">
+                                  <template if:true={school.rating}>
+                                    <div class="slds-truncate" title="Rating">{school.rating}</div>
+                                  </template>
+                                  <template if:false={school.rating}>
+                                    <div class="slds-truncate" title="Rating">-</div>
+                                  </template>
+                                </td>
+                                <td class="slds-cell_action-mode" role="gridcell">
+                                  <!--<div class="slds-truncate" title="Google Maps"><a href={school.maps_url}>Google Maps</a></div>-->
+                                  <div class="slds-truncate" title="Google Maps">
+                                    <c-map-button maps-url={school.maps_url}></c-map-button>
+                                  </div>
+                                </td>
+                              </tr>
+                        </template>
+                    </tbody>
+                  </table>
+            </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>

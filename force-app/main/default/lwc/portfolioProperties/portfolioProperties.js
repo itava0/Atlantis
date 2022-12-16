@@ -40,6 +40,161 @@ export default class PortfolioProperties extends LightningElement {
     numProperties = 0;
     oneProperty = false;
 
+    // For search and sort functionalities
+    searchKey;
+    @track searchedProperties = [];
+    @track sortedProperties = [];
+    amountFound;
+    numToSort;
+    ascendingName = false;
+    ascendingRating = false;
+    ascendingRent = false;
+    ascendingMarketPrice = false;
+    ascendingDaysOnMarket = false;
+
+    // Search function
+    handleSearch(event) {
+        this.searchKey = event.target.value;
+        this.searchedProperties = [];
+        this.amountFound = null;
+
+        // Only update search if user has inputted 3 or more characters
+        if (this.searchKey.length > 2) {
+            this.amountFound = 0;
+            for (let i = 0; i < this.myProperties.length; i++) {
+                // For each property in portfolio, check if the search key can be found in name, record type, or an address field
+                if (this.myProperties[i].Name.toLowerCase().includes(this.searchKey.toLowerCase())
+                || this.myProperties[i].RecordType.Name.toLowerCase().includes(this.searchKey.toLowerCase())
+                || this.myProperties[i].Billing_Street__c.toLowerCase().includes(this.searchKey.toLowerCase())
+                || this.myProperties[i].Billing_City__c.toLowerCase().includes(this.searchKey.toLowerCase())
+                || this.myProperties[i].Billing_State__c.toLowerCase().includes(this.searchKey.toLowerCase())
+                || this.myProperties[i].Billing_Postal_Code__c.includes(this.searchKey)) {
+                    // If found, add to the list of properties
+                    this.searchedProperties.push(this.myProperties[i]);
+                    this.amountFound++;
+                }
+            }
+        } else {
+            // For when user stops searching, go back to default and view all properties
+            this.searchedProperties = this.myProperties;
+            this.amountFound = null;
+        }
+    }
+
+    // Clearing search and sorting back to default
+    handleClear() {
+        // Reset input field, and revert back to all properties
+        this.searchKey = '';
+        this.template.querySelectorAll("lightning-input").forEach((element) => {
+            element.value = null;
+        });
+        this.searchedProperties = this.myProperties;
+        this.amountFound = null;
+
+        // Reset ascending/descending condition for all options
+        this.ascendingName = false;
+        this.ascendingRating = false;
+        this.ascendingRent = false;
+        this.ascendingMarketPrice = false;
+        this.ascendingDaysOnMarket = false;
+    }
+
+    // Sorting properties by name
+    handleSortName() {
+        this.searchedProperties.sort((a, b) => {
+            const nameA = a.Name.toLowerCase();
+            const nameB = b.Name.toLowerCase();
+
+            if (nameA < nameB) {
+                return -1;
+            } else if (nameA > nameB) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+
+        // Alternate between ascending and descending
+        this.ascendingName = !this.ascendingName;
+        if (!this.ascendingName) {
+            this.searchedProperties.reverse();
+        }
+
+        // Reset ascending/descending condition for other options
+        this.ascendingRating = false;
+        this.ascendingRent = false;
+        this.ascendingMarketPrice = false;
+        this.ascendingDaysOnMarket = false;
+    }
+
+    // Sorting properties by rating
+    handleSortRating() {
+        this.searchedProperties.sort((a, b) => a.Score__c - b.Score__c);
+
+        // Alternate between ascending and descending
+        this.ascendingRating = !this.ascendingRating;
+        if (!this.ascendingRating) {
+            this.searchedProperties.reverse();
+        }
+
+        // Reset ascending/descending condition for other options
+        this.ascendingName = false;
+        this.ascendingRent = false;
+        this.ascendingMarketPrice = false;
+        this.ascendingDaysOnMarket = false;
+    }
+
+    // Sorting properties by rent
+    handleSortRent() {
+        this.searchedProperties.sort((a, b) => a.Rent__c - b.Rent__c);
+
+        // Alternate between ascending and descending
+        this.ascendingRent = !this.ascendingRent;
+        if (!this.ascendingRent) {
+            this.searchedProperties.reverse();
+        }
+
+        // Reset ascending/descending condition for other options
+        this.ascendingName = false;
+        this.ascendingRating = false;
+        this.ascendingMarketPrice = false;
+        this.ascendingDaysOnMarket = false;
+    }
+
+    // Sorting properties by market price
+    handleSortMarketPrice() {
+        this.searchedProperties.sort((a, b) => a.Market_Price__c - b.Market_Price__c);
+
+        // Alternate between ascending and descending
+        this.ascendingMarketPrice = !this.ascendingMarketPrice;
+        if (!this.ascendingMarketPrice) {
+            this.searchedProperties.reverse();
+        }
+        
+        // Reset ascending/descending condition for other options
+        this.ascendingName = false;
+        this.ascendingRating = false;
+        this.ascendingRent = false;
+        this.ascendingDaysOnMarket = false;
+    }
+
+    // Sorting properties by days on market
+    handleSortDateListed() {
+        this.searchedProperties.sort((a, b) => a.Days_On_Market__c - b.Days_On_Market__c);
+
+        // Alternate between ascending and descending
+        this.ascendingDaysOnMarket = !this.ascendingDaysOnMarket;
+        if (!this.ascendingDaysOnMarket) {
+            this.searchedProperties.reverse();
+        }
+
+        // Reset ascending/descending condition for other options
+        this.ascendingName = false;
+        this.ascendingRating = false;
+        this.ascendingRent = false;
+        this.ascendingMarketPrice = false;
+    }
+
     // Get Contact ID from User
     @wire (getContact, {usrId : "$userId"}) getContact(result) {
         this.wiredUsers = result;
@@ -130,6 +285,7 @@ export default class PortfolioProperties extends LightningElement {
                                 this.oneProperty = false;
                             }
                             this.myProperties.push(this.properties[i]);
+                            this.searchedProperties.push(this.properties[i]);
                         }
                     }
                 }
