@@ -1,0 +1,131 @@
+<template>
+    <lightning-modal-header label="Explore Nearby Places"></lightning-modal-header>
+    <lightning-modal-body>
+        <!-- <lightning-button variant="brand" label="Populate Markers" onclick={populateMarkers}></lightning-button> -->
+        <div class="slds-align_absolute-center" style="margin-bottom:3px">
+            <p>Select up to 3 to search:</p>
+        </div>
+        <div class="slds-align_absolute-center" style="margin-bottom:10px">
+            <lightning-button-group>
+                <!-- Each button in group has three states:
+                    selected: Type selected for search results
+                    unselected: Type not selected for search results, but still choosable
+                    disabled: Type limit reached, so if not already selected, is disabled
+                -->
+                <template if:true={hotelSelected}>
+                    <lightning-button variant="brand" label="Hotels" value="lodging" onclick={handleTypeSelect}></lightning-button>
+                </template>
+                <template if:false={hotelSelected}>
+                    <template if:true={hotelDisabled}>
+                        <lightning-button variant="brand-outline" label="Hotels" value="lodging" disabled></lightning-button>
+                    </template>
+                    <template if:false={hotelDisabled}>
+                        <lightning-button variant="brand-outline" label="Hotels" value="lodging" onclick={handleTypeSelect}></lightning-button>
+                    </template>
+                </template>
+                <template if:true={restaurantSelected}>
+                    <lightning-button variant="brand" label="Restaurants" value="restaurant" onclick={handleTypeSelect}></lightning-button>
+                </template>
+                <template if:false={restaurantSelected}>
+                    <template if:true={restaurantDisabled}>
+                        <lightning-button variant="brand-outline" label="Restaurants" value="restaurant" disabled></lightning-button>
+                    </template>
+                    <template if:false={restaurantDisabled}>
+                        <lightning-button variant="brand-outline" label="Restaurants" value="restaurant" onclick={handleTypeSelect}></lightning-button>
+                    </template>
+                </template>
+                <template if:true={airportSelected}>
+                    <lightning-button variant="brand" label="Airports" value="airport" onclick={handleTypeSelect}></lightning-button>
+                </template>
+                <template if:false={airportSelected}>
+                    <template if:true={airportDisabled}>
+                        <lightning-button variant="brand-outline" label="Airports" value="airport" disabled></lightning-button>
+                    </template>
+                    <template if:false={airportDisabled}>
+                        <lightning-button variant="brand-outline" label="Airports" value="airport" onclick={handleTypeSelect}></lightning-button>
+                    </template>
+                </template>
+                <template if:true={schoolSelected}>
+                    <lightning-button variant="brand" label="Schools" value="school" onclick={handleTypeSelect}></lightning-button>
+                </template>
+                <template if:false={schoolSelected}>
+                    <template if:true={schoolDisabled}>
+                        <lightning-button variant="brand-outline" label="Schools" value="school" disabled></lightning-button>
+                    </template>
+                    <template if:false={schoolDisabled}>
+                        <lightning-button variant="brand-outline" label="Schools" value="school" onclick={handleTypeSelect}></lightning-button>
+                    </template>
+                </template>
+                <template if:true={gymSelected}>
+                    <lightning-button variant="brand" label="Gyms" value="gym" onclick={handleTypeSelect}></lightning-button>
+                </template>
+                <template if:false={gymSelected}>
+                    <template if:true={gymDisabled}>
+                        <lightning-button variant="brand-outline" label="Gyms" value="gym" disabled></lightning-button>
+                    </template>
+                    <template if:false={gymDisabled}>
+                        <lightning-button variant="brand-outline" label="Gyms" value="gym" onclick={handleTypeSelect}></lightning-button>
+                    </template>
+                </template>
+                <template if:true={bankSelected}>
+                    <lightning-button variant="brand" label="Banks" value="bank" onclick={handleTypeSelect}></lightning-button>
+                </template>
+                <template if:false={bankSelected}>
+                    <template if:true={bankDisabled}>
+                        <lightning-button variant="brand-outline" label="Banks" value="bank" disabled></lightning-button>
+                    </template>
+                    <template if:false={bankDisabled}>
+                        <lightning-button variant="brand-outline" label="Banks" value="bank" onclick={handleTypeSelect}></lightning-button>
+                    </template>
+                </template>
+                <template if:true={hospitalSelected}>
+                    <lightning-button variant="brand" label="Hospitals" value="hospital" onclick={handleTypeSelect}></lightning-button>
+                </template>
+                <template if:false={hospitalSelected}>
+                    <template if:true={hospitalDisabled}>
+                        <lightning-button variant="brand-outline" label="Hospitals" value="hospital" disabled></lightning-button>
+                    </template>
+                    <template if:false={hospitalDisabled}>
+                        <lightning-button variant="brand-outline" label="Hospitals" value="hospital" onclick={handleTypeSelect}></lightning-button>
+                    </template>
+                </template>
+                <template if:true={supermarketSelected}>
+                    <lightning-button variant="brand" label="Supermarkets" value="supermarket" onclick={handleTypeSelect}></lightning-button>
+                </template>
+                <template if:false={supermarketSelected}>
+                    <template if:true={supermarketDisabled}>
+                        <lightning-button variant="brand-outline" label="Supermarkets" value="supermarket" disabled></lightning-button>
+                    </template>
+                    <template if:false={supermarketDisabled}>
+                        <lightning-button variant="brand-outline" label="Supermarkets" value="supermarket" onclick={handleTypeSelect}></lightning-button>
+                    </template>
+                </template>
+            </lightning-button-group>
+            <lightning-button-icon icon-name="utility:refresh" alternative-text="Reset" title="Reset" onclick={handleReset} style="margin-left:10px"></lightning-button-icon>
+        </div>
+        <div class="slds-align_absolute-center">
+            <template if:true={noneSelected}>
+                <lightning-button variant="success" label="Find Locations" icon-name="utility:search" disabled></lightning-button>
+            </template>
+            <template if:false={noneSelected}>
+                <lightning-button variant="success" label="Find Locations" icon-name="utility:search" onclick={getNearbyPlaces}></lightning-button>
+            </template> 
+        </div>
+        <lightning-card>
+            <div class="slds-m-around_medium">
+                <lightning-map map-markers={mapMarkers} zoom-level={zoomLevel} list-view={listView}
+                onmarkerselect={handleMarkerSelect} selected-marker-value={selectedMarkerValue} center={center}>
+                </lightning-map>
+        </div>
+        </lightning-card>
+    </lightning-modal-body>
+    <lightning-modal-footer>
+        <template if:true={anyMarkerSelected}>
+            <lightning-button label="View Selection in Google Maps" onclick={handleLink} style="margin-right:10px"></lightning-button>
+        </template>
+        <template if:false={anyMarkerSelected}>
+            <lightning-button label="View Selection in Google Maps" disabled style="margin-right:10px"></lightning-button>
+        </template>
+        <lightning-button label="Close" onclick={handleClose}></lightning-button>
+    </lightning-modal-footer>
+</template>

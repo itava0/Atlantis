@@ -48,61 +48,28 @@ public without sharing class PropertyController {
     result.pageSize = safePageSize;
     result.pageNumber = safePageNumber;
 
-    if (recordType != null && recordType != 'Any') {
+    if (recordType != null && recordType != '' && recordType != 'Any') {
       if (streets.size() > 0) {
         // VARIATION 1: Record Type Filter = YES, Distance Filter = YES
         result.totalItemCount = [
           SELECT COUNT()
           FROM Property__c
           WHERE
-            (Name LIKE :searchPattern
-            OR Billing_Street__c LIKE :searchPattern
-            OR Billing_City__c LIKE :searchPattern
-            OR Billing_State__c LIKE :searchPattern
-            OR Billing_Postal_Code__c LIKE :searchPattern
-            OR RecordType.Name LIKE :searchPattern)
-            AND RecordType.Name = :recordType
-            AND Rent__c <= :safeMaxPrice
-            AND Bedrooms__c >= :safeMinBedrooms
-            AND Bathrooms__c >= :safeMinBathrooms
-            AND Score__c >= :safeMinRating
-            AND Status__c = 'Available'
-            AND Billing_Street__c IN :streets
-            AND Billing_City__c IN :cities
+            (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
+            OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND RecordType.Name = :recordType AND Rent__c <= :safeMaxPrice
+            AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available'
+            AND Billing_Street__c IN :streets AND Billing_City__c IN :cities AND Approval_Status__c = 'Approved'
         ];
         result.records = [
           SELECT
-            Id,
-            Billing_Street__c,
-            Billing_City__c,
-            Billing_State__c,
-            Billing_Postal_Code__c,
-            Billing_Country__c,
-            Rent__c,
-            Bathrooms__c,
-            Bedrooms__c,
-            Geolocation__Latitude__s,
-            Geolocation__Longitude__s,
-            Name,
-            Picture__c,
-            Score__c,
-            Status__c
+            Id, Billing_Street__c, Billing_City__c, Billing_State__c, Billing_Postal_Code__c, Billing_Country__c, Rent__c,
+            Bathrooms__c, Bedrooms__c, Geolocation__Latitude__s, Geolocation__Longitude__s, Name, Picture__c, Score__c, Status__c, Approval_Status__c
           FROM Property__c
           WHERE
-            (Name LIKE :searchPattern
-            OR Billing_Street__c LIKE :searchPattern
-            OR Billing_City__c LIKE :searchPattern
-            OR Billing_State__c LIKE :searchPattern
-            OR Billing_Postal_Code__c LIKE :searchPattern
-            OR RecordType.Name LIKE :searchPattern)
-            AND RecordType.Name = :recordType
-            AND Rent__c <= :safeMaxPrice
-            AND Bedrooms__c >= :safeMinBedrooms
-            AND Bathrooms__c >= :safeMinBathrooms
-            AND Score__c >= :safeMinRating
-            AND Status__c = 'Available'
-            AND Billing_Street__c IN :streets
-            AND Billing_City__c IN :cities
+            (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
+            OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND RecordType.Name = :recordType AND Rent__c <= :safeMaxPrice
+            AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Approval_Status__c = 'Approved'
+            AND Billing_Street__c IN :streets AND Billing_City__c IN :cities
           WITH SECURITY_ENFORCED
           ORDER BY Rent__c
           LIMIT :safePageSize
@@ -114,50 +81,19 @@ public without sharing class PropertyController {
           SELECT COUNT()
           FROM Property__c
           WHERE
-            (Name LIKE :searchPattern
-            OR Billing_Street__c LIKE :searchPattern
-            OR Billing_City__c LIKE :searchPattern
-            OR Billing_State__c LIKE :searchPattern
-            OR Billing_Postal_Code__c LIKE :searchPattern
-            OR RecordType.Name LIKE :searchPattern)
-            AND RecordType.Name = :recordType
-            AND Rent__c <= :safeMaxPrice
-            AND Bedrooms__c >= :safeMinBedrooms
-            AND Bathrooms__c >= :safeMinBathrooms
-            AND Score__c >= :safeMinRating
-            AND Status__c = 'Available'
+            (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
+            OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND RecordType.Name = :recordType AND Rent__c <= :safeMaxPrice
+            AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Approval_Status__c = 'Approved'
         ];
         result.records = [
           SELECT
-            Id,
-            Billing_Street__c,
-            Billing_City__c,
-            Billing_State__c,
-            Billing_Postal_Code__c,
-            Billing_Country__c,
-            Rent__c,
-            Bathrooms__c,
-            Bedrooms__c,
-            Geolocation__Latitude__s,
-            Geolocation__Longitude__s,
-            Name,
-            Picture__c,
-            Score__c,
-            Status__c
+            Id, Billing_Street__c, Billing_City__c, Billing_State__c, Billing_Postal_Code__c, Billing_Country__c, Rent__c,
+            Bathrooms__c, Bedrooms__c, Geolocation__Latitude__s, Geolocation__Longitude__s, Name, Picture__c, Score__c, Status__c, Approval_Status__c
           FROM Property__c
           WHERE
-            (Name LIKE :searchPattern
-            OR Billing_Street__c LIKE :searchPattern
-            OR Billing_City__c LIKE :searchPattern
-            OR Billing_State__c LIKE :searchPattern
-            OR Billing_Postal_Code__c LIKE :searchPattern
-            OR RecordType.Name LIKE :searchPattern)
-            AND RecordType.Name = :recordType
-            AND Rent__c <= :safeMaxPrice
-            AND Bedrooms__c >= :safeMinBedrooms
-            AND Bathrooms__c >= :safeMinBathrooms
-            AND Score__c >= :safeMinRating
-            AND Status__c = 'Available'
+            (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
+            OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND RecordType.Name = :recordType AND Rent__c <= :safeMaxPrice
+            AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Approval_Status__c = 'Approved'
           WITH SECURITY_ENFORCED
           ORDER BY Rent__c
           LIMIT :safePageSize
@@ -171,52 +107,21 @@ public without sharing class PropertyController {
           SELECT COUNT()
           FROM Property__c
           WHERE
-            (Name LIKE :searchPattern
-            OR Billing_Street__c LIKE :searchPattern
-            OR Billing_City__c LIKE :searchPattern
-            OR Billing_State__c LIKE :searchPattern
-            OR Billing_Postal_Code__c LIKE :searchPattern
-            OR RecordType.Name LIKE :searchPattern)
-            AND Rent__c <= :safeMaxPrice
-            AND Bedrooms__c >= :safeMinBedrooms
-            AND Bathrooms__c >= :safeMinBathrooms
-            AND Score__c >= :safeMinRating
-            AND Status__c = 'Available'
-            AND Billing_Street__c IN :streets
-            AND Billing_City__c IN :cities
+            (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
+            OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms
+            AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Billing_Street__c IN :streets AND Billing_City__c IN :cities
+            AND Approval_Status__c = 'Approved'
         ];
         result.records = [
           SELECT
-            Id,
-            Billing_Street__c,
-            Billing_City__c,
-            Billing_State__c,
-            Billing_Postal_Code__c,
-            Billing_Country__c,
-            Rent__c,
-            Bathrooms__c,
-            Bedrooms__c,
-            Geolocation__Latitude__s,
-            Geolocation__Longitude__s,
-            Name,
-            Picture__c,
-            Score__c,
-            Status__c
+            Id, Billing_Street__c, Billing_City__c, Billing_State__c, Billing_Postal_Code__c, Billing_Country__c, Rent__c,
+            Bathrooms__c, Bedrooms__c, Geolocation__Latitude__s, Geolocation__Longitude__s, Name, Picture__c, Score__c, Status__c, Approval_Status__c
           FROM Property__c
           WHERE
-            (Name LIKE :searchPattern
-            OR Billing_Street__c LIKE :searchPattern
-            OR Billing_City__c LIKE :searchPattern
-            OR Billing_State__c LIKE :searchPattern
-            OR Billing_Postal_Code__c LIKE :searchPattern
-            OR RecordType.Name LIKE :searchPattern)
-            AND Rent__c <= :safeMaxPrice
-            AND Bedrooms__c >= :safeMinBedrooms
-            AND Bathrooms__c >= :safeMinBathrooms
-            AND Score__c >= :safeMinRating
-            AND Status__c = 'Available'
-            AND Billing_Street__c IN :streets
-            AND Billing_City__c IN :cities
+            (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
+            OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms
+            AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Billing_Street__c IN :streets AND Billing_City__c IN :cities
+            AND Approval_Status__c = 'Approved'
           WITH SECURITY_ENFORCED
           ORDER BY Rent__c
           LIMIT :safePageSize
@@ -228,48 +133,19 @@ public without sharing class PropertyController {
           SELECT COUNT()
           FROM Property__c
           WHERE
-            (Name LIKE :searchPattern
-            OR Billing_Street__c LIKE :searchPattern
-            OR Billing_City__c LIKE :searchPattern
-            OR Billing_State__c LIKE :searchPattern
-            OR Billing_Postal_Code__c LIKE :searchPattern
-            OR RecordType.Name LIKE :searchPattern)
-            AND Rent__c <= :safeMaxPrice
-            AND Bedrooms__c >= :safeMinBedrooms
-            AND Bathrooms__c >= :safeMinBathrooms
-            AND Score__c >= :safeMinRating
-            AND Status__c = 'Available'
+            (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
+            OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms
+            AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Approval_Status__c = 'Approved'
         ];
         result.records = [
           SELECT
-            Id,
-            Billing_Street__c,
-            Billing_City__c,
-            Billing_State__c,
-            Billing_Postal_Code__c,
-            Billing_Country__c,
-            Rent__c,
-            Bathrooms__c,
-            Bedrooms__c,
-            Geolocation__Latitude__s,
-            Geolocation__Longitude__s,
-            Name,
-            Picture__c,
-            Score__c,
-            Status__c
+            Id, Billing_Street__c, Billing_City__c, Billing_State__c, Billing_Postal_Code__c, Billing_Country__c, Rent__c,
+            Bathrooms__c, Bedrooms__c, Geolocation__Latitude__s, Geolocation__Longitude__s, Name, Picture__c, Score__c, Status__c, Approval_Status__c
           FROM Property__c
           WHERE
-            (Name LIKE :searchPattern
-            OR Billing_Street__c LIKE :searchPattern
-            OR Billing_City__c LIKE :searchPattern
-            OR Billing_State__c LIKE :searchPattern
-            OR Billing_Postal_Code__c LIKE :searchPattern
-            OR RecordType.Name LIKE :searchPattern)
-            AND Rent__c <= :safeMaxPrice
-            AND Bedrooms__c >= :safeMinBedrooms
-            AND Bathrooms__c >= :safeMinBathrooms
-            AND Score__c >= :safeMinRating
-            AND Status__c = 'Available'
+            (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
+            OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms
+            AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Approval_Status__c = 'Approved'
           WITH SECURITY_ENFORCED
           ORDER BY Rent__c
           LIMIT :safePageSize
@@ -315,4 +191,28 @@ public without sharing class PropertyController {
       ORDER BY CreatedDate
     ];
   }
+    
+    @AuraEnabled
+    public static string newProperty(Property__c propRec, String file, String fileName) {
+        String propertyId;
+        try {
+            insert propRec;
+            propertyId = propRec.Id;
+            String base64File = EncodingUtil.urlDecode(file, 'UTF-8');
+            ContentVersion contentVersionRec = new ContentVersion();
+            contentVersionRec.Title = fileName;
+            contentVersionRec.PathOnClient = '/' + fileName;
+            contentVersionRec.FirstPublishLocationId = propRec.Id;
+            contentVersionRec.VersionData = EncodingUtil.base64Decode(base64File);
+            contentVersionRec.IsMajorVersion = true;
+            insert contentVersionRec;
+        } catch (Exception e) {
+            System.debug('File: ' + file);
+            System.debug('FileName: ' + fileName);
+            System.debug('Exception: ' + e.getMessage());
+            // return e.getMessage();
+            throw new AuraHandledException(e.getMessage());
+        }
+        return propertyId;
+    }
 }

@@ -10,6 +10,7 @@ import FILTERSCHANGEMC from "@salesforce/messageChannel/FiltersChange__c";
 import PROPERTYSELECTEDMC from "@salesforce/messageChannel/PropertySelected__c";
 import GOTUSERLOCATIONMC from "@salesforce/messageChannel/GotUserLocation__c";
 import getPagedPropertyList from "@salesforce/apex/PropertyController.getPagedPropertyList";
+import getAllProperties from '@salesforce/apex/getProperties.getAllProperties';
 //import ReverseGeocodeApex from "@salesforce/apex/ReverseGeocodingService.ReverseGeocode";
 
 const PAGE_SIZE = 12;
@@ -47,9 +48,13 @@ export default class PropertyListMap extends LightningElement {
   cities = [];
   distance = 0;
 
+  // For tracking wired information
   @track properties;
   @track curProperties;
+  @track allProperties;
+  @track wiredProperties;
   @track error;
+  @track propertyCount;
 
   @wire(MessageContext)
   messageContext;
@@ -64,7 +69,7 @@ export default class PropertyListMap extends LightningElement {
     minRating: "$minRating",
     streets: "$streets",
     cities: "$cities",
-    pageSize: "$pageSize",
+    pageSize: "$propertyCount",
     pageNumber: "$pageNumber"
   })
   getPagedPropertyList(result) {
@@ -77,6 +82,20 @@ export default class PropertyListMap extends LightningElement {
     } else if (result.error) {
       this.error = result.error;
       this.curProperties = [];
+    }
+  }
+
+  // Gets list of all properties (above version uses page numbers from filters, due to grid having pages. This one gets every property to know how many to get markers for)
+  @wire(getAllProperties) getAllProperties(result) {
+    this.wiredAllProperties = result;
+
+    if (result.data) {
+      this.allProperties = result.data;
+      this.propertyCount = this.allProperties.length;
+      this.error = undefined;
+    } else if (result.error) {
+      this.error = result.error;
+      this.allProperties = [];
     }
   }
 
@@ -104,16 +123,20 @@ export default class PropertyListMap extends LightningElement {
   updateMarkers() {
     // Reset map markers and refresh properties
     this.mapMarkers = [];
-    refreshApex(this.properties);
+    // refreshApex(this.properties);
 
     // Multiple checks for information (otherwise, errors when anything was null)
     if (this.properties) {
       if (this.properties.data) {
         if (this.properties.data.records) {
           for (let i = 0; i < this.properties.data.records.length; i++) {
-            if(this.properties.data.records[i].Geolocation__Latitude__s && this.properties.data.records[i].Geolocation__Longitude__s){
+            // console.log(this.properties.data.records[i].Name, this.properties.data.records[i].Geolocation__Latitude__s, this.properties.data.records[i].Geolocation__Longitude__s);
+            console.log(this.properties.data.records.length);
+            if (!this.properties.data.records[i].Geolocation__Latitude__s && !this.properties.data.records[i].Geolocation__Longitude__s) {
+              console.log("MISSING: ", this.properties.data.records[i].Name);
+            }
+            if(this.properties.data.records[i].Geolocation__Latitude__s && this.properties.data.records[i].Geolocation__Longitude__s) {
               // Create a new map marker using property's geolocation values
-              console.log(this.properties.data.records[i].Name, this.properties.data.records[i].Geolocation__Latitude__s);
               this.newMapMarker = {
                 location: {
                   // Street: this.properties.data.records[i].Billing_Street__c,

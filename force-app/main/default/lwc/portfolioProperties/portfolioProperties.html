@@ -36,15 +36,57 @@
                             <lightning-input type="text" label ="Search Portfolio by Name, Address, or Type:" onchange={handleSearch} style="margin-bottom:10px"></lightning-input>
                             <div class="slds-align_absolute-center" style="margin-bottom:10px">
                                 <lightning-button icon-name="utility:shortcuts" variant="brand-outline" label="Reset Search" onclick={handleClear} style="margin-right:10px"></lightning-button>
-                                <lightning-button icon-name="utility:text" variant="brand-outline" label="Sort by Name" onclick={handleSortName} style="margin-right:10px"></lightning-button>
-                                <lightning-button icon-name="utility:rating" variant="brand-outline" label="Sort by Rating" onclick={handleSortRating} style="margin-right:10px"></lightning-button>
-                                <lightning-button icon-name="utility:money" variant="brand-outline" label="Sort by Rent" onclick={handleSortRent} style="margin-right:10px"></lightning-button>
-                                <lightning-button icon-name="utility:moneybag" variant="brand-outline" label="Sort by Market Price" onclick={handleSortMarketPrice} style="margin-right:10px"></lightning-button>
-                                <lightning-button icon-name="utility:monthlyview" variant="brand-outline" label="Sort by Date Listed" onclick={handleSortDateListed}></lightning-button>
+                                <template if:true={sortingName}>
+                                    <lightning-button icon-name="utility:text" variant="brand" label="Sort by Name" onclick={handleSortName} style="margin-right:10px"></lightning-button>
+                                </template>
+                                <template if:false={sortingName}>
+                                    <lightning-button icon-name="utility:text" variant="brand-outline" label="Sort by Name" onclick={handleSortName} style="margin-right:10px"></lightning-button>
+                                </template>
+                                <template if:true={sortingRating}>
+                                    <lightning-button icon-name="utility:rating" variant="brand" label="Sort by Rating" onclick={handleSortRating} style="margin-right:10px"></lightning-button>
+                                </template>
+                                <template if:false={sortingRating}>
+                                    <lightning-button icon-name="utility:rating" variant="brand-outline" label="Sort by Rating" onclick={handleSortRating} style="margin-right:10px"></lightning-button>
+                                </template>
+                                <template if:true={sortingRent}>
+                                    <lightning-button icon-name="utility:money" variant="brand" label="Sort by Rent" onclick={handleSortRent} style="margin-right:10px"></lightning-button>
+                                </template>
+                                <template if:false={sortingRent}>
+                                    <lightning-button icon-name="utility:money" variant="brand-outline" label="Sort by Rent" onclick={handleSortRent} style="margin-right:10px"></lightning-button>
+                                </template>
+                                <template if:true={sortingMarketPrice}>
+                                    <lightning-button icon-name="utility:moneybag" variant="brand" label="Sort by Market Price" onclick={handleSortMarketPrice} style="margin-right:10px"></lightning-button>
+                                </template>
+                                <template if:false={sortingMarketPrice}>
+                                    <lightning-button icon-name="utility:moneybag" variant="brand-outline" label="Sort by Market Price" onclick={handleSortMarketPrice} style="margin-right:10px"></lightning-button>
+                                </template>
+                                <template if:true={sortingDaysOnMarket}>
+                                    <lightning-button icon-name="utility:monthlyview" variant="brand" label="Sort by Date Listed" onclick={handleSortDateListed} style="margin-right:10px"></lightning-button>
+                                </template>
+                                <template if:false={sortingDaysOnMarket}>
+                                    <lightning-button icon-name="utility:monthlyview" variant="brand-outline" label="Sort by Date Listed" onclick={handleSortDateListed} style="margin-right:10px"></lightning-button>
+                                </template>
+                                <template if:true={locationFound}>
+                                    <template if:true={sortingDistance}>
+                                        <lightning-button icon-name="utility:travel_and_places" variant="brand" label="Sort by Distance" onclick={handleSortDistance}></lightning-button>
+                                    </template>
+                                    <template if:false={sortingDistance}>
+                                        <lightning-button icon-name="utility:travel_and_places" variant="brand-outline" label="Sort by Distance" onclick={handleSortDistance}></lightning-button>
+                                    </template>
+                                </template>
+                                <template if:false={locationFound}>
+                                    <lightning-button icon-name="utility:travel_and_places" variant="brand-outline" label="Sort by Distance" onclick={handleSortDistance} disabled></lightning-button>
+                                    <lightning-helptext icon-name="utility:info" style="margin-left:3px" content="In order to sort portfolio by the distance from your location, please update your address information"></lightning-helptext>
+                                </template>
                             </div>
                             <template if:true={amountFound}>
-                                <div class="slds-align_absolute-center" style="margin-bottom:6px">
+                                <div class="slds-align_absolute-center" style="margin-bottom:3px">
                                     <p>{amountFound} result(s) found</p>
+                                </div>
+                            </template>
+                            <template if:true={sortText}>
+                                <div class="slds-align_absolute-center" style="margin-bottom:3px">
+                                    <p>{sortText}</p>
                                 </div>
                             </template>
                             <template for:each={searchedProperties} for:item="property">
@@ -88,7 +130,7 @@
                     </article>
                 </template>
                 <template if:false={searchedProperties}>
-                    <p><strong>This user is a property owner, but has no properties. Check out the Property Explorer.</strong></p>
+                    <p><strong>Looks like you don't have any properties. Select "Submit Property" to get started.</strong></p>
                 </template>
             </template>
             <template if:false={recordTypeId}>

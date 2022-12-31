@@ -14,7 +14,7 @@ import getAddresses from "@salesforce/apex/getAddresses.getAddressInfo";
 import getProperties from "@salesforce/apex/getProperties.getAllProperties";
 
 const DELAY = 350;
-const MAX_PRICE = 50000;
+const MAX_PRICE = 10000;
 
 export default class PropertyFilter extends LightningElement {
   // Variables handled by filters and list map

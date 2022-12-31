@@ -22,7 +22,8 @@ export default class DaysOnMarket extends LightningElement {
     propertyId;
     status;
     percent;
-    subscription
+    subscription;
+    positiveDays = false;
 
     @wire(MessageContext)
     messageContext;
@@ -33,6 +34,9 @@ export default class DaysOnMarket extends LightningElement {
             this.error = undefined;
             this.dateListed = getFieldValue(data, DATE_LISTED_FIELD);
             this.daysOnMarket = getFieldValue(data, DAYS_ON_MARKET_FIELD);
+            if (this.daysOnMarket >= 0) {
+                this.positiveDays = true;
+            }
             if (this.daysOnMarket < MAX_DAYS_NORMAL_STATUS) {
                 this.status = 'normal';
             } else if (this.daysOnMarket < MAX_DAYS_WARNING_STATUS) {

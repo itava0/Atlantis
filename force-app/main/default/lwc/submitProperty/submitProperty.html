@@ -1,0 +1,67 @@
+<template>
+    <div class="contain">
+        <div class="wrapper">
+            <div class="header slds-align_absolute-center">
+                <h3>Submit Property</h3>
+            </div>
+            <div class="slds-align_absolute-center">
+                <lightning-radio-group name="recordTypeGroup" label="Property Type" required options={recordTypeOptions} onchange={handleRecordTypeChange} type="radio"></lightning-radio-group>
+            </div>
+            <div class="slds-grid slds-wrap slds-gutters">
+                <div class="slds-col slds-size_1-of-2">
+                    <lightning-input type="text" label="Name" required onchange={handleNameChange}></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2"> 
+                    <lightning-input type="text" label="Billing Street" required onchange={handleStreetChange}></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">                
+                    <lightning-input type="text" label="Billing City" required onchange={handleCityChange}></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">                
+                    <lightning-combobox label="Billing State" value={state} placeholder="Georgia" required options={stateOptions} onchange={handleStateChange}></lightning-combobox>
+                </div>
+                <div class="slds-col slds-size_1-of-2">                
+                    <lightning-input type="text" label="Billing Postal Code" required onchange={handlePostalCodeChange}></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">                
+                    <lightning-combobox label="Billing Country" value={country} placeholder="United States of America" required options={countryOptions} onchange={handleCountryChange}></lightning-combobox>
+                </div>
+                <div class="slds-col slds-size_1-of-2">                
+                    <lightning-input type="number" label="Market Price" required onchange={handleMarketPriceChange}></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">                
+                    <lightning-input type="number" label="Rent" required onchange={handleRentChange}></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">                
+                    <lightning-combobox label="Status" value={status} placeholder="Available" required options={statusOptions} onchange={handleStatusChange}></lightning-combobox>
+                </div>
+                <div class="slds-col slds-size_1-of-2">               
+                    <lightning-input type="date" label="Date Listed" onchange={handleDateListedChange}></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">               
+                    <lightning-input type="number" label="Bedrooms" onchange={handleBedroomsChange}></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-2">                
+                    <lightning-input type="number" label="Bathrooms" onchange={handleBathroomsChange}></lightning-input>
+                </div>
+            </div>
+                <div class="slds-align_absolute-center">
+                    <lightning-input type="file" onchange={onFileUpload} accept="image/*" required name="uploadFile" label="Upload Image"></lightning-input>
+                    <!-- <lightning-input type="file" accept="image/*" onchange={onFileUpload} id="file" required name="uploadFile" label="Upload Image"></lightning-input> -->
+                </div>
+                <div class="slds-align_absolute-center">
+                    <template if:true={fileUploaded}>
+                        <p>File submitted: {fileName}</p>
+                        <!-- <p><label for="file" style="cursor:pointer;">Upload Image</label></p>
+                        <img id="output" width="400" /> -->
+                    </template>
+                    <template if:false={fileUploaded}>
+                        <p><i>No files submitted</i></p>
+                    </template>
+                </div>
+            <div class="slds-align_absolute-center" style="margin-top:3px">    
+                <lightning-button label="Save" onclick={saveProperty} variant="brand"></lightning-button>
+            </div>  
+        </div>
+    </div>
+</template>
