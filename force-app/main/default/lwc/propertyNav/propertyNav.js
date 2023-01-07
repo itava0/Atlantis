@@ -2,8 +2,8 @@ import { LightningElement } from 'lwc';
 
 export default class PropertyNav extends LightningElement {
 
-    showListMap = true;
-    showTileList = false;
+    showTileList = true;
+    showListMap = false;
 
     handleTileList() {
         if (this.showListMap == true) {

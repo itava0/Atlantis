@@ -1,4 +1,5 @@
 import { LightningElement, wire, track } from "lwc";
+import { NavigationMixin } from "lightning/navigation";
 import { refreshApex } from "@salesforce/apex";
 import {
   publish,
@@ -15,7 +16,7 @@ import getAllProperties from '@salesforce/apex/getProperties.getAllProperties';
 
 const PAGE_SIZE = 12;
 
-export default class PropertyListMap extends LightningElement {
+export default class PropertyListMap extends NavigationMixin(LightningElement) {
   // Address and geolocation information
   apiUrl = "https://ipwho.is/";
   locGot = false;
@@ -110,8 +111,8 @@ export default class PropertyListMap extends LightningElement {
 
     this.center = {
       location: {
-        Latitude: "33.753746",
-        Longitude: "-84.386330"
+        Latitude: "33.7760321146953",
+        Longitude: "-84.3872206235533"
       }
     };
 
@@ -152,11 +153,8 @@ export default class PropertyListMap extends LightningElement {
                 value: this.properties.data.records[i].Id,
                 title: this.properties.data.records[i].Billing_Street__c,
                 description:
-                  this.properties.data.records[i].Billing_City__c +
-                  ", " +
-                  this.properties.data.records[i].Billing_State__c +
-                  " " +
-                  this.properties.data.records[i].Billing_Postal_Code__c
+                  // this.properties.data.records[i].Billing_City__c + ", " + this.properties.data.records[i].Billing_State__c + " " + this.properties.data.records[i].Billing_Postal_Code__c
+                  "Beds: " + this.properties.data.records[i].Bedrooms__c + ", Baths: " + this.properties.data.records[i].Bathrooms__c + ", Rent: $" + this.properties.data.records[i].Rent__c
               };
               this.mapMarkers.push(this.newMapMarker);
             }
@@ -229,6 +227,31 @@ export default class PropertyListMap extends LightningElement {
   handlePropertySelected() {
     const message = { propertyId: this.selectedMarkerValue };
     publish(this.messageContext, PROPERTYSELECTEDMC, message);
+  }
+
+  // Navigate to record page
+  handleNavigateToRecord() {
+    this[NavigationMixin.Navigate]({
+      type: "standard__recordPage",
+      attributes: {
+        recordId: this.selectedMarkerValue,
+        objectApiName: "Property__c",
+        actionName: "view"
+      }
+    });
+  }
+
+  // Navigate to application page
+  navigateToApplicationPage() {
+    //set sessionStorage values
+    sessionStorage.setItem("id", this.selectedMarkerValue);
+
+    this[NavigationMixin.Navigate]({
+      type: "standard__namedPage",
+      attributes: {
+        pageName: "application"
+      }
+    });
   }
 
   // Attempts to retrieve user's current geolocation

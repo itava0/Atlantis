@@ -2,7 +2,6 @@ import { LightningElement, api, wire, track } from "lwc";
 import { refreshApex } from "@salesforce/apex";
 import { deleteRecord, updateRecord } from "lightning/uiRecordApi";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
-import { NavigationMixin } from "lightning/navigation";
 import PROPERTY_OBJECT from "@salesforce/schema/Property__c";
 import STREET_FIELD from "@salesforce/schema/Property__c.Billing_Street__c";
 import CITY_FIELD from "@salesforce/schema/Property__c.Billing_City__c";
@@ -16,7 +15,7 @@ import getRatingCount from "@salesforce/apex/getProperties.getRatingCount";
 import getUniqueRating from "@salesforce/apex/getProperties.getUniqueRating";
 import getSingleProperty from "@salesforce/apex/getProperties.getSingleProperty";
 
-export default class RatingForm extends NavigationMixin(LightningElement) {
+export default class RatingForm extends LightningElement {
   propertyObj = PROPERTY_OBJECT;
   street = STREET_FIELD;
   city = CITY_FIELD;
@@ -111,9 +110,7 @@ export default class RatingForm extends NavigationMixin(LightningElement) {
 
       const formFields = event.detail.fields;
       formFields.Score__c = this.currentScore;
-      this.template
-        .querySelector("lightning-record-edit-form")
-        .update(formFields);
+      this.template.querySelector("lightning-record-edit-form").update(formFields);
     } else {
       // When submitting new rating
       event.preventDefault();
@@ -123,9 +120,7 @@ export default class RatingForm extends NavigationMixin(LightningElement) {
       formFields.User__c = this.userId;
       formFields.Score__c = this.currentScore;
 
-      this.template
-        .querySelector("lightning-record-edit-form")
-        .submit(formFields);
+      this.template.querySelector("lightning-record-edit-form").submit(formFields);
     }
   }
 

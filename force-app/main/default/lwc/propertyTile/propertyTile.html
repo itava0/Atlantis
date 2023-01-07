@@ -1,17 +1,29 @@
 <template>
-  <a onclick={handlePropertySelected}>
+  <a onclick={handlePropertySelected} onmouseover={handlePropertySelected} onmouseleave={handlePropertyDeselected}>
     <!-- Below line throws an error in VSCode, but runs properly when pushed -->
     <div class="tile" style={backgroundImageStyle}>
       <div
         class="lower-third slds-var-p-horizontal_x-small slds-var-p-vertical_xx-small slds-text-color_inverse"
       >
-        <h1 class="truncate slds-text-heading_small">
-          <strong>{property.Billing_Street__c}</strong>
-        </h1>
-        <p>
-          Beds: {property.Bedrooms__c} - Baths: {property.Bathrooms__c} - Rent:
-          ${property.Rent__c}
-        </p>
+        <div class="slds-align_absolute-center">
+          <h1 class="truncate slds-text-heading_small">
+            <strong>{property.Billing_Street__c}</strong>
+          </h1>
+        </div>
+        <template if:true={selected}>
+          <div class="slds-align_absolute-center" style="margin-top:3px">
+            <lightning-button variant="brand" label="View Details" onclick={handleNavigateToRecord} style="margin-right:4px"></lightning-button>
+            <lightning-button variant="brand" label="Apply Online" onclick={navigateToApplicationPage}></lightning-button>
+          </div>
+        </template>
+        <template if:false={selected}>
+          <div class="slds-align_absolute-center">
+            <p>
+              Beds: {property.Bedrooms__c} - Baths: {property.Bathrooms__c} - Rent:
+              ${property.Rent__c}
+            </p>
+          </div>
+        </template>
         <p>
           <lightning-formatted-number
             format-style="currency"

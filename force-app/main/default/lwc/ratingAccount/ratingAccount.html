@@ -1,0 +1,95 @@
+<template>
+    <template if:true={hasPropertyOwner}>
+        <lightning-tabset>
+            <template for:each={accounts} for:item="account">
+                <lightning-tab key={account.Id} label={account.Name} value={account.Id} onactive={updateTab}>
+                    <lightning-card title={accName}>
+                        <lightning-record-view-form record-id={accId} object-api-name={accountObj}>
+                            <div class="slds-var-m-around_small">
+                                <template if:false={wasDeleted}>
+                                    <div class="slds-grid">
+                                        <div class="slds-col">
+                                            <p><strong>Overall Rating:</strong></p>
+                                            <lightning-output-field field-name={overallRating} variant="label-hidden"></lightning-output-field>
+                                        </div>
+                                        <div class="slds-col">
+                                            <p><strong>Users:</strong></p>
+                                            <lightning-output-field field-name={countRating} variant="label-hidden"></lightning-output-field>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </lightning-record-view-form>
+                        <template if:false={hasRating}>
+                            <lightning-record-edit-form object-api-name={ratingObj} onsubmit={handleSubmit} onsuccess={handleSuccess} value={accId}>
+                                <div class="slds-var-m-around_small">
+                                    <p><strong>Enter Rating:</strong></p>
+                                    <lightning-input-field field-name={score} onchange={handleScoreChange} variant="label-hidden"></lightning-input-field>
+                                </div>
+                                <div class="slds-var-m-around_small slds-var-p-horizontal_medium slds-align_absolute-center">
+                                    <lightning-button label="Submit Rating" icon-name="utility:save" variant="success" type="submit" name="update"></lightning-button>
+                                </div>
+                            </lightning-record-edit-form>
+                        </template>
+                        <template if:true={hasRating}>
+                            <lightning-record-edit-form record-id={ratingId} object-api-name={ratingObj} onsuccess={handleSuccess}>
+                                <div class="slds-var-m-around_small">
+                                    <p><strong>My Rating:</strong></p>
+                                    <lightning-input-field field-name={score} variant="label-hidden"></lightning-input-field>
+                                </div>
+                                <lightning-button label="Update Rating" icon-name="utility:edit" variant="brand" type="submit" name="update" value={accId}></lightning-button>
+                                <lightning-button label="Delete Rating" icon-name="utility:delete" variant="destructive" onclick={handleDelete} value={accId}></lightning-button>
+                            </lightning-record-edit-form>
+                        </template>
+                    </lightning-card>
+                </lightning-tab>
+            </template>
+        </lightning-tabset>
+        <!-- <template for:each={accounts} for:item="account">
+            <div key={account.Id}>
+                <lightning-card title={account.Name}>
+                    <lightning-record-view-form record-id={account.Id} object-api-name={accountObj}>
+                        <div class="slds-var-m-around_small">
+                            <template if:false={wasDeleted}>
+                                <div class="slds-grid">
+                                    <div class="slds-col">
+                                        <p><strong>Overall Rating:</strong></p>
+                                        <lightning-output-field field-name={overallRating} variant="label-hidden"></lightning-output-field>
+                                    </div>
+                                    <div class="slds-col">
+                                        <p><strong>Users:</strong></p>
+                                        <lightning-output-field field-name={countRating} variant="label-hidden"></lightning-output-field>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </lightning-record-view-form>
+                    <template if:false={hasRating}>
+                        <lightning-record-edit-form object-api-name={ratingObj} onsubmit={handleSubmit} onsuccess={handleSuccess} value={account.Id}>
+                            <div class="slds-var-m-around_small">
+                                <p><strong>Enter Rating:</strong></p>
+                                <lightning-input-field field-name={score} onchange={handleScoreChange} variant="label-hidden"></lightning-input-field>
+                            </div>
+                            <div class="slds-var-m-around_small slds-var-p-horizontal_medium slds-align_absolute-center">
+                                <lightning-button label="Submit Rating" icon-name="utility:save" variant="success" type="submit" name="update"></lightning-button>
+                            </div>
+                        </lightning-record-edit-form>
+                    </template>
+                    <template if:true={hasRating}>
+                        <lightning-record-edit-form record-id={ratingId} object-api-name={ratingObj} onsuccess={handleSuccess}>
+                            <div class="slds-var-m-around_small">
+                                <p><strong>My Rating:</strong></p>
+                                <lightning-input-field field-name={score} variant="label-hidden"></lightning-input-field>
+                            </div>
+                            <lightning-button label="Update Rating" icon-name="utility:edit" variant="brand" type="submit" name="update" value={account.Id}></lightning-button>
+                            <lightning-button label="Delete Rating" icon-name="utility:delete" variant="destructive" onclick={handleDelete} value={account.Id}></lightning-button>
+                        </lightning-record-edit-form>
+                    </template>
+                </lightning-card>
+            </div>
+        </template> -->
+    </template>
+    <template if:false={hasPropertyOwner}>
+        <p><i>Searching for property owner. If you still see this message after a few seconds, then the property has no listed property owner, and you should contact an administrator.</i></p>
+    </template>
+</template>

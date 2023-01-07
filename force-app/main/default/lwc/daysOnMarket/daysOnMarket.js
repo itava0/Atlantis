@@ -72,7 +72,11 @@ export default class DaysOnMarket extends LightningElement {
     get barStyle() {
         const value = (this.daysOnMarket / MAX_DAYS_CHART) * 100;
         this.percent = value;
-        return 'width:' + value + '%';
+        console.log(this.percent, value);
+        if (this.percent > 100) {
+            this.percent = 100;
+        }
+        return 'width:' + this.percent + '%';
     }
 
     connectedCallback() {

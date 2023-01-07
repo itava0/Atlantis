@@ -26,6 +26,7 @@ export default class PropertyFilter extends LightningElement {
   minRating = 0;
   value = "Any";
   subscription;
+  pageNumber = 1;
   userLatitude = 0;
   userLongitude = 0;
   userLocated = false;
@@ -144,6 +145,7 @@ export default class PropertyFilter extends LightningElement {
     this.minRating = 0;
     this.streets = [];
     this.cities = [];
+    this.pageNumber = 1;
     this.fireChangeEvent();
   }
 
@@ -227,7 +229,8 @@ export default class PropertyFilter extends LightningElement {
         cities: this.cities,
         distance: this.curDistance,
         latitude: this.lat1,
-        longitude: this.lon1
+        longitude: this.lon1,
+        pageNumber: this.pageNumber
       };
       publish(this.messageContext, FILTERSCHANGEMC, filters);
     }, DELAY);

@@ -19,6 +19,16 @@
         center={center}
       >
       </lightning-map>
+      <div class="slds-align_absolute-center" style="margin-top:5px">
+        <template if:true={selectedMarkerValue}>
+          <lightning-button variant="brand" label="View Details" onclick={handleNavigateToRecord} style="margin-right:4px; display:grid; width:40%"></lightning-button>
+          <lightning-button variant="brand" label="Apply Online" onclick={navigateToApplicationPage} style="display:grid; width:40%"></lightning-button>
+        </template>
+        <template if:false={selectedMarkerValue}>
+          <lightning-button variant="brand" label="View Details" disabled style="margin-right:4px; display:grid; width:40%"></lightning-button>
+          <lightning-button variant="brand" label="Apply Online" disabled style="display:grid; width:40%"></lightning-button>
+        </template>
+      </div>
     </template>
     <template if:true={properties.error}>
       <c-error-panel

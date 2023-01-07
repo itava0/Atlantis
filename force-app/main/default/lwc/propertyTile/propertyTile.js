@@ -5,8 +5,24 @@ import { NavigationMixin } from "lightning/navigation";
 export default class PropertyTile extends NavigationMixin(LightningElement) {
   @api property;
   formFactor = FORM_FACTOR;
+  currentId;
+  selected = false;
 
+  // On page load
+  connectedCallback() {
+    this.selected = false;
+  }
+
+  // Mouse leaves property
+  handlePropertyDeselected() {
+    this.selected = false;
+  }
+
+  // Property tile clicked or hovered over
   handlePropertySelected() {
+    // console.log("TEST",this.property.Id);
+    this.currentId = this.property.Id;
+    this.selected = true;
     if (FORM_FACTOR === "Small") {
       // In Phones, navigate to property record page directly
       this[NavigationMixin.Navigate]({
@@ -24,7 +40,32 @@ export default class PropertyTile extends NavigationMixin(LightningElement) {
       });
       this.dispatchEvent(selectedEvent);
     }
-    console.log(this.property);
+    // console.log(this.property);
+  }
+
+  // Navigate to record page
+  handleNavigateToRecord() {
+    this[NavigationMixin.Navigate]({
+      type: "standard__recordPage",
+      attributes: {
+        recordId: this.property.Id,
+        objectApiName: "Property__c",
+        actionName: "view"
+      }
+    });
+  }
+
+  // Navigate to application page
+  navigateToApplicationPage() {
+    //set sessionStorage values
+    sessionStorage.setItem("id", this.property.Id);
+
+    this[NavigationMixin.Navigate]({
+      type: "standard__namedPage",
+      attributes: {
+        pageName: "application"
+      }
+    });
   }
 
   get backgroundImageStyle() {

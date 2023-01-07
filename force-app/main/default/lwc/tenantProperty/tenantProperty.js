@@ -143,5 +143,4 @@ export default class PortfolioProperties extends NavigationMixin(LightningElemen
             this.error = result.error;
         }
     }
-
 }

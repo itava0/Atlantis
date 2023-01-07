@@ -19,12 +19,12 @@
                         <div class="slds-media__body slds-align_absolute-center">
                             <template if:false={oneProperty}>
                                 <h2 class="slds-card__header-title">
-                                    Welcome, {userFirstName} {userLastName}!<br>You have {numProperties} properties.
+                                    Welcome, {userFirstName} {userLastName}! Here are your properties:
                                 </h2>
                             </template>
                             <template if:true={oneProperty}>
                                 <h2 class="slds-card__header-title">
-                                    Welcome, {userFirstName} {userLastName}!<br>You have {numProperties} property.
+                                    Welcome, {userFirstName} {userLastName}! Here is your property:
                                 </h2>
                             </template>
                         </div>
@@ -62,7 +62,14 @@
                                     </div>
                                     <div class="slds-col slds-size_1-of-4">
                                         <!--<lightning-formatted-rich-text value={property.Rating__c}></lightning-formatted-rich-text>-->
-                                        <c-rating-form record-id={property.Id}></c-rating-form>
+                                        <lightning-tabset>
+                                            <lightning-tab label="Rate Property">
+                                                <c-rating-form record-id={property.Id}></c-rating-form>
+                                            </lightning-tab>
+                                            <lightning-tab label="Rate Owner(s)">
+                                                <c-rating-account property-id={property.Id}></c-rating-account>
+                                            </lightning-tab>
+                                        </lightning-tabset>
                                     </div>
                                 </div>
                             </div>

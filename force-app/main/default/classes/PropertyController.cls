@@ -192,6 +192,7 @@ public without sharing class PropertyController {
     ];
   }
     
+    // For submitting a new property, image included
     @AuraEnabled
     public static string newProperty(Property__c propRec, String file, String fileName) {
         String propertyId;

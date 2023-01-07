@@ -79,6 +79,7 @@ export default class PropertyTileList extends LightningElement {
         this.minRating = filters.minRating;
         this.streets = filters.streets;
         this.cities = filters.cities;
+        this.pageNumber = filters.pageNumber;
     }
 
     handlePreviousPage() {
