@@ -9,6 +9,7 @@ import OVERALL_RATING_FIELD from "@salesforce/schema/Account.Rating__c";
 import RATING_COUNT_FIELD from "@salesforce/schema/Account.Rating_Count__c";
 import RATING_OBJECT from "@salesforce/schema/AccRating__c";
 import SCORE_FIELD from "@salesforce/schema/AccRating__c.Score__c";
+import REVIEW_FIELD from "@salesforce/schema/AccRating__c.Review__c";
 import ID_FIELD from "@salesforce/user/Id";
 import getPropertyOwners from '@salesforce/apex/getProperties.getPropertyOwnersFromProperty';
 import getAccount from "@salesforce/apex/getProperties.getAccountName";
@@ -45,9 +46,11 @@ export default class RatingAccount extends LightningElement {
     hasPropertyOwner = false;
     multiplePropertyOwners = false;
 
-    fields = [SCORE_FIELD];
+    fields = [SCORE_FIELD, REVIEW_FIELD];
     score = SCORE_FIELD;
+    review = REVIEW_FIELD;
     currentScore;
+    currentReview;
     accId;
     accName;
     @track accNames = [];
@@ -161,6 +164,7 @@ export default class RatingAccount extends LightningElement {
                         // A rating for this account already exists
                         this.ratingId = this.ratings[i].Id;
                         this.currentScore = this.ratings[i].Score__c;
+                        this.currentReview = this.ratings[i].Review__c;
                         this.hasRating = true;
                         this.wasDeleted = false;
                         this.ratingFound = true;
@@ -176,6 +180,10 @@ export default class RatingAccount extends LightningElement {
         // console.log(this.recordId, this.currentScore);
     }
 
+    handleReviewChange(event) {
+        this.currentReview = event.target.value;
+    }
+
     handleSubmit(event) {
         // console.log(event.target.value);
         if (this.hasRating) {
@@ -184,6 +192,7 @@ export default class RatingAccount extends LightningElement {
 
             const formFields = event.detail.fields;
             formFields.Score__c = this.currentScore;
+            formFields.Review__c = this.currentReview;
             this.template.querySelector("lightning-record-edit-form").update(formFields);
         } else {
             // When submitting new rating
@@ -193,6 +202,7 @@ export default class RatingAccount extends LightningElement {
             formFields.Account__c = event.target.value;
             formFields.User__c = this.userId;
             formFields.Score__c = this.currentScore;
+            formFields.Review__c = this.currentReview;
 
             this.template.querySelector("lightning-record-edit-form").submit(formFields);
         }

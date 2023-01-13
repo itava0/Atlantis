@@ -1,0 +1,18 @@
+<template>
+    <template if:true={hasLease}>
+        <template if:true={hasLeaseHistory}>
+            <lightning-card title="Lease History">
+                <lightning-datatable
+                    data={leaseHistory}
+                    columns={columns}
+                    key-field="Id"
+                    hide-checkbox-column
+                    default-sort-direction={defaultSort}
+                    sorted-direction={sortDirection}
+                    sorted-by={sortedBy}
+                    onsort={onHandleSort}>
+                </lightning-datatable>
+            </lightning-card>
+        </template>
+    </template>
+</template>

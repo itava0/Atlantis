@@ -1,0 +1,21 @@
+<template>
+    <template if:true={hasRating}>
+        <lightning-card title="Ratings">
+            <div class="slds-align_absolute-center">
+                <lightning-record-view-form record-id={propertyId} object-api-name={propertyObj}>
+                    <lightning-output-field field-name={overallRating}></lightning-output-field>
+                </lightning-record-view-form>
+            </div>
+            <lightning-datatable
+                data={ratings}
+                columns={columns}
+                key-field="Id"
+                hide-checkbox-column
+                default-sort-direction={defaultSort}
+                sorted-direction={sortDirection}
+                sorted-by={sortedBy}
+                onsort={onHandleSort}>
+            </lightning-datatable>
+        </lightning-card>
+    </template>
+</template>

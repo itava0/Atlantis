@@ -34,34 +34,14 @@
                         <template for:each={myProperties} for:item="property">
                             <div key={property.Id} class="slds-box">
                                 <div class="slds-grid slds-gutters">
-                                    <div class="slds-col slds-size_1-of-4">
-                                        <img src={property.Picture__c} style="max-width:600px;width:100%;max-height:400px;height:100%;object-fit:contain">
+                                    <div class="slds-col slds-size_3-of-5">
+                                        <c-property-info-card property-id={property.Id} name={property.Name} street={property.Billing_Street__c} city={property.Billing_City__c}
+                                        type={property.RecordType.Name} status={property.Status__c} state={property.Billing_State__c} postal-code={property.Billing_Postal_Code__c}
+                                        lat={property.Geolocation__Latitude__s} lon={property.Geolocation__Longitude__s} country={property.Billing_Country__c rent={property.Rent__c}
+                                        market-price={property.Market_Price__c} date-listed={property.Date_Listed__c} days-on-market={property.Days_On_Market__c}
+                                        bedrooms={property.Bedrooms__c} bathrooms={property.Bathrooms__c} picture={property.Picture__c}></c-property-info-card>
                                     </div>
-                                    <div class="slds-col slds-size_1-of-4">
-                                        <p><strong>Type:</strong> {property.RecordType.Name}</p>
-                                        <p><strong>Name:</strong> {property.Name}</p>
-                                        <p><strong>Status:</strong> {property.Status__c}</p>
-                                        <p><strong>Street:</strong> {property.Billing_Street__c}</p>
-                                        <p><strong>City:</strong> {property.Billing_City__c}</p>
-                                        <p><strong>State:</strong> {property.Billing_State__c}</p>
-                                        <p><strong>Postal Code:</strong> {property.Billing_Postal_Code__c}</p>
-                                        <p><strong>Country:</strong> {property.Billing_Country__c}</p>
-                                        <p><strong>Geolocation:</strong> {property.Geolocation__Latitude__s}, {property.Geolocation__Longitude__s}</p>
-                                        <c-nav-button property-id={property.Id}></c-nav-button>
-                                    </div>
-                                    <div class="slds-col slds-size_1-of-4">
-                                        <p><strong>Market Price:</strong> ${property.Market_Price__c}</p>
-                                        <p><strong>Rent:</strong> ${property.Rent__c}</p>
-                                        <p><strong>Date Listed:</strong> {property.Date_Listed__c}</p>
-                                        <p><strong>Days On Market:</strong> {property.Days_On_Market__c}</p>
-                                        <p><strong>Bedrooms:</strong> {property.Bedrooms__c}</p>
-                                        <p><strong>Bathrooms:</strong> {property.Bathrooms__c}</p>
-                                        <p><strong>Balconies:</strong> {property.Balconies__c}</p>
-                                        <p><strong>Showers:</strong> {property.Showers__c}</p>
-                                        <p><strong>Year Built:</strong> {property.Year_Built__c}</p>
-                                    </div>
-                                    <div class="slds-col slds-size_1-of-4">
-                                        <!--<lightning-formatted-rich-text value={property.Rating__c}></lightning-formatted-rich-text>-->
+                                    <div class="slds-col slds-size_2-of-5">
                                         <lightning-tabset>
                                             <lightning-tab label="Rate Property">
                                                 <c-rating-form record-id={property.Id}></c-rating-form>

@@ -10,6 +10,7 @@ import OVERALL_RATING_FIELD from "@salesforce/schema/Property__c.Rating__c";
 import RATING_COUNT_FIELD from "@salesforce/schema/Property__c.Rating_Count__c";
 import RATING_OBJECT from "@salesforce/schema/Rating__c";
 import SCORE_FIELD from "@salesforce/schema/Rating__c.Score__c";
+import REVIEW_FIELD from "@salesforce/schema/Rating__c.Review__c";
 import ID_FIELD from "@salesforce/user/Id";
 import getRatingCount from "@salesforce/apex/getProperties.getRatingCount";
 import getUniqueRating from "@salesforce/apex/getProperties.getUniqueRating";
@@ -37,9 +38,11 @@ export default class RatingForm extends LightningElement {
   hasRating = false;
   wasDeleted = false;
 
-  fields = [SCORE_FIELD];
+  fields = [SCORE_FIELD, REVIEW_FIELD];
   score = SCORE_FIELD;
+  review = REVIEW_FIELD;
   currentScore;
+  currentReview;
 
   // Test Id, Should Be Dynamic
   // recordId = "a02Dn000001HPFsIAO"
@@ -87,6 +90,7 @@ export default class RatingForm extends LightningElement {
       this.properties = result.data;
       console.log("PROPERTYID", this.properties[0].Id);
       console.log("SCORE", this.properties[0].Score__c);
+      console.log("REVIEW", this.properties[0].Review__c);
       this.error = undefined;
     } else if (result.error) {
       this.error = result.error;
@@ -97,6 +101,10 @@ export default class RatingForm extends LightningElement {
   handleScoreChange(event) {
     this.currentScore = event.target.value;
     // console.log(this.recordId, this.currentScore);
+  }
+
+  handleReviewChange(event) {
+    this.currentReview = event.target.value;
   }
 
   updateRecordView(recordId) {
@@ -110,6 +118,7 @@ export default class RatingForm extends LightningElement {
 
       const formFields = event.detail.fields;
       formFields.Score__c = this.currentScore;
+      formFields.Review__c = this.currentReview;
       this.template.querySelector("lightning-record-edit-form").update(formFields);
     } else {
       // When submitting new rating
@@ -119,6 +128,7 @@ export default class RatingForm extends LightningElement {
       formFields.Property__c = this.recordId;
       formFields.User__c = this.userId;
       formFields.Score__c = this.currentScore;
+      formFields.Review__c = this.currentReview;
 
       this.template.querySelector("lightning-record-edit-form").submit(formFields);
     }
