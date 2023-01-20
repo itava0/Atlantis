@@ -1,0 +1,16 @@
+<template>
+    <template if:true={hasInspections}>
+        <lightning-card title="Upcoming Inspections" icon-name="standard:search">
+            <lightning-datatable
+                data={inspections}
+                columns={columns}
+                key-field="Id"
+                hide-checkbox-column
+                default-sort-direction={defaultSort}
+                sorted-direction={sortDirection}
+                sorted-by={sortedBy}
+                onsort={onHandleSort}>
+            </lightning-datatable>
+        </lightning-card>
+    </template>
+</template>

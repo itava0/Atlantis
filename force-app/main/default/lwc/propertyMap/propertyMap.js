@@ -25,7 +25,7 @@ export default class PropertyMap extends LightningElement {
   error;
   propMarker;
   @track markers = [];
-  propertyId;
+  @api propertyId;
   subscription = null;
   zoomLevel = 14;
   center = {};

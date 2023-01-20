@@ -1,0 +1,35 @@
+<template>
+    <lightning-card title="Neighborhood Details" icon-name="standard:metrics">
+        <template if:true={properties}>
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-3 ">
+                    <c-walk-score-graph data-my-id="in1" class="inner"></c-walk-score-graph>
+                    <div class="inner slds-is-absolute slds-align_absolute-center slds-text-heading_medium">{w_score}</div>
+                    <div class="slds-align_absolute-center slds-var-m-around_small">Walk Score</div>
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                    <c-walk-score-graph data-my-id="in2" class="inner"></c-walk-score-graph>
+                    <div class="inner slds-is-absolute slds-align_absolute-center slds-text-heading_medium">{b_score}</div>
+                    <div class="slds-align_absolute-center slds-var-m-around_small">Bike Score</div>
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                    <c-walk-score-graph data-my-id="in3" class="inner"></c-walk-score-graph>
+                    <div class="inner slds-is-absolute slds-align_absolute-center slds-text-heading_medium">{c_score}</div>
+                    <div class="slds-align_absolute-center slds-var-m-around_small">Crime Score</div>
+                </div>
+                <template if:true={loading}>
+                    <lightning-spinner
+                        alternative-text="Loading..." variant="brand">
+                    </lightning-spinner>
+                </template>
+            </div>
+        </template>
+        <lightning-accordion allow-multiple-sections-open="true">
+            <lightning-accordion-section>
+                <p><b>Walk Score</b> - Walk Score measures the walkability of any address based on the distance to nearby places and pedestrian friendliness.</p>
+                <p><b>Bike Score</b> - Bike Score measures whether an area is good for biking based on bike lanes and trails, hills, road connectivity, and destinations.</p>
+                <p><b>Crime Score</b> - Crime Score measures the safety index of a property based on local crime rate at the county level.</p>
+            </lightning-accordion-section>
+        </lightning-accordion>
+    </lightning-card>
+</template>

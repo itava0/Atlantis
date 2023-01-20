@@ -7,7 +7,7 @@ import getLeaseHistory from '@salesforce/apex/getProperties.getLeaseHistory';
 const columns = [
     { label : 'Date', fieldName : 'CreatedDate', sortable : true, wrapText : false},
     { label : 'Field', fieldName : 'Field', sortable : false, wrapText : true},
-    { label : 'Original Value', fieldName : 'OldValue', sortable : false, wrapText : true},
+    { label : 'Old Value', fieldName : 'OldValue', sortable : false, wrapText : true},
     { label : 'New Value', fieldName: 'NewValue', sortable : false, wrapText : true}
 ];
 
@@ -56,6 +56,7 @@ export default class LeaseHistory extends LightningElement {
     // Get lease history from lease
     @wire (getLeaseHistory, {contId : "$leaseId"}) getLeaseHistory(result) {
         if (result.data) {
+            // Map lease history results to table fields
             this.leaseHistory = result.data.map((elem) => ({
                 ...elem,
                 ...{
@@ -68,9 +69,20 @@ export default class LeaseHistory extends LightningElement {
                 }
             }));
 
+            // Determine if component should be displayed
             if (this.leaseHistory.length > 0) {
                 this.hasLeaseHistory = true;
             }
+
+            
+            // Parse CreatedDate into more readable format
+            for (let i = 0; i < this.leaseHistory.length; i++) {
+                // this.leaseHistory[i].CreatedDate = this.leaseHistory[i].CreatedDate.parse();
+                let dateStr = this.leaseHistory[i].CreatedDate.toString();
+                let dateSub = dateStr.substring(0, 10);
+                this.leaseHistory[i].CreatedDate = dateSub;
+            }
+            
 
             this.error = undefined;
         } else if (result.error) {

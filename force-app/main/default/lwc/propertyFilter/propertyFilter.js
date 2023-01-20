@@ -301,6 +301,7 @@ export default class PropertyFilter extends LightningElement {
     // Check Addresses and If Match, Calculate Distance
     for (let i = 0; i < 5; i++) {
       if (
+        this.addresses[i] != null &&
         this.addresses[i].Latitude__c != null &&
         this.addresses[i].Longitude__c != null &&
         !this.useCurrentLocation

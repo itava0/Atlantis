@@ -1,0 +1,22 @@
+<template>
+    <lightning-tabset>
+        <lightning-tab label="Nearby Locations">
+            <c-modal-map property-id={propertyId}></c-modal-map>
+        </lightning-tab>
+        <lightning-tab label="Charging Stations">
+            <c-property-map property-id={propertyId}></c-property-map>
+        </lightning-tab>
+        <lightning-tab label="Ratings">
+            <c-view-ratings property-id={propertyId}></c-view-ratings>
+        </lightning-tab>
+        <lightning-tab label="Lease History">
+            <c-lease-history property-id={propertyId}></c-lease-history>
+        </lightning-tab>
+        <lightning-tab label="Neighborhood Details">
+            <c-walk-score property-id={propertyId}></c-walk-score>
+        </lightning-tab>
+        <lightning-tab label="Days on Market">
+            <c-days-on-market property-id={propertyId}></c-days-on-market>
+        </lightning-tab>
+    </lightning-tabset>
+</template>

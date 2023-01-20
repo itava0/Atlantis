@@ -1,0 +1,20 @@
+<template>
+    <lightning-card title="crimeRate">
+        <template if:true={properties}>
+            <!-- <div>Property:</div> -->
+            <lightning-combobox
+                name="Property"
+                label="Property:"
+                value={propertyIndex}
+                data-id="reset"
+                placeholder="Select Property..."
+                options={pickList}
+                onchange={pickListChange}>
+            </lightning-combobox>
+            <lightning-button 
+                label="Crime Rate"
+                onclick={onclickHandler}>
+            </lightning-button>
+        </template>
+    </lightning-card>
+</template>

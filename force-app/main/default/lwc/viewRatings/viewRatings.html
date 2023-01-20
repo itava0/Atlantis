@@ -1,6 +1,6 @@
 <template>
     <template if:true={hasRating}>
-        <lightning-card title="Ratings">
+        <lightning-card title="Ratings" icon-name="standard:reward">
             <div class="slds-align_absolute-center">
                 <lightning-record-view-form record-id={propertyId} object-api-name={propertyObj}>
                     <lightning-output-field field-name={overallRating}></lightning-output-field>

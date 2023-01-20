@@ -1,7 +1,7 @@
 <template>
     <template if:true={hasLease}>
         <template if:true={hasLeaseHistory}>
-            <lightning-card title="Lease History">
+            <lightning-card title="Lease History" icon-name="standard:location_permit">
                 <lightning-datatable
                     data={leaseHistory}
                     columns={columns}

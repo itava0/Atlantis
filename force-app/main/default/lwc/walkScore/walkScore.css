@@ -1,0 +1,16 @@
+.outer {
+    /* white-space: nowrap; */
+}
+
+div.inner {
+    /* top: 38%; */
+    /* margin-bottom: 50%; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translate(0,-185%);
+}
+
+.inner {
+    width: 33%;
+}
