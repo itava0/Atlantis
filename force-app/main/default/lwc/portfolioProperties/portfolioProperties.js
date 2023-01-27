@@ -51,13 +51,11 @@ export default class PortfolioProperties extends LightningElement {
     sortingName = false;
     sortingRating = false;
     sortingRent = false;
-    // sortingMarketPrice = false;
     sortingDaysOnMarket = false;
     sortingDistance = false;
     ascendingName = false;
     ascendingRating = false;
     ascendingRent = false;
-    // ascendingMarketPrice = false;
     ascendingDaysOnMarket = false;
     ascendingDistance = false;
 
@@ -113,13 +111,11 @@ export default class PortfolioProperties extends LightningElement {
         this.sortingName = false;
         this.sortingRating = false;
         this.sortingRent = false;
-        // this.sortingMarketPrice = false;
         this.sortingDaysOnMarket = false;
         this.sortingDistance = false;
         this.ascendingName = false;
         this.ascendingRating = false;
         this.ascendingRent = false;
-        // this.ascendingMarketPrice = false;
         this.ascendingDaysOnMarket = false;
         this.ascendingDistance = false;
     }
@@ -152,12 +148,10 @@ export default class PortfolioProperties extends LightningElement {
         // Reset sorting condition for other options
         this.sortingRating = false;
         this.sortingRent = false;
-        // this.sortingMarketPrice = false;
         this.sortingDaysOnMarket = false;
         this.sortingDistance = false;
         this.ascendingRating = false;
         this.ascendingRent = false;
-        // this.ascendingMarketPrice = false;
         this.ascendingDaysOnMarket = false;
         this.ascendingDistance = false;
     }
@@ -179,12 +173,10 @@ export default class PortfolioProperties extends LightningElement {
         // Reset sorting condition for other options
         this.sortingName = false;
         this.sortingRent = false;
-        // this.sortingMarketPrice = false;
         this.sortingDaysOnMarket = false;
         this.sortingDistance = false;
         this.ascendingName = false;
         this.ascendingRent = false;
-        // this.ascendingMarketPrice = false;
         this.ascendingDaysOnMarket = false;
         this.ascendingDistance = false;
     }
@@ -206,44 +198,13 @@ export default class PortfolioProperties extends LightningElement {
         // Reset sorting condition for other options
         this.sortingName = false;
         this.sortingRating = false;
-        // this.sortingMarketPrice = false;
         this.sortingDaysOnMarket = false;
         this.sortingDistance = false;
         this.ascendingName = false;
         this.ascendingRating = false;
-        // this.ascendingMarketPrice = false;
         this.ascendingDaysOnMarket = false;
         this.ascendingDistance = false;
     }
-
-    // Sorting properties by market price
-    /*
-    handleSortMarketPrice() {
-        this.sortingMarketPrice = true;
-        this.searchedProperties.sort((a, b) => a.Market_Price__c - b.Market_Price__c);
-
-        // Alternate between ascending and descending
-        this.ascendingMarketPrice = !this.ascendingMarketPrice;
-        if (!this.ascendingMarketPrice) {
-            this.searchedProperties.reverse();
-            this.sortText = 'Sorting by Market Price, in descending order';
-        } else {
-            this.sortText = 'Sorting by Market Price, in ascending order';
-        }
-        
-        // Reset sorting condition for other options
-        this.sortingName = false;
-        this.sortingRating = false;
-        this.sortingRent = false;
-        this.sortingDaysOnMarket = false;
-        this.sortingDistance = false;
-        this.ascendingName = false;
-        this.ascendingRating = false;
-        this.ascendingRent = false;
-        this.ascendingDaysOnMarket = false;
-        this.ascendingDistance = false;
-    }
-    */
 
     // Sorting properties by days on market
     handleSortDateListed() {
@@ -263,12 +224,10 @@ export default class PortfolioProperties extends LightningElement {
         this.sortingName = false;
         this.sortingRating = false;
         this.sortingRent = false;
-        // this.sortingMarketPrice = false;
         this.sortingDistance = false;
         this.ascendingName = false;
         this.ascendingRating = false;
         this.ascendingRent = false;
-        // this.ascendingMarketPrice = false;
         this.ascendingDistance = false;
     }
 
@@ -320,12 +279,10 @@ export default class PortfolioProperties extends LightningElement {
         this.sortingName = false;
         this.sortingRating = false;
         this.sortingRent = false;
-        // this.sortingMarketPrice = false;
         this.sortingDaysOnMarket = false;
         this.ascendingName = false;
         this.ascendingRating = false;
         this.ascendingRent = false;
-        // this.ascendingMarketPrice = false;
         this.ascendingDaysOnMarket = false;
     }
     
@@ -453,14 +410,10 @@ export default class PortfolioProperties extends LightningElement {
                         }
                     }
                 }
-                for (let k = 0; k < this.myProperties.length; k++) {
-                    // console.log("NEW RESULT", k + 1, this.myProperties[k].Billing_Street__c, this.myProperties[k].Billing_City__c)
-                }
             }
             this.error = undefined;
         } else if (result.error) {
             this.error = result.error;
         }
     }
-
 }

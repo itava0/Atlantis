@@ -15,7 +15,7 @@ export default class ModalMapMain extends LightningModal {
     mapUrl;
     anyMarkerSelected = false;
     minRating = 0;
-    maxDistance = 10;
+    maxDistance = 3;
 
     // Stores each type of search result in array
     @track hotels = [];

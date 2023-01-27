@@ -44,27 +44,6 @@ export default class RatingForm extends LightningElement {
   currentScore;
   currentReview;
 
-  // Test Id, Should Be Dynamic
-  // recordId = "a02Dn000001HPFsIAO"
-
-  // Get Rating Count from Property Id
-  @wire(getRatingCount, { propId: "$recordId" }) getRatingCount(result) {
-    if (result.data) {
-      this.ratingCount = result.data;
-      // console.log(this.recordId, "has", this.ratingCount);
-      if (this.ratingCount > 0) {
-        this.hasRating = true;
-      }
-      this.error = undefined;
-    } else if (result.error) {
-      this.error = result.error;
-      this.ratingCount = null;
-    } else {
-      this.ratingCount = 0;
-      // console.log(this.recordId, "has", this.ratingCount);
-    }
-  }
-
   // Get Rating to Update or Delete
   @wire(getUniqueRating, { propId: "$recordId", usrId: "$userId" })
   getUniqueRating(result) {
@@ -73,6 +52,7 @@ export default class RatingForm extends LightningElement {
     if (result.data) {
       this.ratings = result.data;
       if (this.ratings.length > 0) {
+        this.hasRating = true;
         console.log("RATINGID", this.ratings[0].Id);
         this.ratingId = this.ratings[0].Id;
         this.error = undefined;

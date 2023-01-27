@@ -248,8 +248,8 @@ export default class SubmitProperty extends NavigationMixin(LightningElement) {
             'Rent__c': this.rent,
             'Status__c': this.status,
             'Date_Listed__c': this.dateListed,
-            'Bedrooms': this.bedrooms,
-            'Bathrooms': this.bathrooms,
+            'Bedrooms__c': this.bedrooms,
+            'Bathrooms__c': this.bathrooms,
             'RecordTypeId': this.recordType,
             'Approval_Status__c': 'Pending'
         }
