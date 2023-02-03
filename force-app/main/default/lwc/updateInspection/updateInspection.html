@@ -1,0 +1,16 @@
+<template>
+    <lightning-modal-header label="Update Inspection"></lightning-modal-header>
+    <lightning-modal-body>
+        <lightning-record-edit-form object-api-name={inspectionObj} record-id={inspectionId} onerror={handleError} onsuccess={handleSuccess}>
+            <lightning-input-field field-name={dateTimeField}></lightning-input-field>
+            <lightning-input-field field-name={inspectorField}></lightning-input-field>
+            <lightning-input-field field-name={subjectsField}></lightning-input-field>
+            <div class="slds-var-m-around_small slds-var-p-horizontal_medium slds-align_absolute-center">
+                <lightning-button label="Update" icon-name="utility:save" variant="brand" type="submit"></lightning-button>
+            </div>
+        </lightning-record-edit-form>
+    </lightning-modal-body>
+    <lightning-modal-footer>
+        <lightning-button label="Close" variant="destructive" onclick={handleClose}></lightning-button>
+    </lightning-modal-footer>
+</template>

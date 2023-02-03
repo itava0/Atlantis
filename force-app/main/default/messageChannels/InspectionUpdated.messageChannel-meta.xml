@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata">
+    <isExposed>true</isExposed>
+    <lightningMessageFields>
+        <description>Inspection Id</description>
+        <fieldName>inspectionId</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <description>DateTime</description>
+        <fieldName>dateTime</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <description>Inspector</description>
+        <fieldName>inspector</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <description>Subjects</description>
+        <fieldName>subjects</fieldName>
+    </lightningMessageFields>
+    <masterLabel>Inspection Updated Message Channel</masterLabel>
+</LightningMessageChannel>
