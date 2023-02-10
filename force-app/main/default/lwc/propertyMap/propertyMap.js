@@ -9,15 +9,8 @@ import PROPERTYSELECTEDMC from "@salesforce/messageChannel/PropertySelected__c";
 import getChargingStations from "@salesforce/apex/EVLocations.getChargingStations";
 import { connectionTypes, carToConnectorMap } from "./evData";
 
-const fields = [
-  "Property__c.Name",
-  "Property__c.Billing_Street__c",
-  "Property__c.Billing_City__c",
-  "Property__c.Billing_State__c",
-  "Property__c.Billing_Postal_Code__c",
-  "Property__c.Billing_Country__c",
-  "Property__c.Geolocation__Latitude__s",
-  "Property__c.Geolocation__Longitude__s"
+const fields = ["Property__c.Name", "Property__c.Billing_Street__c", "Property__c.Billing_City__c", "Property__c.Billing_State__c",
+  "Property__c.Billing_Postal_Code__c", "Property__c.Billing_Country__c", "Property__c.Geolocation__Latitude__s", "Property__c.Geolocation__Longitude__s"
 ];
 
 export default class PropertyMap extends LightningElement {
@@ -38,15 +31,15 @@ export default class PropertyMap extends LightningElement {
   @wire(getRecord, { recordId: "$propertyId", fields })
   wiredRecord({ error, data }) {
     if (data) {
-      //Reset values
+      // Reset values
       this.markers = [];
       this.error = undefined;
 
-      //Define property object and location
+      // Define property object and location
       const property = data.fields;
       this.address = `${property.Billing_Street__c.value}, ${property.Billing_City__c.value}`;
 
-      //Define map center
+      // Define map center
       this.center = 
         {
           location: {
@@ -55,10 +48,10 @@ export default class PropertyMap extends LightningElement {
           }
         };
 
-      //Get charging stations
+      // Get charging stations
       this.getStations(property.Geolocation__Latitude__s.value, property.Geolocation__Longitude__s.value);
 
-      //Create marker for property
+      // Create marker for property
       this.propMarker = 
         {
           location: {
@@ -93,7 +86,6 @@ export default class PropertyMap extends LightningElement {
 
   getStations(propLat, propLon) {
     //Define description variable for string building
-
     //Call apex method to get local charging stations, iterate through results and build markers
     getChargingStations({ lat: parseFloat(propLat), lon: parseFloat(propLon)}).then(result => {
       this.response = JSON.parse(result);
@@ -168,7 +160,6 @@ export default class PropertyMap extends LightningElement {
   handleChange() {
     this.filter = [];
     this.template.querySelectorAll("input").forEach(element => {
-      console.log(element.checked);
       if(element.checked) {
         carToConnectorMap[element.value].forEach(id => {
           this.filter.push(id);

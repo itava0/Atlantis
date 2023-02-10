@@ -6,6 +6,7 @@
                 </div>
                 <template if:true={searchedProperties}>
                     <article class="slds-card">
+                        <!-- HEADER -->
                         <div class="slds-card__header slds-grid">
                           <header class="slds-media slds-media_center slds-has-flexi-truncate">
                             <div class="slds-media__figure">
@@ -32,41 +33,17 @@
                             </div>
                           </header>
                         </div>
+                        <!-- SEARCH AND SORT OPTIONS -->
                         <div class="slds-card__body slds-card__body_inner">
                             <lightning-input type="text" label ="Search Portfolio by Name, Address, or Type:" onchange={handleSearch} style="margin-bottom:10px"></lightning-input>
                             <div class="slds-align_absolute-center" style="margin-bottom:10px">
                                 <lightning-button icon-name="utility:shortcuts" variant="brand-outline" label="Reset Search" onclick={handleClear} style="margin-right:10px"></lightning-button>
-                                <template if:true={sortingName}>
-                                    <lightning-button icon-name="utility:text" variant="brand" label="Sort by Name" onclick={handleSortName} style="margin-right:10px"></lightning-button>
-                                </template>
-                                <template if:false={sortingName}>
-                                    <lightning-button icon-name="utility:text" variant="brand-outline" label="Sort by Name" onclick={handleSortName} style="margin-right:10px"></lightning-button>
-                                </template>
-                                <template if:true={sortingRating}>
-                                    <lightning-button icon-name="utility:rating" variant="brand" label="Sort by Rating" onclick={handleSortRating} style="margin-right:10px"></lightning-button>
-                                </template>
-                                <template if:false={sortingRating}>
-                                    <lightning-button icon-name="utility:rating" variant="brand-outline" label="Sort by Rating" onclick={handleSortRating} style="margin-right:10px"></lightning-button>
-                                </template>
-                                <template if:true={sortingRent}>
-                                    <lightning-button icon-name="utility:money" variant="brand" label="Sort by Rent" onclick={handleSortRent} style="margin-right:10px"></lightning-button>
-                                </template>
-                                <template if:false={sortingRent}>
-                                    <lightning-button icon-name="utility:money" variant="brand-outline" label="Sort by Rent" onclick={handleSortRent} style="margin-right:10px"></lightning-button>
-                                </template>
-                                <template if:true={sortingDaysOnMarket}>
-                                    <lightning-button icon-name="utility:monthlyview" variant="brand" label="Sort by Date Listed" onclick={handleSortDateListed} style="margin-right:10px"></lightning-button>
-                                </template>
-                                <template if:false={sortingDaysOnMarket}>
-                                    <lightning-button icon-name="utility:monthlyview" variant="brand-outline" label="Sort by Date Listed" onclick={handleSortDateListed} style="margin-right:10px"></lightning-button>
-                                </template>
+                                <lightning-button icon-name="utility:text" variant={nameSort} label="Sort by Name" onclick={handleSortName} style="margin-right:10px"></lightning-button>
+                                <lightning-button icon-name="utility:rating" variant={ratingSort} label="Sort by Rating" onclick={handleSortRating} style="margin-right:10px"></lightning-button>
+                                <lightning-button icon-name="utility:money" variant={rentSort} label="Sort by Rent" onclick={handleSortRent} style="margin-right:10px"></lightning-button>
+                                <lightning-button icon-name="utility:monthlyview" variant={dateListedSort} label="Sort by Date Listed" onclick={handleSortDateListed} style="margin-right:10px"></lightning-button>
                                 <template if:true={locationFound}>
-                                    <template if:true={sortingDistance}>
-                                        <lightning-button icon-name="utility:travel_and_places" variant="brand" label="Sort by Distance" onclick={handleSortDistance}></lightning-button>
-                                    </template>
-                                    <template if:false={sortingDistance}>
-                                        <lightning-button icon-name="utility:travel_and_places" variant="brand-outline" label="Sort by Distance" onclick={handleSortDistance}></lightning-button>
-                                    </template>
+                                    <lightning-button icon-name="utility:travel_and_places" variant={distanceSort} label="Sort by Distance" onclick={handleSortDistance}></lightning-button>
                                 </template>
                                 <template if:false={locationFound}>
                                     <lightning-button icon-name="utility:travel_and_places" variant="brand-outline" label="Sort by Distance" onclick={handleSortDistance} disabled></lightning-button>
@@ -83,6 +60,7 @@
                                     <p>{sortText}</p>
                                 </div>
                             </template>
+                            <!-- INFO CARD, RATING COMPONENT, AND STAFF COMPONENT FOR EACH PORTFOLIO PROPERTY -->
                             <template for:each={searchedProperties} for:item="property">
                                 <div key={property.Id} class="slds-box">
                                     <div class="slds-grid slds-gutters">
@@ -103,7 +81,7 @@
                                             </div>
                                         </div>
                                         <div class="slds-col slds-size_1-of-4">
-                                            <c-manage-staff record-id={property.Id}></c-manage-staff>
+                                            <c-manage-staff record-id={property.Id} portfolio={myProperties}></c-manage-staff>
                                         </div>
                                     </div>
                                 </div>

@@ -79,7 +79,6 @@ export default class ViewRatingsAccount extends LightningElement {
 
         if (result.data) {
             this.contacts = result.data;
-            console.log("ACCOUNTID", this.contacts[0].AccountId);
             this.accountId = this.contacts[0].AccountId;
             this.error = undefined;
         } else if (result.error) {
@@ -93,8 +92,6 @@ export default class ViewRatingsAccount extends LightningElement {
         this.wiredUsers = result;
         if (result.data) {
             this.users = result.data;
-            console.log("USERID", this.userId);
-            console.log("CONTACTID", this.users[0].ContactId);
             this.contactId = this.users[0].ContactId;
             this.error = undefined;
         } else if (result.error) {

@@ -45,6 +45,7 @@ export default class PropertySummary extends NavigationMixin(LightningElement) {
     return getFieldValue(this.property.data, PICTURE_FIELD);
   }
 
+  // Susbcribe to message channel
   connectedCallback() {
     this.subscription = subscribe(
       this.messageContext,
@@ -55,15 +56,18 @@ export default class PropertySummary extends NavigationMixin(LightningElement) {
     );
   }
 
+  // Unsubscribe from message channel
   disconnectedCallback() {
     unsubscribe(this.subscription);
     this.subscription = null;
   }
 
+  // Update current property based on message channel
   handlePropertySelected(message) {
     this.propertyId = message.propertyId;
   }
 
+  // Navigate to lease application page for current property
   navigateToApplicationPage() {
     //set sessionStorage values
     sessionStorage.setItem("id", this.propertyId);
@@ -76,6 +80,7 @@ export default class PropertySummary extends NavigationMixin(LightningElement) {
     });
   }
 
+  // Navigate to record page for current property
   handleNavigateToRecord() {
     this[NavigationMixin.Navigate]({
       type: "standard__recordPage",

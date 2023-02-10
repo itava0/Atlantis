@@ -46,8 +46,6 @@ export default class PortfolioProperties extends NavigationMixin(LightningElemen
         this.wiredUsers = result;
         if (result.data) {
             this.users = result.data;
-            console.log("USERID", this.userId);
-            console.log("CONTACTID", this.users[0].ContactId);
             this.contactId = this.users[0].ContactId;
             this.error = undefined;
         } else if (result.error) {
@@ -62,8 +60,6 @@ export default class PortfolioProperties extends NavigationMixin(LightningElemen
 
         if (result.data) {
             this.contacts = result.data;
-            console.log("ACCOUNTID", this.contacts[0].AccountId);
-            console.log("NAME", this.contacts[0].FirstName, this.contacts[0].LastName);
             this.accountId = this.contacts[0].AccountId;
             this.userFirstName = this.contacts[0].FirstName;
             this.userLastName = this.contacts[0].LastName;
@@ -80,7 +76,6 @@ export default class PortfolioProperties extends NavigationMixin(LightningElemen
 
         if (result.data) {
             this.accounts = result.data;
-            console.log("RECORDTYPEID", this.accounts[0].RecordTypeId);
             this.recordTypeId = this.accounts[0].RecordTypeId;
             if (this.recordTypeId == TENANT_ID || this.recordTypeId == TENANT_ID_2) {
                 this.isTenant=true;
@@ -101,8 +96,6 @@ export default class PortfolioProperties extends NavigationMixin(LightningElemen
             this.tenantIds = [];
             if (this.tenants.length > 0) {
                 for (let i = 0; i < this.tenants.length; i++) {
-                    console.log("TENANT", i, this.tenants[i].Id);
-                    console.log("PROPERTY", i, this.tenants[i].Property__c);
                     this.tenantIds.push(this.tenants[i].Id);
                     this.propertyIds.push(this.tenants[i].Property__c);
                 }
@@ -133,9 +126,6 @@ export default class PortfolioProperties extends NavigationMixin(LightningElemen
                             this.myProperties.push(this.properties[i]);
                         }
                     }
-                }
-                for (let k = 0; k < this.myProperties.length; k++) {
-                    // console.log("NEW RESULT", k + 1, this.myProperties[k].Billing_Street__c, this.myProperties[k].Billing_City__c)
                 }
             }
             this.error = undefined;

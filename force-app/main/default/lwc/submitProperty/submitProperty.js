@@ -3,19 +3,6 @@ import saveRecord from '@salesforce/apex/PropertyController.newProperty';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 const MAX_FILE_SIZE = 30000000;
-import PROPERTY_OBJECT from '@salesforce/schema/Property__c';
-import NAME_FIELD from '@salesforce/schema/Property__c.Name';
-import STREET_FIELD from '@salesforce/schema/Property__c.Billing_Street__c';
-import CITY_FIELD from '@salesforce/schema/Property__c.Billing_City__c';
-import STATE_FIELD from '@salesforce/schema/Property__c.Billing_State__c';
-import POSTAL_CODE_FIELD from '@salesforce/schema/Property__c.Billing_Postal_Code__c';
-import COUNTRY_FIELD from '@salesforce/schema/Property__c.Billing_Country__c';
-import MARKET_PRICE_FIELD from '@salesforce/schema/Property__c.Market_Price__c';
-import RENT_FIELD from '@salesforce/schema/Property__c.Rent__c';
-import STATUS_FIELD from '@salesforce/schema/Property__c.Status__c';
-import DATE_LISTED_FIELD from '@salesforce/schema/Property__c.Date_Listed__c';
-import BEDROOMS_FIELD from '@salesforce/schema/Property__c.Bedrooms__c';
-import BATHROOMS_FIELD from '@salesforce/schema/Property__c.Bathrooms__c';
 
 // Record Type IDs for properties
 const APARTMENT_ID = '012Dn000000gZGMIA2';
@@ -121,56 +108,67 @@ export default class SubmitProperty extends NavigationMixin(LightningElement) {
         { label: "Townhouse", value: TOWNHOUSE_ID }
     ];
 
-    // Handling changes in parameters
-
+    // Form Update: Name
     handleNameChange(event) {
         this.name = event.detail.value;
     }
 
+    // Form Update: Billing Street
     handleStreetChange(event) {
         this.street = event.detail.value;
     }
 
+    // Form Update: Billing City
     handleCityChange(event) {
         this.city = event.detail.value;
     }
 
+    // Form Update: Billing State
     handleStateChange(event) {
         this.state = event.detail.value;
     }
 
+    // Form Update: Billing Postal Code
     handlePostalCodeChange(event) {
         this.postalCode = event.detail.value;
     }
 
+    // Form Update: Billing Country
     handleCountryChange(event) {
         this.country = event.detail.value;
     }
 
+    // Form Update: Market Price
     handleMarketPriceChange(event) {
         this.marketPrice = event.detail.value;
     }
 
+    // Form Update: Rent
     handleRentChange(event) {
         this.rent = event.detail.value;
     }
 
+    // Form Update: Status
     handleStatusChange(event) {
         this.status = event.detail.value;
     }
 
+    // Form Update: Date Listed
     handleDateListedChange(event) {
         this.dateListed = event.detail.value;
     }
 
+    // Form Update: Bedrooms
     handleBedroomsChange(event) {
         this.bedrooms = event.detail.value;
     }
 
+    // Form Update: Bathrooms
     handleBathroomsChange(event) {
         this.bathrooms = event.detail.value;
     }
 
+    // Form Update: Record Type
     handleRecordTypeChange(event) {
         this.recordType = event.detail.value;
     }
@@ -178,8 +176,6 @@ export default class SubmitProperty extends NavigationMixin(LightningElement) {
     // When a file is submitted for upload
     onFileUpload(event) {
         if (event.target.files.length == 1) {
-            // var image = document.getElementById("output");
-            // image.src = URL.createObjectURL(event.target.files[0]);
             // Submit image for upload
             this.uploadedFiles = event.target.files;
             this.fileName = event.target.files[0].name;
@@ -210,11 +206,9 @@ export default class SubmitProperty extends NavigationMixin(LightningElement) {
     saveProperty() {
         // If there is an image submitted for upload
         if (this.file) {
-            console.log("TEST 1");
-            // Read contents of file, preparing it for upload, then attempting to save the record
+            // Read contents of file, preparing it for upload, then attempt to save the record
             this.fileReader = new FileReader();
             this.fileReader.onloadend = (() => {
-                console.log("TEST 2");
                 this.fileContents = this.fileReader.result;
                 let base64 = 'base64,';
                 this.content = this.fileContents.indexOf(base64) + base64.length;
@@ -234,7 +228,6 @@ export default class SubmitProperty extends NavigationMixin(LightningElement) {
     }
 
     saveRecord() {
-        console.log("TEST 3");
         // Create new property record with inputted parameters
         var prop = {
             'sobjectType': 'Property__c',
@@ -279,7 +272,6 @@ export default class SubmitProperty extends NavigationMixin(LightningElement) {
         })
         .then(propId => {
             if (propId) {
-                console.log("TEST 4");
                 // Display success message
                 this.dispatchEvent(
                     new ShowToastEvent({
@@ -299,20 +291,13 @@ export default class SubmitProperty extends NavigationMixin(LightningElement) {
                 });
             }
         }).catch(error => {
-            console.log('error 2 ', error);
+            console.log('error: ', error);
         });
     }
-
-    // Deprecated - for input form
-    propertyObj = PROPERTY_OBJECT;
-    fields = [NAME_FIELD, STREET_FIELD, CITY_FIELD, STATE_FIELD, POSTAL_CODE_FIELD, COUNTRY_FIELD, MARKET_PRICE_FIELD,
-            RENT_FIELD, STATUS_FIELD, DATE_LISTED_FIELD, BEDROOMS_FIELD, BATHROOMS_FIELD];
 
     // When save button clicked, attempt to submit property
     handleSubmit(event) {
         event.preventDefault();
-
-        // console.log("PROPERTY NOT SUBMITTED, OTHER STEPS FIRST");
         this.saveProperty();
     }
 }

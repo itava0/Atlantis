@@ -1,0 +1,42 @@
+<template>
+    <lightning-card>
+        <template if:true={hasStaff}>
+            <lightning-modal-header label={manageStaffHeader}></lightning-modal-header>
+            <lightning-modal-body>
+                <div class="slds-align_absolute-center">
+                    <template if:true={propertyPicklistLoaded}>
+                        <!-- <lightning-combobox label="Properties" placeholder="Select Property" options={propertyPicklist} onchange={handlePropertyPicklist}></lightning-combobox> -->
+                        <lightning-radio-group label="Select Property:" options={propertyPicklist} onchange={handlePropertyPicklist} style="margin-right:10px"></lightning-radio-group>
+                    </template>
+                    <template if:true={curProperty}>
+                        <lightning-button label="Reassign Staff" variant="brand" onclick={reassignStaff}></lightning-button>
+                    </template>
+                    <template if:false={curProperty}>
+                        <lightning-button label="Reassign Staff" variant="brand" disabled></lightning-button>
+                    </template>
+                </div>
+            </lightning-modal-body>
+            <lightning-modal-footer>
+                <lightning-button label="Close" variant="destructive" onclick={handleClose}></lightning-button>
+            </lightning-modal-footer>
+        </template>
+        <template if:false={hasStaff}>
+            <lightning-modal-header label={addStaffHeader}></lightning-modal-header>
+            <lightning-modal-body>
+                <!-- <lightning-combobox label="Staff Members" placeholder="Select Staff" options={staffPicklist} onchange={handleStaffPicklist}></lightning-combobox> -->
+                <div class="slds-align_absolute-center">
+                    <lightning-radio-group label="Select Staff:" options={staffPicklist} onchange={handleStaffPicklist} style="margin-right:10px"></lightning-radio-group>
+                    <template if:true={curStaff}>
+                        <lightning-button label="Assign Staff" variant="brand" onclick={assignNewStaff}></lightning-button>    
+                    </template>
+                    <template if:false={curStaff}>
+                        <lightning-button label="Assign Staff" variant="brand" disabled></lightning-button>   
+                    </template>
+                </div>
+            </lightning-modal-body>
+            <lightning-modal-footer>
+                <lightning-button label="Close" variant="destructive" onclick={handleClose}></lightning-button>
+            </lightning-modal-footer>
+        </template>
+    </lightning-card>
+</template>

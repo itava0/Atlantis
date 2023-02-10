@@ -65,6 +65,7 @@ export default class PropertyFilter extends LightningElement {
   lat2;
   lon2;
 
+  // Options for state picklist
   stateOptions = [
     { label: "Alabama", value: "AL" },
     { label: "Alaska", value: "AK" },
@@ -132,8 +133,8 @@ export default class PropertyFilter extends LightningElement {
     ];
   }
 
+  // Reset filters
   handleReset() {
-    // Reset filters
     this.template.querySelectorAll("lightning-input").forEach((element) => {
       element.value = null;
     });
@@ -149,43 +150,50 @@ export default class PropertyFilter extends LightningElement {
     this.fireChangeEvent();
   }
 
+  // Filter Update: Current Location
   handleUseCurrentLocationChange(event) {
     this.useCurrentLocation = event.target.checked;
   }
 
+  // Filter Update: Search Key
   handleSearchKeyChange(event) {
     this.searchKey = event.detail.value;
     this.fireChangeEvent();
   }
 
+  // Filter Update: Record Type
   handleRecordTypeChange(event) {
     this.value = event.detail.value;
     this.recordType = event.detail.value;
     this.fireChangeEvent();
   }
 
+  // Filter Update: Max Price
   handleMaxPriceChange(event) {
     this.maxPrice = event.detail.value;
     this.fireChangeEvent();
   }
 
+  // Filter Update: Min Bedrooms
   handleMinBedroomsChange(event) {
     this.minBedrooms = event.detail.value;
     this.fireChangeEvent();
   }
 
+  // Filter Update: Min Bathrooms
   handleMinBathroomsChange(event) {
     this.minBathrooms = event.detail.value;
     this.fireChangeEvent();
   }
 
+  // Filter Update: Min Rating
   handleMinRatingChange(event) {
     this.minRating = event.detail.value;
     this.fireChangeEvent();
   }
-
+ 
+  // Get user location
   handleMessage(message) {
-    // Get user location
     const toastEvt = new ShowToastEvent({
       title: "Geocoded your location",
       message: "Use the checkbox to get property distance from your current location",
@@ -198,8 +206,8 @@ export default class PropertyFilter extends LightningElement {
     unsubscribe(this.subscription);
   }
 
+  // Subscribe to message channel
   connectedCallback() {
-    // Subscribe to message channel
     this.subscription = subscribe(
       this.messageContext,
       GOTUSERLOCATIONMC,
@@ -209,6 +217,7 @@ export default class PropertyFilter extends LightningElement {
     );
   }
 
+  // Calls message channel to update other components
   fireChangeEvent() {
     // Debouncing this method: Do not actually fire the event as long as this function is
     // being called within a delay of DELAY. This is to avoid a very large number of Apex
@@ -216,7 +225,6 @@ export default class PropertyFilter extends LightningElement {
     window.clearTimeout(this.delayTimeout);
 
     // Sends variables, primarily for filters, through message channel
-    // eslint-disable-next-line @lwc/lwc/no-async-operation
     this.delayTimeout = setTimeout(() => {
       const filters = {
         searchKey: this.searchKey,
@@ -236,8 +244,8 @@ export default class PropertyFilter extends LightningElement {
     }, DELAY);
   }
 
+  // Get geo of inputted address
   geoAddress() {
-    // Get geo of inputted address
     this.evtStreet = this.curStreet;
     this.evtCity = this.curCity;
     this.evtState = this.curState;
@@ -273,6 +281,7 @@ export default class PropertyFilter extends LightningElement {
       });
   }
 
+  // Gets distance for each property from the given location
   getDistance() {
     refreshApex(this.wiredAddresses);
 
@@ -300,18 +309,9 @@ export default class PropertyFilter extends LightningElement {
 
     // Check Addresses and If Match, Calculate Distance
     for (let i = 0; i < 5; i++) {
-      if (
-        this.addresses[i] != null &&
-        this.addresses[i].Latitude__c != null &&
-        this.addresses[i].Longitude__c != null &&
-        !this.useCurrentLocation
-      ) {
-        if (
-          this.addresses[i].Street__c === this.evtStreet &&
-          this.addresses[i].City__c === this.evtCity &&
-          this.addresses[i].State__c === this.evtState &&
-          this.addresses[i].PostalCode__c === this.evtPostalCode
-        ) {
+      if (this.addresses[i] != null && this.addresses[i].Latitude__c != null && this.addresses[i].Longitude__c != null && !this.useCurrentLocation) {
+        if (this.addresses[i].Street__c === this.evtStreet && this.addresses[i].City__c === this.evtCity &&
+          this.addresses[i].State__c === this.evtState && this.addresses[i].PostalCode__c === this.evtPostalCode) {
           // First set of geocoordinates grabbed from inputted address (saved in Address object)
           this.lat1 = this.addresses[i].Latitude__c;
           this.lon1 = this.addresses[i].Longitude__c;
@@ -320,18 +320,7 @@ export default class PropertyFilter extends LightningElement {
             this.lat2 = this.properties[j].Geolocation__Latitude__s;
             this.lon2 = this.properties[j].Geolocation__Longitude__s;
             // Calculates the distance given these coordinates
-            this.distance = this.calculateDistance(
-              this.lat1,
-              this.lon1,
-              this.lat2,
-              this.lon2
-            );
-            console.log(
-              "DISTANCE",
-              this.properties[j].Billing_Street__c,
-              this.properties[j].Billing_City__c,
-              this.distance
-            );
+            this.distance = this.calculateDistance(this.lat1, this.lon1, this.lat2, this.lon2);
             // Pushes street & city info with distance at matching indexes, so the property can be connected to the acquired distance
             this.streetsAll.push(this.properties[j].Billing_Street__c);
             this.citiesAll.push(this.properties[j].Billing_City__c);
@@ -340,25 +329,12 @@ export default class PropertyFilter extends LightningElement {
         }
       } else if(this.useCurrentLocation) {
         // Same as above, but using current location data instead of inputted information
-        console.log("USE CURRENT LOCATION");
         this.lat1 = this.userLatitude;
         this.lon1 = this.userLongitude;
-        console.log("USER LOCATION", this.lat1, this.lon1)
         for (let j = 0; j < this.properties.length; j++) {
           this.lat2 = this.properties[j].Geolocation__Latitude__s;
           this.lon2 = this.properties[j].Geolocation__Longitude__s;
-          this.distance = this.calculateDistance(
-            this.lat1,
-            this.lon1,
-            this.lat2,
-            this.lon2
-          );
-          console.log(
-            "DISTANCE",
-            this.properties[j].Billing_Street__c,
-            this.properties[j].Billing_City__c,
-            this.distance
-          );
+          this.distance = this.calculateDistance(this.lat1, this.lon1, this.lat2, this.lon2);
           this.streetsAll.push(this.properties[j].Billing_Street__c);
           this.citiesAll.push(this.properties[j].Billing_City__c);
           this.distances.push(this.distance);
@@ -374,17 +350,9 @@ export default class PropertyFilter extends LightningElement {
       for (let k = 0; k < this.properties.length; k++) {
         if (this.distances[k] <= this.evtDistance) {
           this.belowAll = false;
-          console.log(
-            "IN RANGE",
-            this.streetsAll[k],
-            this.citiesAll[k],
-            this.distances[k]
-          );
           // New arrays that will be pushed to the filters, used in SOQL queries to only return the matching addresses for filter results
           this.streets.push(this.properties[k].Billing_Street__c);
           this.cities.push(this.properties[k].Billing_City__c);
-        } else {
-          // console.log("OUT OF RANGE", this.streets[k], this.cities[k], this.distances[k]);
         }
       }
       // Handles an edge case where filters don't update properly if the inputted address is below every retrieved distance
@@ -394,7 +362,6 @@ export default class PropertyFilter extends LightningElement {
       }
     } else {
       // Message user that address data is still being processed by API
-      console.log("PLEASE GEO ADDRESS");
       const toastEvt = new ShowToastEvent({
         title: "No address data found",
         message: "You may need to wait a few seconds.",
@@ -452,22 +419,27 @@ export default class PropertyFilter extends LightningElement {
     return d * 0.621371192;
   }
 
+  // Updating street in distance calculator
   handleStreetChange(event) {
     this.curStreet = event.target.value;
   }
 
+  // Updating city in distance calculator
   handleCityChange(event) {
     this.curCity = event.target.value;
   }
 
+  // Updating state in distance calculator
   handleStateChange(event) {
     this.curState = event.target.value;
   }
 
+  // Updating postal code in distance calculator
   handlePostalCodeChange(event) {
     this.curPostalCode = event.target.value;
   }
 
+  // Updating max distance in distance calculator
   handleDistanceChange(event) {
     this.curDistance = event.target.value;
   }

@@ -58,6 +58,11 @@ export default class PortfolioProperties extends LightningElement {
     ascendingRent = false;
     ascendingDaysOnMarket = false;
     ascendingDistance = false;
+    nameSort = "brand-outline";
+    ratingSort = "brand-outline";
+    rentSort = "brand-outline";
+    dateListedSort = "brand-outline";
+    distanceSort = "brand-outline";
 
     // For user geolocation (for distance sorting; checks contact mailing & account billing, both of which Salesforce geocodes automatically)
     userLat;
@@ -96,6 +101,25 @@ export default class PortfolioProperties extends LightningElement {
         }
     }
 
+    // Reset sorting variables when new option clicked
+    resetSort() {
+        this.sortingName = false;
+        this.sortingRating = false;
+        this.sortingRent = false;
+        this.sortingDaysOnMarket = false;
+        this.sortingDistance = false;
+        if (!this.ascendingName) this.ascendingName = false;
+        if (!this.ascendingRating) this.ascendingRating = false;
+        if (!this.ascendingRent) this.ascendingRent = false;
+        if (!this.ascendingDaysOnMarket) this.ascendingDaysOnMarket = false;
+        if (!this.ascendingDistance) this.ascendingDistance = false;
+        this.nameSort = "brand-outline";
+        this.ratingSort = "brand-outline";
+        this.rentSort = "brand-outline";
+        this.dateListedSort = "brand-outline";
+        this.distanceSort = "brand-outline";
+    }
+
     // Clearing search and sorting back to default
     handleClear() {
         // Reset input field, and revert back to all properties
@@ -108,20 +132,13 @@ export default class PortfolioProperties extends LightningElement {
         this.sortText = null;
 
         // Reset sorting conditions for all options
-        this.sortingName = false;
-        this.sortingRating = false;
-        this.sortingRent = false;
-        this.sortingDaysOnMarket = false;
-        this.sortingDistance = false;
-        this.ascendingName = false;
-        this.ascendingRating = false;
-        this.ascendingRent = false;
-        this.ascendingDaysOnMarket = false;
-        this.ascendingDistance = false;
+        this.resetSort();
     }
-
+    
     // Sorting properties by name
     handleSortName() {
+        this.resetSort();
+        this.nameSort = "brand";
         this.sortingName = true;
         this.searchedProperties.sort((a, b) => {
             const nameA = a.Name.toLowerCase();
@@ -140,24 +157,16 @@ export default class PortfolioProperties extends LightningElement {
         this.ascendingName = !this.ascendingName;
         if (!this.ascendingName) {
             this.searchedProperties.reverse();
-            this.sortText = 'Sorting by Name, in descending order';
+            this.sortText = 'Sorting by name (descending)';
         } else {
-            this.sortText = 'Sorting by Name, in ascending order';
+            this.sortText = 'Sorting by name (ascending)';
         }
-
-        // Reset sorting condition for other options
-        this.sortingRating = false;
-        this.sortingRent = false;
-        this.sortingDaysOnMarket = false;
-        this.sortingDistance = false;
-        this.ascendingRating = false;
-        this.ascendingRent = false;
-        this.ascendingDaysOnMarket = false;
-        this.ascendingDistance = false;
     }
 
     // Sorting properties by rating
     handleSortRating() {
+        this.resetSort();
+        this.ratingSort = "brand";
         this.sortingRating = true;
         this.searchedProperties.sort((a, b) => a.Score__c - b.Score__c);
 
@@ -165,24 +174,16 @@ export default class PortfolioProperties extends LightningElement {
         this.ascendingRating = !this.ascendingRating;
         if (!this.ascendingRating) {
             this.searchedProperties.reverse();
-            this.sortText = 'Sorting by Rating, in descending order';
+            this.sortText = 'Sorting by rating (descending)';
         } else {
-            this.sortText = 'Sorting by Rating, in ascending order';
+            this.sortText = 'Sorting by rating (ascending)';
         }
-
-        // Reset sorting condition for other options
-        this.sortingName = false;
-        this.sortingRent = false;
-        this.sortingDaysOnMarket = false;
-        this.sortingDistance = false;
-        this.ascendingName = false;
-        this.ascendingRent = false;
-        this.ascendingDaysOnMarket = false;
-        this.ascendingDistance = false;
     }
 
     // Sorting properties by rent
     handleSortRent() {
+        this.resetSort();
+        this.rentSort = "brand";
         this.sortingRent = true;
         this.searchedProperties.sort((a, b) => a.Rent__c - b.Rent__c);
 
@@ -190,24 +191,16 @@ export default class PortfolioProperties extends LightningElement {
         this.ascendingRent = !this.ascendingRent;
         if (!this.ascendingRent) {
             this.searchedProperties.reverse();
-            this.sortText = 'Sorting by Rent, in descending order';
+            this.sortText = 'Sorting by rent (descending)';
         } else {
-            this.sortText = 'Sorting by Rent, in ascending order';
+            this.sortText = 'Sorting by rent (ascending)';
         }
-
-        // Reset sorting condition for other options
-        this.sortingName = false;
-        this.sortingRating = false;
-        this.sortingDaysOnMarket = false;
-        this.sortingDistance = false;
-        this.ascendingName = false;
-        this.ascendingRating = false;
-        this.ascendingDaysOnMarket = false;
-        this.ascendingDistance = false;
     }
 
     // Sorting properties by days on market
     handleSortDateListed() {
+        this.resetSort();
+        this.dateListedSort = "brand";
         this.sortingDaysOnMarket = true;
         this.searchedProperties.sort((a, b) => a.Days_On_Market__c - b.Days_On_Market__c);
 
@@ -215,28 +208,19 @@ export default class PortfolioProperties extends LightningElement {
         this.ascendingDaysOnMarket = !this.ascendingDaysOnMarket;
         if (!this.ascendingDaysOnMarket) {
             this.searchedProperties.reverse();
-            this.sortText = 'Sorting by Date Listed, in ascending order';
+            this.sortText = 'Sorting by date listed (ascending)';
         } else {
-            this.sortText = 'Sorting by Date Listed, in descending order';
+            this.sortText = 'Sorting by date listed (descending)';
         }
-
-        // Reset sorting condition for other options
-        this.sortingName = false;
-        this.sortingRating = false;
-        this.sortingRent = false;
-        this.sortingDistance = false;
-        this.ascendingName = false;
-        this.ascendingRating = false;
-        this.ascendingRent = false;
-        this.ascendingDistance = false;
     }
 
     // Sorting properties by distance from user
     handleSortDistance() {
+        this.resetSort();
+        this.distanceSort = "brand";
         this.sortingDistance = true;
         // Create new array of distance objects, including geolocation and the distance from the property
         // (Has to be done this way since you can't add a hypothetical "userDistance" key-value pair for objects that have been received from Apex)
-        // console.log("USER ", this.userLat, this.userLon);
         this.distances = [];
         for (let i = 0; i < this.searchedProperties.length; i++) {
             this.distance = this.calculateDistance(this.userLat, this.userLon, this.searchedProperties[i].Geolocation__Latitude__s, this.searchedProperties[i].Geolocation__Longitude__s);
@@ -245,7 +229,6 @@ export default class PortfolioProperties extends LightningElement {
                 'lon': this.searchedProperties[i].Geolocation__Longitude__s,
                 'distance': this.distance
             });
-            // console.log(this.distances[i]);
         }
 
         this.distances.sort((a, b) => a.distance - b.distance);
@@ -254,9 +237,9 @@ export default class PortfolioProperties extends LightningElement {
         this.ascendingDistance = !this.ascendingDistance;
         if (!this.ascendingDistance) {
             this.distances.reverse();
-            this.sortText = 'Sorting by Distance, in descending order';
+            this.sortText = 'Sorting by distance from your address (descending)';
         } else {
-            this.sortText = 'Sorting by Distance, in ascending order';
+            this.sortText = 'Sorting by distance from your address (ascending)';
         }
 
         // Using the distance array as a reference, reorder the portfolio properties by distance, using lat & lon to match the two arrays
@@ -274,16 +257,6 @@ export default class PortfolioProperties extends LightningElement {
             }
         }
         this.searchedProperties = this.searchedPropertiesDist;
-
-        // Reset sorting condition for other options
-        this.sortingName = false;
-        this.sortingRating = false;
-        this.sortingRent = false;
-        this.sortingDaysOnMarket = false;
-        this.ascendingName = false;
-        this.ascendingRating = false;
-        this.ascendingRent = false;
-        this.ascendingDaysOnMarket = false;
     }
     
     // Calculate distance using Haversine formula
@@ -311,8 +284,6 @@ export default class PortfolioProperties extends LightningElement {
         this.wiredUsers = result;
         if (result.data) {
             this.users = result.data;
-            console.log("USERID", this.userId);
-            console.log("CONTACTID", this.users[0].ContactId);
             this.contactId = this.users[0].ContactId;
             this.error = undefined;
         } else if (result.error) {
@@ -327,9 +298,6 @@ export default class PortfolioProperties extends LightningElement {
 
         if (result.data) {
             this.contacts = result.data;
-            console.log("ACCOUNTID", this.contacts[0].AccountId);
-            console.log("NAME", this.contacts[0].FirstName, this.contacts[0].LastName);
-            console.log("CONTACT GEO", this.contacts[0].MailingLatitude, this.contacts[0].MailingLongitude);
             this.accountId = this.contacts[0].AccountId;
             this.userFirstName = this.contacts[0].FirstName;
             this.userLastName = this.contacts[0].LastName;
@@ -348,8 +316,6 @@ export default class PortfolioProperties extends LightningElement {
 
         if (result.data) {
             this.accounts = result.data;
-            console.log("RECORDTYPEID", this.accounts[0].RecordTypeId);
-            console.log("ACCOUNT GEO", this.accounts[0].BillingLatitude, this.accounts[0].BillingLongitude);
             this.recordTypeId = this.accounts[0].RecordTypeId;
             if (this.recordTypeId == PROPERTY_OWNER_ID || this.recordTypeId == PROPERTY_OWNER_ID_2) {
                 this.isPropertyOwner=true;
@@ -359,7 +325,6 @@ export default class PortfolioProperties extends LightningElement {
             if (this.userLat && this.userLon) {
                 this.locationFound = true;
             }
-            console.log("LOCATION?", this.locationFound);
             this.error = undefined;
         } else if (result.error) {
             this.error = result.error;
@@ -376,8 +341,6 @@ export default class PortfolioProperties extends LightningElement {
             this.propertyOwnerIds = [];
             if (this.propertyOwners.length > 0) {
                 for (let i = 0; i < this.propertyOwners.length; i++) {
-                    console.log("PROPERTYOWNER", i, this.propertyOwners[i].Id);
-                    console.log("PROPERTY", i, this.propertyOwners[i].Property__c);
                     this.propertyOwnerIds.push(this.propertyOwners[i].Id);
                     this.propertyIds.push(this.propertyOwners[i].Property__c);
                 }

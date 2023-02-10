@@ -75,12 +75,11 @@ export default class ModalMapMain extends LightningModal {
         this.propertyId = propertyId;
     }
 
+    // Get geolocation of property for map centering and API parameters
     @wire (getPropertyGeo, {propId: "$propertyId"}) getPropertyGeo(result) {
         if (result.data) {
-            console.log("ID", this.propertyId, this.recordId);
             this.properties = result.data;
             this.property = this.properties[0];
-            console.log("PROP GEO", this.property.Geolocation__Latitude__s, this.property.Geolocation__Longitude__s);
             this.lat = this.property.Geolocation__Latitude__s;
             this.lon = this.property.Geolocation__Longitude__s;
             this.center = {
@@ -92,9 +91,7 @@ export default class ModalMapMain extends LightningModal {
             this.populatePropertyMarker();
             this.error = undefined;
         } else if (result.error) {
-            console.log("ID", this.propertyId, this.recordId);
             this.error = result.error;
-            console.log("ERROR", this.error);
             this.properties = [];
             this.property = null;
         }
@@ -102,7 +99,6 @@ export default class ModalMapMain extends LightningModal {
 
     // Link to view selected property or location on Google Maps
     handleLink() {
-        // console.log(this.selectedMarkerValue);
         window.open(this.selectedMarkerValue);
     }
 
@@ -128,14 +124,14 @@ export default class ModalMapMain extends LightningModal {
         this.supermarketDisabled = false;
     }
 
+    // Update selected rating filter
     handleRatingChange(event) {
         this.minRating = event.detail.value;
-        // console.log(this.minRating);
     }
 
+    // Update selected distance filter
     handleDistanceChange(event) {
         this.maxDistance = event.detail.value;
-        // console.log(this.maxDistance);
     }
 
     // Apex method to get places given property geocode and a type of result, using Google Maps Places API
@@ -183,7 +179,6 @@ export default class ModalMapMain extends LightningModal {
                 if (this.supermarketSearched && this.supermarketSelected) this.searchedNum++;
 
                 // Populate markers when all types searched
-                console.log(this.searchedNum, this.types.length);
                 if (this.searchedNum == this.types.length) {
                     this.populateMarkers();
                 }
@@ -191,7 +186,6 @@ export default class ModalMapMain extends LightningModal {
             })
             .catch((error) => {
                 this.error = error;
-                console.log(error.message);
                 
                 this.hotels = undefined;
                 this.restaurants = undefined;
@@ -207,7 +201,6 @@ export default class ModalMapMain extends LightningModal {
 
     // Selecting types of locations to search for, adding to array of types which API will loop over
     handleTypeSelect(event) {
-        // console.log(event.target.value);
         if (this.types && this.types.includes(event.target.value)) {
             const index = this.types.indexOf(event.target.value);
             if (index > -1) {
@@ -218,8 +211,6 @@ export default class ModalMapMain extends LightningModal {
         }
         
         this.updateSelected();
-
-        console.log(this.types.length, this.types[0], this.types[1], this.types[2]);
     }
 
     // Update button status for types of search results

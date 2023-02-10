@@ -5,6 +5,7 @@ export default class NavButton extends NavigationMixin(LightningElement) {
 
     @api propertyId;
 
+    // Navigate to record given an Id
     handleNavigateToRecord() {
         this[NavigationMixin.Navigate]({
             type: 'standard__recordPage',

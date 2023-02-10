@@ -1,0 +1,16 @@
+<template>
+    <lightning-card>
+        <lightning-modal-header label="Removal Confirmation"></lightning-modal-header>
+        <lightning-modal-body>
+            <div class="slds-align_absolute-center" style="margin-bottom:5px">
+                <h2>Are you sure you want to remove this staff member from the property?</h2>
+            </div>
+            <div class="slds-align_absolute-center">
+                <lightning-button label="Confirm Removal" variant="brand" onclick={handleDelete}></lightning-button>
+            </div>
+        </lightning-modal-body>
+        <lightning-modal-footer>
+            <lightning-button label="Close" variant="destructive" onclick={handleClose}></lightning-button>
+        </lightning-modal-footer>
+    </lightning-card>
+</template>

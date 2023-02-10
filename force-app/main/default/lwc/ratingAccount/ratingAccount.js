@@ -28,6 +28,7 @@ export default class RatingAccount extends LightningElement {
     @track ratingCount;
     @track error;
 
+    // Tracking information from wired queries
     @track ratingId = "";
     @track wiredRatings = [];
     @track ratings = [];
@@ -39,13 +40,13 @@ export default class RatingAccount extends LightningElement {
     @track wiredPropertyOwners = [];
     @track propertyOwners = [];
 
+    // Various rating status information
     ratingObj = RATING_OBJECT;
     hasRating = false;
     ratingFound = false;
     wasDeleted = false;
     hasPropertyOwner = false;
     multiplePropertyOwners = false;
-
     fields = [SCORE_FIELD, REVIEW_FIELD];
     score = SCORE_FIELD;
     review = REVIEW_FIELD;
@@ -64,17 +65,14 @@ export default class RatingAccount extends LightningElement {
             // Push list of property owners
             if (this.propertyOwners.length > 0) {
                 for (let i = 0; i < this.propertyOwners.length; i++) {
-                    console.log("PROPOWNERID", this.propertyOwners[i].Id);
                     this.accountIds.push(this.propertyOwners[i].Account__c);
                 }
                 this.hasPropertyOwner = true;
                 // Get ID (will default to first one, but can be changed)
                 this.accId = this.accountIds[0];
-                console.log("CURRENT", this.accId);
             }
             // Check if there are multiple property owners
             if (this.propertyOwners.length > 1) {
-                console.log("MULTIPLE PROPERTY OWNERS");
                 this.multiplePropertyOwners = true;
             }
             this.error = undefined;
@@ -90,8 +88,6 @@ export default class RatingAccount extends LightningElement {
             this.accNames = result.data;
             if (this.accNames.length > 0) {
                 this.accName = this.accNames[0].Name;
-                console.log("ACC NAME", this.accName);
-                console.log("-----------------");
                 this.error = undefined;
             }
         } else if (result.error) {
@@ -105,11 +101,6 @@ export default class RatingAccount extends LightningElement {
         this.wiredAccounts = result;
         if (result.data) {
             this.accounts = result.data;
-            if (this.accounts.length > 0) {
-                for (let i = 0; i < this.accounts.length; i++) {
-                    console.log("RATINGACCOUNTID", i + 1, this.accounts[i].Id);
-                }
-            }
             this.error = undefined;
         } else if (result.error) {
             this.error = result.error;
@@ -126,14 +117,12 @@ export default class RatingAccount extends LightningElement {
             this.ratings = result.data;
             this.myRatings = [];
             this.ratingIds = [];
-            console.log("RATINGS", this.ratings.length);
             if (this.ratings.length > 0) {
                 for (let i = 0; i < this.ratings.length; i++) {
                     this.myRatings.push(this.ratings[i]);
                     this.ratingIds.push(this.ratings[i].Id);
                     // If a rating exists that matches the default (first) accId, then display that rating
                     if (this.ratings[i].Account__c == this.accId) {
-                        console.log("MATCH", this.ratings[i].Account__c, this.accId);
                         this.ratingId = this.ratings[i].Id;
                         this.hasRating = true;
                     }   
@@ -151,14 +140,11 @@ export default class RatingAccount extends LightningElement {
 
     // Change Account Information When Tab Clicked
     updateTab(event) {
-        // console.log("TAB ID", event.target.value);
         this.accId = event.target.value;
         this.hasRating = false;
         this.ratingFound = false;
         for (let i = 0; i < this.ratings.length; i++) {
-            console.log(this.ratings[i].Account__c, this.accId);
             if (this.ratings[i].Account__c == this.accId) {
-                console.log("TAB MATCH");
                 for (let j = 0; j < this.ratingIds.length; j++) {
                     if (this.ratingIds[j] == this.ratings[i].Id) {
                         // A rating for this account already exists
@@ -172,20 +158,20 @@ export default class RatingAccount extends LightningElement {
                 }
             }
         }
-        console.log("RATING", this.ratingId, this.currentScore, this.ratings.length);
     }
 
+    // Update rating score
     handleScoreChange(event) {
         this.currentScore = event.target.value;
-        // console.log(this.recordId, this.currentScore);
     }
 
+    // Update review
     handleReviewChange(event) {
         this.currentReview = event.target.value;
     }
 
+    // Insert/update form submission
     handleSubmit(event) {
-        // console.log(event.target.value);
         if (this.hasRating) {
             // When updating existing rating
             event.preventDefault();
@@ -208,6 +194,7 @@ export default class RatingAccount extends LightningElement {
         }
     }
 
+    // Insert/update form success
     handleSuccess(event) {
         if (this.hasRating) {
             // When updating existing rating
@@ -236,10 +223,12 @@ export default class RatingAccount extends LightningElement {
         }
     }
 
+    // Delete form submission
     handleDelete(event) {
         // Delete Rating
         deleteRecord(this.ratingId)
         .then(() => {
+            // On success
             const toastEvt = new ShowToastEvent({
                 title: "Rating deleted",
                 variant: "error"
@@ -260,6 +249,7 @@ export default class RatingAccount extends LightningElement {
             return refreshApex(this.wiredRatings);
         })
         .catch((error) => {
+            // On error
             const toastEvt = new ShowToastEvent({
                 title: "Error deleting rating",
                 message: error.message,

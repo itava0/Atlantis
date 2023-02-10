@@ -5,9 +5,8 @@ export default class NavButton extends NavigationMixin(LightningElement) {
 
     @api mapsUrl;
 
+    // Open Google Maps given a URL
     handleGoogleMapsLink() {
-        // console.log(this.mapsUrl);
-        // this[NavigationMixin.Navigate](this.mapsUrl);
         window.open(this.mapsUrl);
     }
 }

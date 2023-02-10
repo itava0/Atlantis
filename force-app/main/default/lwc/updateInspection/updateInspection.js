@@ -14,11 +14,13 @@ export default class UpdateInspection extends LightningModal {
     @api content;
     @api inspectionId;
     
+    // Object and field information
     inspectionObj = INSPECTION_OBJECT;
     dateTimeField = DATETIME_FIELD;
     inspectorField = INSPECTOR_FIELD;
     subjectsField = SUBJECTS_FIELD;
 
+    // User-inputted field information to update
     msgDateTime;
     msgInspector;
     msgSubjects;
@@ -42,9 +44,7 @@ export default class UpdateInspection extends LightningModal {
     }
 
     // If error when updating inspection
-    handleError(event) {
-        console.log("handleError event");
-        console.log(JSON.stringify(event.detail));
+    handleError() {
         const evt = new ShowToastEvent({
             title: "Error updating inspection",
             variant: "error"
@@ -52,6 +52,7 @@ export default class UpdateInspection extends LightningModal {
         this.dispatchEvent(evt);
     }
 
+    // Send message channel of updated information to original component that called modal
     fireChangeEvent() {
         // Debouncing this method: Do not actually fire the event as long as this function is
         // being called within a delay of DELAY. This is to avoid a very large number of Apex
@@ -59,7 +60,6 @@ export default class UpdateInspection extends LightningModal {
         window.clearTimeout(this.delayTimeout);
     
         // Sends variables, primarily for filters, through message channel
-        // eslint-disable-next-line @lwc/lwc/no-async-operation
         this.delayTimeout = setTimeout(() => {
             const fields = {
                 inspectionId: this.inspectionId,

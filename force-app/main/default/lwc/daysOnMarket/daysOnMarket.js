@@ -28,6 +28,7 @@ export default class DaysOnMarket extends LightningElement {
     @wire(MessageContext)
     messageContext;
 
+    // Retrieve current property
     @wire(getRecord, { recordId: '$propertyId', fields: FIELDS })
     wiredRecord({ error, data }) {
         if (data) {
@@ -37,6 +38,7 @@ export default class DaysOnMarket extends LightningElement {
             if (this.daysOnMarket >= 0) {
                 this.positiveDays = true;
             }
+            // Different color bar depending on number of days
             if (this.daysOnMarket < MAX_DAYS_NORMAL_STATUS) {
                 this.status = 'normal';
             } else if (this.daysOnMarket < MAX_DAYS_WARNING_STATUS) {
@@ -69,16 +71,17 @@ export default class DaysOnMarket extends LightningElement {
         return 'bar ' + this.status;
     }
 
+    // Styling information
     get barStyle() {
         const value = (this.daysOnMarket / MAX_DAYS_CHART) * 100;
         this.percent = value;
-        console.log(this.percent, value);
         if (this.percent > 100) {
             this.percent = 100;
         }
         return 'width:' + this.percent + '%';
     }
 
+    // Subscribe to message channel
     connectedCallback() {
         this.subscription = subscribe(
             this.messageContext,
@@ -89,11 +92,13 @@ export default class DaysOnMarket extends LightningElement {
         );
     }
 
+    // Unsubscribe from message channel
     disconnectedCallback() {
         unsubscribe(this.subscription);
         this.subscription = null;
     }
 
+    // Update current property based on message channel
     handlePropertySelected(message) {
         this.propertyId = message.propertyId;
     }

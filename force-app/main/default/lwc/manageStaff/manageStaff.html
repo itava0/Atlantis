@@ -17,9 +17,11 @@
                         <div class="slds-col">
                             <lightning-button-menu alternative-text="Show menu">
                                 <lightning-menu-item value={staff.Account__c} label="View Profile" icon-name="utility:user" onclick={viewProfile}></lightning-menu-item>
-                                <lightning-menu-item value={staff.Account__c} label="Switch Role" icon-name="utility:product_transfer" onclick={switchRole}></lightning-menu-item>
-                                <lightning-menu-item value={staff.Account__c} label="Reassign" icon-name="utility:replace" onclick={reassign}></lightning-menu-item>
-                                <lightning-menu-item value={staff.Account__c} label="Remove" icon-name="utility:close" onclick={remove}></lightning-menu-item>
+                                <!-- <lightning-menu-item value={staff.Account__c} label="Switch Role" icon-name="utility:product_transfer" onclick={switchRole}></lightning-menu-item> -->
+                                <lightning-menu-item value={staff.Id} data-accountid={staff.Account__c} data-accountname={staff.Account__r.Name}
+                                label="Reassign" icon-name="utility:replace" onclick={reassign}></lightning-menu-item>
+                                <lightning-menu-item value={staff.Id} data-accountname={staff.Account__r.Name} data-propertyname={staff.Property__r.Name}
+                                label="Remove" icon-name="utility:close" onclick={remove}></lightning-menu-item>
                             </lightning-button-menu>
                         </div>
                     </div>
@@ -28,9 +30,9 @@
         </template>
     </template>
     <template if:false={hasStaff}>
-        <div class="slds-box">
+        <div class="slds-box slds-align_absolute-center">
             <i>There are no staff currently assigned to this property.</i><br><br>
-            <lightning-button variant="brand" icon-name="utility:thunder" label="Assign Staff" onclick={assignStaff}></lightning-button>
+            <lightning-button variant="brand" icon-name="utility:thunder" label="Assign" onclick={assignStaff}></lightning-button>
         </div>
     </template>
 </template>

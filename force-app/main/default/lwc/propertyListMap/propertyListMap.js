@@ -101,6 +101,7 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
   }
 
   connectedCallback() {
+    // Subscribe to message channel
     this.subscription = subscribe(
       this.messageContext,
       FILTERSCHANGEMC,
@@ -109,6 +110,7 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
       }
     );
 
+    // Center map on Atlanta
     this.center = {
       location: {
         Latitude: "33.7760321146953",
@@ -116,6 +118,7 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
       }
     };
 
+    // Map information
     this.mapMarkers = [];
     this.zoomLevel = 11;
     this.listView = "hidden";
@@ -131,11 +134,6 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
       if (this.properties.data) {
         if (this.properties.data.records) {
           for (let i = 0; i < this.properties.data.records.length; i++) {
-            // console.log(this.properties.data.records[i].Name, this.properties.data.records[i].Geolocation__Latitude__s, this.properties.data.records[i].Geolocation__Longitude__s);
-            console.log(this.properties.data.records.length);
-            if (!this.properties.data.records[i].Geolocation__Latitude__s && !this.properties.data.records[i].Geolocation__Longitude__s) {
-              console.log("MISSING: ", this.properties.data.records[i].Name);
-            }
             if(this.properties.data.records[i].Geolocation__Latitude__s && this.properties.data.records[i].Geolocation__Longitude__s) {
               // Create a new map marker using property's geolocation values
               this.newMapMarker = {
@@ -256,14 +254,11 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
 
   // Attempts to retrieve user's current geolocation
   getLocation() {
-    console.log("Getting location...");
     navigator.permissions.query({ name: "geolocation" }).then((geoStatus) => {
-      console.log(geoStatus.state);
       if (geoStatus.state === "granted" || geoStatus.state === "prompt") {
         navigator.geolocation.getCurrentPosition((position) => {
           this.geoLat = position.coords.latitude;
           this.geoLong = position.coords.longitude;
-          console.log("WEB: " + this.geoLat + " " + this.geoLong);
           publish(this.messageContext, GOTUSERLOCATIONMC, {
             latitude: this.geoLat,
             longitude: this.geoLong
@@ -277,7 +272,6 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
           .then((data) => {
             this.geoLat = data.latitude;
             this.geoLong = data.longitude;
-            console.log("API: " + this.geoLat + " " + this.geoLong);
             publish(this.messageContext, GOTUSERLOCATIONMC, {
               latitude: this.geoLat,
               longitude: this.geoLong

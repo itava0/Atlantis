@@ -13,14 +13,13 @@ export default class PropertyTile extends NavigationMixin(LightningElement) {
     this.selected = false;
   }
 
-  // Mouse leaves property
+  // When mouse leaves property
   handlePropertyDeselected() {
     this.selected = false;
   }
 
-  // Property tile clicked or hovered over
+  // When property tile clicked or hovered over
   handlePropertySelected() {
-    // console.log("TEST",this.property.Id);
     this.currentId = this.property.Id;
     this.selected = true;
     if (FORM_FACTOR === "Small") {
@@ -40,7 +39,6 @@ export default class PropertyTile extends NavigationMixin(LightningElement) {
       });
       this.dispatchEvent(selectedEvent);
     }
-    // console.log(this.property);
   }
 
   // Navigate to record page
@@ -55,7 +53,7 @@ export default class PropertyTile extends NavigationMixin(LightningElement) {
     });
   }
 
-  // Navigate to application page
+  // Navigate to lease application page
   navigateToApplicationPage() {
     //set sessionStorage values
     sessionStorage.setItem("id", this.property.Id);

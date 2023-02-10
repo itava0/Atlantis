@@ -58,7 +58,6 @@ export default class ViewInspections extends LightningElement {
     @wire (getInspections, {propId : "$propertyId"}) getInspections(result) {
         this.wiredInspections = result;
         if (result.data) {
-            console.log("DATA FOUND");
             this.inspections = result.data.map((elem) => ({
                 ...elem,
                 ...{
@@ -71,9 +70,6 @@ export default class ViewInspections extends LightningElement {
                     'Subject' : elem.Subjects__c
                 }
             }));
-
-            console.log("LEN", this.inspections.length);
-            console.log("FIRST", this.inspections[0]);
 
             if (this.inspections.length > 0) {
                 this.hasInspections = true;
@@ -88,22 +84,21 @@ export default class ViewInspections extends LightningElement {
         }
     }
 
+    // For selecting "Update" button based on row information
     callRowAction(event) {
         let insId = event.detail.row.Id;
         let actionName = event.detail.action.name;
         if (actionName == 'Update') {
-            // console.log("HELLO UPDATE", insId);
             this.loadModal(insId);
         }
     }
 
+    // Convert Salesforce time data to a standard, readable format
     convertTimeData() {
-        // Convert time to a readable format
         for (let i = 0; i < this.inspections.length; i++) {
             let hours = this.inspections[i].Time.substring(0, 2);
             let minutes = this.inspections[i].Time.substring(3, 5);
             let ampm = 'AM';
-            console.log("TIME", hours, minutes);
             // Determine if AM or PM
             if (hours >= 12) {
                 ampm = 'PM';
@@ -112,7 +107,7 @@ export default class ViewInspections extends LightningElement {
             if (hours == 0) {
                 hrs = 12;
             }
-            // PM hours to match AM
+            // PM hour subtraction
             if (hours >= 13 && hours <= 23) {
                 hours -= 12;
             }
@@ -152,6 +147,7 @@ export default class ViewInspections extends LightningElement {
         })
     }
 
+    // Subscribe to message channel
     connectedCallback() {
         this.subscription = subscribe(
             this.messageContext,
@@ -162,20 +158,22 @@ export default class ViewInspections extends LightningElement {
         );
     }
 
+    // Unsubscribe from message channel
     disconnectedCallback() {
         unsubscribe(this.subscription);
         this.subscription = null;
     }
 
+    // When received from message channel, update inspection data
     handleInspectionUpdated(message) {
         this.updatedId = message.inspectionId;
         this.updatedDateTime = message.dateTime;
         this.updatedInspector = message.inspector;
         this.updatedSubjects = message.subjects;
-        // console.log(this.updatedId, this.updatedDateTime, this.updatedInspector, this.updatedSubjects);
         this.updateInspectionView();
     }
 
+    // Update table based on updated inspection data
     updateInspectionView() {
         for (let i = 0; i < this.inspections.length; i++) {
             if (this.inspections[i].Id == this.updatedId) {
@@ -188,6 +186,7 @@ export default class ViewInspections extends LightningElement {
         }
     }
 
+    // Refresh Apex datatable
     refreshTable() {
         return refreshApex(this.wiredInspections);
     }

@@ -8,7 +8,6 @@ import {
 import FILTERSCHANGEMC from '@salesforce/messageChannel/FiltersChange__c';
 import PROPERTYSELECTEDMC from '@salesforce/messageChannel/PropertySelected__c';
 import getPagedPropertyList from '@salesforce/apex/PropertyController.getPagedPropertyList';
-// import PropertyModal from 'c/propertyModal';
 
 const PAGE_SIZE = 12;
 
@@ -32,6 +31,7 @@ export default class PropertyTileList extends LightningElement {
     @wire(MessageContext)
     messageContext;
 
+    // Get paginated list of properties from filter component
     @wire(getPagedPropertyList, {
         searchKey: '$searchKey',
         recordType: '$recordType',
@@ -55,6 +55,7 @@ export default class PropertyTileList extends LightningElement {
         }
     };
 
+    // Subscribe to message channel
     connectedCallback() {
         this.subscription = subscribe(
             this.messageContext,
@@ -65,11 +66,13 @@ export default class PropertyTileList extends LightningElement {
         );
     }
 
+    // Unsubscribe from message channel
     disconnectedCallback() {
         unsubscribe(this.subscription);
         this.subscription = null;
     }
 
+    // Update variables based on filter component
     handleFilterChange(filters) {
         this.searchKey = filters.searchKey;
         this.recordType = filters.recordType;
@@ -82,26 +85,19 @@ export default class PropertyTileList extends LightningElement {
         this.pageNumber = filters.pageNumber;
     }
 
+    // Move to previous page of tiles
     handlePreviousPage() {
         this.pageNumber = this.pageNumber - 1;
     }
 
+    // Move to next page of tiles
     handleNextPage() {
         this.pageNumber = this.pageNumber + 1;
     }
 
+    // Update current property based on message channel
     handlePropertySelected(event) {
-        // this.handleModal();
         const message = { propertyId: event.detail };
         publish(this.messageContext, PROPERTYSELECTEDMC, message);
     }
-
-    // Modal to show property summary
-    // async handleModal() {
-    //     await PropertyModal.open({
-    //         size: 'small',
-    //         description: 'description',
-    //         content: 'content',
-    //     });
-    // }
 }
