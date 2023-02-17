@@ -1,0 +1,122 @@
+<template>
+    <template if:true={showmodal}>
+    <section role="dialog" tabindex="-1" class={modalClass} aria-labelledby="modal-heading-01" aria-modal="true">
+        <div class="slds-modal__container">
+            <div class="slds-modal__header">
+                <slot name="headercontent"></slot>
+                <h1>Rate Service Provided:</h1>
+                <lightning-button-icon 
+                    class="slds-modal__close" 
+                    title="Close" 
+                    label="Close" 
+                    icon-name="utility:close"
+                    icon-class="slds-button_icon-inverse" 
+                    onclick={closemodal}>
+                    <label>Close</label>
+                </lightning-button-icon>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <template if:false={done}>
+                    <div class="slds-m-top_medium slds-m-bottom_x-large">
+                        <div class="slds-p-around_medium lgc-bg">
+                            <h2>Timeliness</h2>
+                            <div class="rate">
+                                <input type="radio" id="star5" name="Timeliness" value="5" onchange={rating} />
+                                <label for="star5" title="text">5 stars</label>
+                                <input type="radio" id="star4" name="Timeliness" value="4" onchange={rating} />
+                                <label for="star4" title="text">4 stars</label>
+                                <input type="radio" id="star3" name="Timeliness" value="3" onchange={rating} />
+                                <label for="star3" title="text">3 stars</label>
+                                <input type="radio" id="star2" name="Timeliness" value="2" onchange={rating} />
+                                <label for="star2" title="text">2 stars</label>
+                                <input type="radio" id="star1" name="Timeliness" value="1" onchange={rating} />
+                                <label for="star1" title="text">1 star</label>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="slds-m-top_medium slds-m-bottom_x-large">
+                        
+                        <div class="slds-p-around_medium lgc-bg">
+                            <h2>Professionalism</h2>
+                            <div class="rate">
+                                <input type="radio" id="star15" name="Professionalism" value="5" onchange={rating} />
+                                <label for="star15" title="text">5 stars</label>
+                                <input type="radio" id="star14" name="Professionalism" value="4" onchange={rating} />
+                                <label for="star14" title="text">4 stars</label>
+                                <input type="radio" id="star13" name="Professionalism" value="3" onchange={rating} />
+                                <label for="star13" title="text">3 stars</label>
+                                <input type="radio" id="star12" name="Professionalism" value="2" onchange={rating} />
+                                <label for="star12" title="text">2 stars</label>
+                                <input type="radio" id="star11" name="Professionalism" value="1" onchange={rating} />
+                                <label for="star11" title="text">1 star</label>
+                            </div>         
+                        </div>
+                    </div>
+                    <div class="slds-m-top_medium slds-m-bottom_x-large">
+                
+                        <div class="slds-p-around_medium lgc-bg">
+                            <h2>Quality:</h2>
+                            <div class="rate">
+                                <input type="radio" id="star25" name="Quality" value="5" onchange={rating} />
+                                <label for="star25" title="text">5 stars</label>
+                                <input type="radio" id="star24" name="Quality" value="4" onchange={rating} />
+                                <label for="star24" title="text">4 stars</label>
+                                <input type="radio" id="star23" name="Quality" value="3" onchange={rating} />
+                                <label for="star23" title="text">3 stars</label>
+                                <input type="radio" id="star22" name="Quality" value="2" onchange={rating} />
+                                <label for="star22" title="text">2 stars</label>
+                                <input type="radio" id="star21" name="Quality" value="1" onchange={rating} />
+                                <label for="star21" title="text">1 star</label>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="slds-m-top_medium slds-m-bottom_x-large">
+                        
+                        <div class="slds-p-around_medium lgc-bg">
+                            <h2>Overall:</h2>
+                            <div class="rate">
+                                <input type="radio" id="star35" name="Overall" value="5" onchange={rating} />
+                                <label for="star35" title="text">5 stars</label>
+                                <input type="radio" id="star34" name="Overall" value="4" onchange={rating} />
+                                <label for="star34" title="text">4 stars</label>
+                                <input type="radio" id="star33" name="Overall" value="3" onchange={rating} />
+                                <label for="star33" title="text">3 stars</label>
+                                <input type="radio" id="star32" name="Overall" value="2" onchange={rating} />
+                                <label for="star32" title="text">2 stars</label>
+                                <input type="radio" id="star31" name="Overall" value="1" onchange={rating} />
+                                <label for="star31" title="text">1 star</label>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template if:true={done}>
+                    <div>Thank you for your feedback!</div>
+                </template>
+            </div>
+            <div class="slds-modal__footer">
+                <slot name="footercontent"></slot>
+                <template if:false={done}>
+                    <lightning-button
+                        variant="brand"
+                        label="Submit"
+                        onclick={submit}>
+                    </lightning-button>
+                    <lightning-button
+                        label="Cancel"
+                        onclick={closemodal}>
+                    </lightning-button>
+                </template>
+                <template if:true={done}>
+                    <lightning-button
+                        label="Close"
+                        onclick={closemodal}>
+                    </lightning-button>
+                </template>
+            </div>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+</template>

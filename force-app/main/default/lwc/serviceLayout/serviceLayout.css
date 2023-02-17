@@ -1,0 +1,15 @@
+.my-icon {
+    --sds-c-icon-color-foreground-default: #ffffff;
+    --sds-c-icon-color-background: #0176D3;
+}
+
+.service-title {
+    margin-left: 10px;
+    font-size: 22px;
+}
+
+.service-paragraph {
+    margin: 10px;
+    padding: 10px;
+    font-size: 18px;
+}

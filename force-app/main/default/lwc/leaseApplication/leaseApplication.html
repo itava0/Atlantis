@@ -1,0 +1,160 @@
+<template>
+    <div class="contain">
+        <div class="wrapper">
+            <template if:true={show}>
+                <div class="header">
+                    <h3>Tenant Applicantion </h3>
+                </div>
+                <div class="form">
+                    <form action="">
+                        <p>
+                            <label
+                                for="single-form-element-id-01">
+                                First Name
+                            </label>
+                            <lightning-input type="text"
+                                id="single-form-element-id-01"
+                                data-id="reset"
+                                onchange={firstNameHandler}>
+                            </lightning-input>
+                        </p>
+                        <p>
+                            <label
+                                for="single-form-element-id-02">
+                                Last Name
+                            </label>
+                            <lightning-input type="text"
+                                id="single-form-element-id-02"
+                                data-id="reset"
+                                onchange={lastNameHandler}>
+                            </lightning-input>
+                        </p>
+                        <p>
+                            <label
+                                for="single-form-element-id-03">
+                                Phone number
+                            </label>
+                            <lightning-input type="tel"
+                                id="ingle-form-element-id-03"
+                                data-id="reset"
+                                onchange={phoneHandler}>
+                            </lightning-input>
+                        </p>
+                        <p>
+                            <label
+                                for="single-form-element-id-04">
+                                Social Security
+                            </label>
+                            <lightning-input type="number"
+                                id="single-form-element-id-04"
+                                data-id="reset"
+                                onchange={socialSecurityHandler}>
+                            </lightning-input>
+                        </p>
+                        <p>
+                            <label
+                                for="single-form-element-id-05">
+                                Date of Birth
+                            </label>
+                            <lightning-input type="date"
+                                id="single-form-element-id-05"
+                                data-id="reset"
+                                onchange={dateBirthHandler}>
+                            </lightning-input>
+                        </p>
+                        <p>
+                            <label
+                                for="single-form-element-id-06">
+                                Email Address
+                            </label>
+                            <lightning-input type="email"
+                                id="single-form-element-id-06"
+                                data-id="reset"
+                                onchange={emailHandler}>
+                            </lightning-input>
+                        </p>
+                        <p>
+                            <label
+                                for="single-form-element-id-07">
+                                Driver License #
+                            </label>
+                            <lightning-input type="test"
+                                id="single-form-element-id-07"
+                                data-id="reset"
+                                onchange={driverLicenseHandler}>
+                            </lightning-input>
+                        </p>
+                        <p>
+                            <label
+                                for="single-form-element-id-08">
+                                Monthly Income
+                            </label>
+                            <lightning-input type="number"
+                                id="single-form-element-id-08"
+                                data-id="reset"
+                                onchange={monthlyIncomeHandler}>
+                            </lightning-input>
+                        </p>
+                        <p>
+                            <label
+                                for="single-form-element-id-09">
+                                Lease Term(Months)
+                            </label>
+                            <lightning-input type="number"
+                                id="single-form-element-id-09"
+                                data-id="reset"
+                                onchange={leaseTermHandler}>
+                            </lightning-input>
+                        </p>
+                        <p>
+                            <label
+                                for="single-form-element-id-10">
+                                Move In Date
+                            </label>
+                            <lightning-input type="date"
+                                id="single-form-element-id-10"
+                                data-id="reset"
+                                onchange={moveInHandler}>
+                            </lightning-input>
+                        </p>
+                        <p>
+                            <label
+                                for="single-form-element-id-10">
+                                Are you a veteran?
+                            </label>
+                            <lightning-combobox
+                                name="status"
+                                value=""
+                                placeholder="Select Status"
+                                options={options}
+                                onchange={handleChange}
+                                required
+                            ></lightning-combobox>
+                        </p>
+                        <p class="full-width">
+                            <lightning-button
+                                variant="brand"
+                                label="Submit"
+                                title="Submit Application"
+                                icon-position="right"
+                                onclick={submitApplication}>
+                                Submit Application
+                            </lightning-button>
+                        </p>
+                    </form>
+                </div>
+            </template>
+        </div>
+        <template if:false={show}>
+            <div class="sucess">
+                <img style="max-height: 400px"
+                    alt="Sucessful" src={logo} />
+                <h1>Thank you!</h1>
+                <p class="application">Your application
+                    was successfully submitted.</p>
+                <p>We'll contact you when a decision is
+                    made</p>
+            </div>
+        </template>
+    </div>
+</template>

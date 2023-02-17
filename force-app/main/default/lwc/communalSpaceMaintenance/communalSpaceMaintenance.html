@@ -1,0 +1,52 @@
+<template>
+    <lightning-card title="Communal Space Maintenance" if:true={communities}>
+        <div class="slds-grid">
+            <div class="slds-col slds-size_1-of-3 slds-var-m-around_small" style="flex-shrink: 1;">
+                <h3>Communities</h3>
+                <div class="slds-scrollable_x" style="max-height:40rem;">
+                    <template for:each={communities} for:item="com">
+                        <div class="slds-var-m-around_x-small" key={com} data-id={com.Id}>
+                            <div class="slds-box com-box" onclick={handleCommunitySelect} data-id={com.Id}>
+                                {com.Name}<span class="arrow"></span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-3 slds-var-m-around_small" style="flex-shrink: 1;">
+                <h3>Communal Spaces</h3>
+                <div class="slds-scrollable_x" style="max-height:40rem;">
+                    <template for:each={communalSpaces} for:item="cms">
+                        <div class="slds-var-m-around_x-small" key={cms} data-id={cms.Id}>
+                            <div class="slds-box com-box" onclick={handleSpaceSelect} data-id={cms.Id}>
+                                
+                                <span>
+                                    <h2 data-id={cms.Id}>{cms.Name}</h2>
+                                    <p data-id={cms.Id}>{cms.Space_Type__c}</p>
+                                </span>
+                                <span class="arrow"></span>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-3 slds-var-m-around_small" style="flex-shrink: 1;">
+                <h3>Scheduled Maintenance</h3>
+                <div class="slds-scrollable_x" style="max-height:40rem;">
+                    <template for:each={communalSpaceMaintenance} for:item="maint">
+                        <div class="slds-var-m-around_x-small" key={maint}>
+                            <div class="slds-box" onclick={handleMaintenanceSelect} data-id={maint.Id}>
+                                <h2>{maint.Id}</h2>
+                                <p>Maintenance Start: <lightning-formatted-date-time value={maint.Maintenance_Start__c} year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                    minute="2-digit" time-zone-name="short"></lightning-formatted-date-time></p>
+                                <p>Maintenance End: <lightning-formatted-date-time value={maint.Maintenance_End__c} year="numeric" month="numeric" day="numeric" hour="2-digit"
+                                    minute="2-digit" time-zone-name="short"></lightning-formatted-date-time></p>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+        <lightning-button class="slds-var-m-around_small" if:true={communalSpaceId} label="Schedule Maintenance" variant="brand" onclick={handleScheduleMaintenance}></lightning-button>
+    </lightning-card>
+</template>

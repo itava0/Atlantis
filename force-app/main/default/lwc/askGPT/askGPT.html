@@ -1,0 +1,30 @@
+<template>
+    <h1>Hi there! I'm a chatbot. How can I help you?</h1>
+    <lightning-textarea name="input7" 
+    required value="" 
+    placeholder="compose your question" 
+    label="Required textarea field with a maximum length of 140 characters" 
+    maxlength="140" message-when-too-long="A maximum of 140 characters are allowed in a question." 
+    message-when-value-missing="An empty question cannot be posted." 
+    >
+    </lightning-textarea>
+    <lightning-textarea 
+    name="input6" 
+    class="response"
+    required value="" 
+    placeholder="Response"
+    >
+    </lightning-textarea>
+    <lightning-button
+        variant="brand"
+        label="Ask"
+        title="Post question"
+        onclick={handleResponse}>
+    </lightning-button>
+    <lightning-button
+        variant="destructive"
+        label="Reset"
+        title="Post question"
+        onclick={handleReset}>
+    </lightning-button>
+</template>

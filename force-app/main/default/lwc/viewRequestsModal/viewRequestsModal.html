@@ -1,0 +1,83 @@
+<template>
+    <template if:true={showmodal}>
+    <section role="dialog" tabindex="-1" class={modalClass} aria-labelledby="modal-heading-01" aria-modal="true">
+        <div class="slds-modal__container">
+            <div class="slds-modal__header">
+                <slot name="headercontent"></slot>
+                <h1>Case #{caseNumber}:</h1>
+                <lightning-button-icon 
+                    class="slds-modal__close" 
+                    title="Close" 
+                    label="Close" 
+                    icon-name="utility:close"
+                    icon-class="slds-button_icon-inverse" 
+                    onclick={closemodal}>
+                    <label>Close</label>
+                </lightning-button-icon>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <template if:true={caseId}>
+                    <template if:true={caseItem}>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input
+                                    type="text"
+                                    label="Subject:"
+                                    value={caseItem.Subject}
+                                    readonly>
+                                </lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input
+                                    type="text"
+                                    label="Case Number:"
+                                    value={caseItem.CaseNumber}
+                                    readonly>
+                                </lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input
+                                    type="text"
+                                    label="Status:"
+                                    value={caseItem.Status}
+                                    readonly>
+                                </lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input
+                                    type="text"
+                                    label="Priority:"
+                                    value={caseItem.Priority}
+                                    readonly>
+                                </lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1">
+                                <lightning-textarea
+                                    type="text"
+                                    label="Description:"
+                                    value={caseItem.Description}
+                                    class="no-outline"
+                                    readonly>
+                                </lightning-textarea>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+            </div>
+            <div class="slds-modal__footer">
+                <slot name="footercontent"></slot>
+                <lightning-button
+                    label="Close"
+                    onclick={closemodal}>
+                </lightning-button>
+                <lightning-button
+                    variant="brand"
+                    label="View more"
+                    onclick={viewMore}>
+                </lightning-button>
+            </div>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+</template>

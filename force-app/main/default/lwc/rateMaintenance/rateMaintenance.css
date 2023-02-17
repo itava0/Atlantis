@@ -1,0 +1,7 @@
+lightning-textarea {
+    border: none;
+  }
+  
+  .no-outline:focus {
+    outline: none;
+  }

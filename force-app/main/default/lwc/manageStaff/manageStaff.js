@@ -109,10 +109,13 @@ export default class ManageStaff extends NavigationMixin(LightningElement) {
         });
     }
 
-    // // Switch staff member's assigned role
-    // switchRole() {
-    //     console.log("SWITCH ROLE");
-    // }
+    // Switch staff member's assigned role
+    switchRole(event) {
+        this.staffId = event.target.value;
+        this.staffRole = event.target.dataset.role;
+        this.accountName = event.target.dataset.accountname; 
+        console.log("ROLE", this.staffRole, this.accountName, this.staffId);
+    }
 
     // Reassign staff member to different property
     reassign(event) {

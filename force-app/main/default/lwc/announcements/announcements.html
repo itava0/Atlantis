@@ -1,0 +1,15 @@
+<template>
+  <div if:true={announcements.data} class="slds-m-around_small">
+    <template for:each={announcements.data} for:item="announcement">
+      <div key={announcement.Id}>
+        <article class="slds-card slds-var-m-around_small">
+          <lightning-formatted-rich-text
+            class="slds-card__body slds-card__body_inner"
+            value={announcement.Body__c}
+          >
+          </lightning-formatted-rich-text>
+        </article>
+      </div>
+    </template>
+  </div>
+</template>

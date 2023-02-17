@@ -1,0 +1,124 @@
+<template>
+    <lightning-card>
+        <h1 class="slds-align_absolute-center slds-text-heading_medium">VIEW PAST REQUESTS</h1>
+        <div class="slds-var-m-around_medium slds-clearfix">
+            <lightning-button-icon
+                icon-name="utility:arrow_left"
+                title="Left"
+                onclick={left}
+                disabled={leftDisabled}
+                class="slds-float_left">
+                <label>Left</label>
+            </lightning-button-icon>
+            <lightning-button-icon
+                icon-name="utility:arrow_right"
+                title="Right"
+                onclick={right}
+                disabled={rightDisabled}
+                class="slds-float_right">
+                <label>Right</label>
+            </lightning-button-icon>
+        </div>
+    </lightning-card>
+    <template if:true={requests}>    
+        <template for:each={requests} for:item="request">
+            <lightning-card key={request.id} title={request.CaseNumber} class="slds-var-m-around_small">
+                <div class="slds-var-p-horizontal_large slds-p-top_none">
+                    <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_1-of-2 ">
+                        <!-- <div>Location: {request.location}</div> -->
+                        <lightning-input
+                            type="text"
+                            label="Location:"
+                            value={request.location}
+                            readonly>
+                        </lightning-input>
+                        <!-- <div>Subject: {request.Subject}</div> -->
+                        <lightning-input
+                            type="text"
+                            label="Subject:"
+                            value={request.Subject}
+                            readonly>
+                        </lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <!-- <div>Created: {request.CreatedDate}</div> -->
+                        <lightning-input
+                            type="text"
+                            label="Created:"
+                            value={request.CreatedDate}
+                            class="slds-float_right"
+                            readonly>
+                        </lightning-input>
+                        <!-- <div>Completed: {request.ClosedDate}</div> -->
+                        <lightning-input
+                            type="text"
+                            label="Closed:"
+                            value={request.ClosedDate}
+                            class="slds-float_right"
+                            readonly>
+                        </lightning-input>
+
+                    </div>
+                    </div>
+                    <!-- <div>Description:</div>
+                    <div>{request.Description}</div> -->
+                    <lightning-textarea
+                        type="text"
+                        label="Description:"
+                        value={request.Description}
+                        class="no-outline"
+                        readonly>
+                    </lightning-textarea>
+                    <template if:true={request.Closed}>
+                        <div class="slds-align_absolute-center slds-var-p-around_small">
+                            <lightning-button
+                                variant="brand"
+                                data-key={request.id} 
+                                label="RATE"
+                                title="RATE"
+                                onclick={rate}>
+                            </lightning-button>
+                        </div>
+                    </template>
+                </div>
+            </lightning-card>
+        </template>
+        <c-rate-maintenance-modal showmodal={openModal} modal-class="slds-modal slds-fade-in-open slds-modal_medium" onchildmethod={handleCloseModal}>
+            <span slot="headercontent">
+                <!-- <lightning-button-icon 
+                    class="slds-modal__close" 
+                    title="Close" 
+                    label="Close" 
+                    icon-name="utility:close"
+                    icon-class="slds-button_icon-inverse" 
+                    onclick={handleCloseModal}>
+                </lightning-button-icon> -->
+            </span>
+            <span slot="bodycontent"></span>
+            <span slot="footercontent">
+                <!-- <button class="slds-button slds-button_neutral" onclick={handleCloseModal} title="Cancel">Cancel</button> -->
+            </span>
+        </c-rate-maintenance-modal>
+    </template>
+    <lightning-card>
+        <div class="slds-var-m-around_medium slds-clearfix">
+            <lightning-button-icon
+                icon-name="utility:arrow_left"
+                title="Left"
+                onclick={left}
+                disabled={leftDisabled}
+                class="slds-float_left">
+                <label>Left</label>
+            </lightning-button-icon>
+            <lightning-button-icon
+                icon-name="utility:arrow_right"
+                title="Right"
+                onclick={right}
+                disabled={rightDisabled}
+                class="slds-float_right">
+                <label>Right</label>
+            </lightning-button-icon>
+        </div>
+    </lightning-card>
+</template>

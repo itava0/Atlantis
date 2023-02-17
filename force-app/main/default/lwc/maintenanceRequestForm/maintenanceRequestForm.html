@@ -1,0 +1,98 @@
+<template>
+    <template if:true={contactId}>
+        <lightning-card>
+            <div class="slds-var-m-around_medium">
+                <template if:true={showForm}>
+                    <h1 class="slds-align_absolute-center slds-text-heading_medium">SUBMIT A MAINTENANCE REQUEST</h1><br>
+                    <lightning-input
+                        type="text"
+                        label="Name:"
+                        value={contactName}
+                        readonly>
+                    </lightning-input>
+                    <lightning-input
+                        type="text"
+                        label="Email:"
+                        value={contactEmail}
+                        readonly>
+                    </lightning-input>
+                    <lightning-input
+                        type="text"
+                        label="Date:"
+                        value={todaysDate}
+                        readonly>
+                    </lightning-input>
+                    <template if:true={accountId}>
+                        <template if:true={hasProperties}>
+                            <div class="slds-grid slds-wrap">
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-combobox
+                                        name="Property"
+                                        label="Property:"
+                                        value={location}
+                                        data-id="reset"
+                                        placeholder="Select Property..."
+                                        options={pickList}
+                                        onchange={pickListChange}
+                                        required>
+                                    </lightning-combobox>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-combobox
+                                        name="Type"
+                                        label="Type:"
+                                        value={location}
+                                        data-id="reset"
+                                        placeholder="Select Request Type..."
+                                        options={typePickList}
+                                        onchange={typePickListChange}
+                                        required>
+                                    </lightning-combobox>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <lightning-input
+                        type="text"
+                        label="Subject:"
+                        onchange={subjectHandler} 
+                        data-id="reset" 
+                        placeholder="Enter Subject..."
+                        required>
+                    </lightning-input>
+                    <!-- <div>Description:</div> -->
+                    <lightning-textarea
+                        type="text"
+                        label="Description:"
+                        rows=3
+                        onchange={descriptionHandler} 
+                        data-id="reset" 
+                        placeholder="Enter Description..."
+                        required>
+                    </lightning-textarea>
+                    <div class="slds-align_absolute-center slds-var-m-around_medium">
+                        <lightning-button
+                            style="border-radius: 0;"
+                            variant="brand"
+                            label="SUBMIT"
+                            title="SUBMIT"
+                            onclick={submitForm}>
+                        </lightning-button>
+                    </div>
+                </template>
+                <template if:false={showForm}>
+                    <h1 class="slds-align_absolute-center">Thank you! Your maintenance request has been submitted. We will respond back to you at the earliest possible convenience.</h1>
+                    <div class="slds-align_absolute-center slds-var-m-around_medium">
+                        <lightning-button
+                            variant="brand"
+                            label="Fill out another form?"
+                            title="Fill out another form?"
+                            onclick={newForm}>
+                        </lightning-button>
+                    </div>
+                </template>
+            </div>
+        </lightning-card>
+    </template>
+            
+</template>

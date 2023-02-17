@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ApexComponent xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>56.0</apiVersion>
+    <description>Default Lightning Platform site footer component</description>
+    <label>SiteFooter</label>
+    <packageVersions>
+        <majorNumber>1</majorNumber>
+        <minorNumber>22</minorNumber>
+        <namespace>cloudx_cms</namespace>
+    </packageVersions>
+    <packageVersions>
+        <majorNumber>2</majorNumber>
+        <minorNumber>19</minorNumber>
+        <namespace>wk_slider_comp</namespace>
+    </packageVersions>
+</ApexComponent>

@@ -1,0 +1,104 @@
+<template>
+    <lightning-card title="Search Maintenance Requests">
+        <div class="slds-var-m-around_medium">
+            <lightning-input
+                type="text"
+                label="Search Subject"
+                onchange={handleSubjectSearch}
+                data-id="nameInput">
+            </lightning-input>
+            <template if:true={properties}>
+                <div class="slds-grid slds-wrap">
+                    <div class="slds-col slds-size_1-of-4">
+                        <lightning-combobox
+                            name="Property"
+                            label="Property"
+                            value={inputProperty}
+                            placeholder="Select Property"
+                            options={propertyOptions}
+                            onchange={handlePropertyCombobox}
+                            data-id="LevelInput">
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-col slds-size_1-of-4">
+                        <lightning-combobox
+                            name="Type"
+                            label="Type"
+                            value={inputType}
+                            placeholder="Select Type"
+                            options={typeOptions}
+                            onchange={handleTypeCombobox}
+                            data-id="LevelInput">
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-col slds-size_1-of-4">
+                        <lightning-combobox
+                            name="Closed/Open"
+                            label="Closed/Open"
+                            value={inputClosed}
+                            placeholder="Closed/Open"
+                            options={closedOptions}
+                            onchange={handleClosedCombobox}
+                            data-id="LevelInput">
+                        </lightning-combobox>
+                    </div>
+                    <div class="slds-col slds-size_1-of-8">
+                        <lightning-input
+                            type="number"
+                            label="Min Rating"
+                            onchange={handleMin}
+                            data-id="nameInput">
+                        </lightning-input>
+                    </div>
+                    <div class="slds-col slds-size_1-of-8">
+                        <lightning-input
+                            type="number"
+                            label="Max Rating"
+                            onchange={handleMax}
+                            data-id="nameInput">
+                        </lightning-input>
+                    </div>
+                </div>
+            </template>
+            <div class="slds-var-m-around_medium slds-clearfix">
+                <lightning-button
+                    label="Search"
+                    variant="brand"
+                    onclick={handleSearch}
+                    class="slds-float_left">
+                </lightning-button>
+                <lightning-button
+                    label="Clear Search"
+                    onclick={handleShowAll}
+                    class="slds-float_left">
+                </lightning-button>
+                <lightning-button
+                    icon-name="utility:delete"
+                    variant="destructive"
+                    label="Delete Selection"
+                    onclick={deleteSelection}
+                    class="slds-float_right"
+                    disabled={noSelection}>
+                </lightning-button>
+            </div>
+        </div>
+    </lightning-card>
+    <lightning-card title="Maintenance Request list">
+        <div class="slds-var-m-around_medium">
+            <div style="height: 300px;">
+                <lightning-datatable
+                        key-field="id"
+                        data={data}
+                        columns={columns}
+                        sorted-by={sortBy}
+                        sorted-direction={sortDirection}
+                        onsort={doSorting}
+                        onrowselection={handleRowSelection}
+                        onrowaction={showModal}>
+                </lightning-datatable>
+            </div>
+        </div>
+    </lightning-card>
+    <c-view-requests-modal showmodal={openModal} modal-class="slds-modal slds-fade-in-open slds-modal_medium" onchildmethod={handleCloseModal}></c-view-requests-modal>
+
+</template>

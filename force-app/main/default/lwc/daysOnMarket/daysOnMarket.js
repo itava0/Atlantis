@@ -19,7 +19,7 @@ export default class DaysOnMarket extends LightningElement {
     error;
     daysOnMarket;
     dateListed;
-    propertyId;
+    @api propertyId;
     status;
     percent;
     subscription;

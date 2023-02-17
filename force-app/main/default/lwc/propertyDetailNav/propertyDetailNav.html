@@ -1,22 +1,16 @@
 <template>
     <lightning-tabset>
-        <lightning-tab label="Nearby Locations">
+        <lightning-tab label="Local Information">
             <c-modal-map property-id={propertyId}></c-modal-map>
-        </lightning-tab>
-        <lightning-tab label="Charging Stations">
-            <c-property-map property-id={propertyId}></c-property-map>
-        </lightning-tab>
-        <lightning-tab label="Ratings">
-            <c-view-ratings property-id={propertyId}></c-view-ratings>
-        </lightning-tab>
-        <lightning-tab label="Lease History">
-            <c-lease-history property-id={propertyId}></c-lease-history>
-        </lightning-tab>
-        <lightning-tab label="Neighborhood Details">
             <c-walk-score property-id={propertyId}></c-walk-score>
+            <c-property-map property-id={propertyId}></c-property-map>
+            <c-communal-space-manager record-id={propertyId}></c-communal-space-manager>
         </lightning-tab>
-        <lightning-tab label="Days on Market">
+        <lightning-tab label="General Information">
             <c-days-on-market property-id={propertyId}></c-days-on-market>
+            <c-view-ratings property-id={propertyId}></c-view-ratings>
+            <c-view-inspections property-id={propertyId}></c-view-inspections>
+            <c-lease-history property-id={propertyId}></c-lease-history>
         </lightning-tab>
     </lightning-tabset>
 </template>

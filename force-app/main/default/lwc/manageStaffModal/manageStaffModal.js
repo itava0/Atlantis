@@ -1,10 +1,13 @@
 import { api, wire, track } from 'lwc';
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import { refreshApex } from '@salesforce/apex';
+import { getObjectInfo, getPicklistValues } from 'lightning/uiObjectInfoApi';
 import getAvailableStaffProperties from '@salesforce/apex/getProperties.getAvailableStaffProperties';
 import createStaff from '@salesforce/apex/ManageStaff.createStaff';
 import updateStaff from '@salesforce/apex/ManageStaff.updateStaff';
 import LightningModal from 'lightning/modal';
+import STAFF_OBJECT from '@salesforce/schema/Staff__c';
+import ROLE_FIELD from '@salesforce/schema/Staff__c.Role__c';
 import { publish, MessageContext } from "lightning/messageService";
 import STAFFUPDATEDMC from "@salesforce/messageChannel/StaffUpdated__c";
 
@@ -30,8 +33,10 @@ export default class ManageStaffModal extends LightningModal {
     manageStaffHeader;
     curStaff;
     curProperty;
+    curRole;
     propertyPicklistLoaded = false;
     msgStaff;
+    submitReady = false;
 
     @wire(MessageContext)
     messageContext;
@@ -41,6 +46,7 @@ export default class ManageStaffModal extends LightningModal {
     // are unique to each will have initial comments starting with "ADD:" or "MANAGE:".
 
     connectedCallback() {
+        // Determine Headers for assigning or reassigning staff taff
         if (this.hasStaff) {
             this.manageStaffHeader = "Reassign Staff: " + this.accountName;
         } else {
@@ -48,14 +54,40 @@ export default class ManageStaffModal extends LightningModal {
         }
     }
 
+    // ADD: Determine picklist options for roles
+    @wire(getObjectInfo, { objectApiName: STAFF_OBJECT }) staffObj;
+    @wire(getPicklistValues, { recordTypeId: '$staffObj.data.defaultRecordTypeId', fieldApiName: ROLE_FIELD}) rolePicklist;
+
     // ADD: Update selected staff
     handleStaffPicklist(event) {
         this.curStaff = event.target.value;
+        // Enable button only if both staff and role selected
+        if (this.curStaff && this.curRole) {
+            this.submitReady = true;
+        }
+    }
+
+    // MANAGE: Update selected property
+    handlePropertyPicklist(event) {
+        this.curProperty = event.target.value;
+        // Enable button only if both property and role selected
+        if (this.curProperty && this.curRole) {
+            this.submitReady = true;
+        }
+    }
+
+    // Update selected role
+    handleRolePicklist(event) {
+        this.curRole = event.target.value;
+        // Enable button only if both role and either property or staff selected (depending on assignment or reassignment)
+        if ((!this.hasStaff && this.curStaff && this.curRole) || (this.hasStaff && this.curProperty && this.curRole)) {
+            this.submitReady = true;
+        }
     }
 
     // ADD: Assign new staff to a property
     assignNewStaff() {
-        createStaff({ propId: this.propertyId, accId: this.curStaff })
+        createStaff({ propId: this.propertyId, accId: this.curStaff, role: this.curRole })
         .then((result) => {
             const evt = new ShowToastEvent({
                 title: "Staff assigned",
@@ -76,14 +108,9 @@ export default class ManageStaffModal extends LightningModal {
         });
     }
 
-    // MANAGE: Update selected property
-    handlePropertyPicklist(event) {
-        this.curProperty = event.target.value;
-    }
-
     // MANAGE: Reassign staff member to new property
     reassignStaff() {
-        updateStaff({ staffId: this.staffId, propId: this.curProperty })
+        updateStaff({ staffId: this.staffId, propId: this.curProperty, role: this.curRole })
         .then((result) => {
             const evt = new ShowToastEvent({
                 title: "Staff reassigned",

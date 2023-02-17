@@ -1,0 +1,17 @@
+<template>
+    <lightning-modal-header label="Schedule Maintenance"></lightning-modal-header>
+    <lightning-modal-body>
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-input required="true" type="datetime" label="Start Date/Time" value={startDateTime} onchange={handleStartDateTimeChange}></lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-input required="true" type="datetime" label="End Date/Time" value={endDateTime} onchange={handleEndDateTimeChange}></lightning-input>
+            </div>
+        </div>
+        <lightning-input-rich-text class="slds-var-m-top_small" label="Announcement" value={announcementDetails} onchange={handleAnnouncementDetailsChange}></lightning-input-rich-text>
+    </lightning-modal-body>
+    <lightning-modal-footer>
+        <lightning-button label="Schedule Maintenance" onclick={handleOkay}></lightning-button>
+    </lightning-modal-footer>
+</template>

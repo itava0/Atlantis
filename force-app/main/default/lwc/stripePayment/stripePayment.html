@@ -1,0 +1,344 @@
+<template>
+    <lightning-card title="Make a Payment">
+        <div class="slds-grid slds-wrap slds-var-m-around_medium">
+            <div class="slds-col slds-size_1-of-2 slds-var-p-around_medium">
+                <template if:true={hasCards}>
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_1-of-1">
+                            <lightning-input
+                                type="text"
+                                label="Card Number:"
+                                value={curCard.last4}
+                                readonly>
+                            </lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-4">
+                            <lightning-input
+                                type="text"
+                                label="Expiration Month:"
+                                value={curCard.exp_month}
+                                readonly>
+                            </lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-4">
+                            <lightning-input
+                                type="text"
+                                label="Expiration Year:"
+                                value={curCard.exp_year}
+                                readonly>
+                            </lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-button
+                                label="Change"
+                                onclick={changePayment}
+                                class="slds-float_right">
+                            </lightning-button>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-var-m-around_medium slds-align_absolute-center">
+                        <lightning-button
+                            variant="brand"
+                            label="Pay"
+                            title="Pay"
+                            onclick={pay}
+                            disabled={cannotPay}
+                            class="slds-var-p-around_medium">
+                        </lightning-button>
+                        <template if:false={autoPaymentEnabled}>
+                            <lightning-button
+                                label="Enable automatic payments"
+                                title="Enable automatic payments"
+                                onclick={autoPaymentModal}
+                                class="slds-var-p-around_medium">
+                            </lightning-button>
+                        </template>
+                        <template if:true={autoPaymentEnabled}>
+                            <lightning-button
+                                variant="destructive-text"
+                                label="Disable automatic payments"
+                                title="Disable automatic payments"
+                                onclick={autoPaymentModal}
+                                class="slds-var-p-around_medium">
+                            </lightning-button>
+                        </template>
+                    </div>
+                </template>
+                <template if:false={hasCards}>
+                    <lightning-input 
+                        type="text" 
+                        pattern="[0-9]{16}" 
+                        label="Card Number:"
+                        onchange={cardNumHandler} 
+                        data-id="reset" 
+                        placeholder="Enter Card Number"
+                        message-when-pattern-mismatch="Card number must be a numeric value and 16 characters long"
+                        maxlength="16"
+                        minlength="16"
+                        required
+                    ></lightning-input>
+                    <lightning-input
+                        type="number"
+                        label="Expiration Month:"
+                        onchange={expMonthHandler} 
+                        data-id="reset" 
+                        placeholder="Enter Expiration Month"
+                        max="12"
+                        min="1"
+                        maxlength="2"
+                        required
+                    ></lightning-input>
+                    <lightning-input
+                        type="text"
+                        pattern="[2-9]{1}[0-9]{1}[2-9]{1}[3-9]{1}"
+                        message-when-pattern-mismatch="Expiration year must be a numeric value and 2023 or later"
+                        label="Expiration Year:"
+                        onchange={expYearHandler} 
+                        data-id="reset" 
+                        placeholder="Enter Expiration Year"
+                        maxlength="4"
+                        minlength="4"
+                        class="inputYear"
+                        required
+                    ></lightning-input>
+                    <lightning-input
+                        type="number"
+                        label="CVC:"
+                        onchange={cvcHandler} 
+                        data-id="reset" 
+                        placeholder="Enter CVC"
+                        maxlength="3"
+                        required
+                    ></lightning-input>
+                    <div class="slds-var-m-around_medium">
+                        <lightning-button
+                            variant="brand"
+                            label="Add Card"
+                            title="Add Card"
+                            onclick={addFirstCard}
+                            class="slds-align_absolute-center">
+                        </lightning-button>
+                    </div>
+                </template>
+            </div>
+            <div class="slds-col slds-size_1-of-2 slds-var-p-around_medium slds-border_left slds-border_right">
+                <div><strong>Balance Due: $<lightning-formatted-number value={balanceDue} maximum-fraction-digits="2" minimum-fraction-digits="2"></lightning-formatted-number></strong></div>
+                <div class="slds-text-align_center slds-var-m-around_medium">{curMonth} Charges:</div>
+                <template iterator:it={leasePricings}>
+                    <template if:false={it.last}>
+                        <div key={it.value.key}><span>{it.value.key}</span><span class="slds-float_right">$<lightning-formatted-number value={it.value.value} maximum-fraction-digits="2" minimum-fraction-digits="2"></lightning-formatted-number></span></div>
+                    </template>
+                    <template if:true={it.last}>
+                        <div key={it.value.key} class="slds-border_top"><span>{it.value.key}</span><span class="slds-float_right">$<lightning-formatted-number value={it.value.value} maximum-fraction-digits="2" minimum-fraction-digits="2"></lightning-formatted-number></span></div>
+                    </template>
+                </template>
+            </div>
+        </div>
+        <template if:true={loading}>
+            <lightning-spinner alternative-text="Loading...">
+            </lightning-spinner>
+        </template>
+    </lightning-card>
+    <c-stripe-payment-change-card-modal showmodal={showChangeCardModal}></c-stripe-payment-change-card-modal>
+
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="modalSection slds-modal">
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                    <lightning-icon variant="inverse" onclick={closeModal} alternative-text="close" icon-name="utility:close" size="small"></lightning-icon>
+                </button>
+                <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Select a card:</h2>
+            </header>
+            <div class="slds-modal__content slds-var-p-around_medium" id="modal-content-id-1">
+                <template if:true={cards}>
+                    <template if:false={showAddCard}>
+                        <ul class="slds-var-m-around_medium slds-has-dividers_around-space">
+                            <template for:each={cards} for:item="card">
+                                <li key={card.id}  class="slds-item">
+                                    <div class="slds-grid slds-wrap">
+                                        <div class="slds-col slds-size_1-of-2">
+                                            <lightning-input
+                                                type="text"
+                                                label="Card Number:"
+                                                value={card.last4}
+                                                readonly>
+                                            </lightning-input>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-2">
+                                            <lightning-button-icon
+                                                icon-name="utility:delete"
+                                                variant="destructive"
+                                                data-key={card.id} 
+                                                title="Delete"
+                                                onclick={deleteCardItem}
+                                                class="slds-float_right">
+                                                <label>Delete</label>
+                                            </lightning-button-icon>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-4">
+                                            <lightning-input
+                                                type="text"
+                                                label="Expiration Month:"
+                                                value={card.exp_month}
+                                                readonly>
+                                            </lightning-input>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-4">
+                                            <lightning-input
+                                                type="text"
+                                                label="Expiration Year:"
+                                                value={card.exp_year}
+                                                readonly>
+                                            </lightning-input>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-2">
+                                            <lightning-button
+                                                label="Set default"
+                                                variant="neutral"
+                                                data-key={card.id} 
+                                                data-id="defaultButton"
+                                                onclick={makeDefaultCard}
+                                                class="slds-float_right slds-var-p-around_xxx-small">
+                                            </lightning-button>
+                                            <lightning-button
+                                                label="Select"
+                                                variant="neutral"
+                                                data-key={card.id} 
+                                                data-id="selectButton"
+                                                onclick={useSelectedCard}
+                                                class="slds-float_right slds-var-p-around_xxx-small">
+                                            </lightning-button>
+                                        </div>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+                    <template if:true={showAddCard}>
+                        <lightning-input 
+                            type="text" 
+                            pattern="[0-9]{16}" 
+                            label="Card Number:"
+                            onchange={cardNumHandler} 
+                            data-id="reset" 
+                            placeholder="Enter Card Number"
+                            message-when-pattern-mismatch="Card number must be a numeric value and 16 characters long"
+                            maxlength="16"
+                            minlength="16"
+                            required
+                        ></lightning-input>
+                        <lightning-input
+                            type="number"
+                            label="Expiration Month:"
+                            onchange={expMonthHandler} 
+                            data-id="reset" 
+                            placeholder="Enter Expiration Month"
+                            max="12"
+                            min="1"
+                            maxlength="2"
+                            required
+                        ></lightning-input>
+                        <lightning-input
+                            type="text"
+                            pattern="[2-9]{1}[0-9]{1}[2-9]{1}[0-9]{1}"
+                            message-when-pattern-mismatch="Expiration year must be a numeric value and 2023 or later"
+                            label="Expiration Year:"
+                            onchange={expYearHandler} 
+                            data-id="reset" 
+                            placeholder="Enter Expiration Year"
+                            maxlength="4"
+                            minlength="4"
+                            class="inputYear2"
+                            required
+                        ></lightning-input>
+                        <lightning-input
+                            type="number"
+                            label="CVC:"
+                            onchange={cvcHandler} 
+                            data-id="reset" 
+                            placeholder="Enter CVC"
+                            maxlength="3"
+                            required
+                        ></lightning-input>
+                    </template>
+                </template>
+            </div>
+            <footer class="slds-modal__footer">
+                <template if:false={showAddCard}>
+                    <lightning-button label="Cancel" onclick={closeModal} class="slds-var-p-around_xxx-small"></lightning-button>
+                    <lightning-button label="Add new cards" onclick={addNewCardToggle} class="slds-var-p-around_xxx-small"></lightning-button>
+                    <lightning-button variant="brand" label="Continue" onclick={saveSelection} class="slds-var-p-around_xxx-small"></lightning-button>
+                </template>
+                <template if:true={showAddCard}>
+                    <lightning-button label="Back" onclick={addNewCardToggle} class="slds-var-p-around_xxx-small"></lightning-button>
+                    <lightning-button variant="brand" label="Save Card" onclick={saveNewCard} class="slds-var-p-around_xxx-small"></lightning-button>
+                </template>
+            </footer>
+        </div>
+    </section>
+
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="modalSection2 slds-modal">
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                    <lightning-icon variant="inverse" onclick={closeModal2} alternative-text="close" icon-name="utility:close" size="small"></lightning-icon>
+                </button>
+                <h2 id="modal-heading-02" class="slds-modal__title slds-hyphenate">Automatic Payments:</h2>
+            </header>
+            <div class="slds-modal__content slds-var-p-around_medium" id="modal-content-id-2">
+                <template if:false={autoPaymentEnabled}>
+                    <template if:true={defaultCard}>
+                        <div>Are you sure you want to enable automatic monthly payments with your default card?</div>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-1">
+                                <lightning-input
+                                    type="text"
+                                    label="Card Number:"
+                                    value={defaultCard.last4}
+                                    readonly>
+                                </lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-4">
+                                <lightning-input
+                                    type="text"
+                                    label="Expiration Month:"
+                                    value={defaultCard.exp_month}
+                                    readonly>
+                                </lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_3-of-4">
+                                <lightning-input
+                                    type="text"
+                                    label="Expiration Year:"
+                                    value={defaultCard.exp_year}
+                                    readonly>
+                                </lightning-input>
+                            </div>
+                        </div>
+                    </template>
+                    <template if:false={defaultCard}>
+                        <div>Default payment method not available.</div>
+                    </template>
+                </template>
+                <template if:true={autoPaymentEnabled}>
+                    <div>Are you sure you want to disable automatic payments?</div>
+                </template>
+            </div>
+            <footer class="slds-modal__footer">
+                <template if:false={defaultCard}>
+                    <lightning-button label="Cancel" onclick={closeModal2} class="slds-var-p-around_xxx-small"></lightning-button>
+                </template>
+                <template if:true={defaultCard}>
+                    <lightning-button label="Cancel" onclick={closeModal2} class="slds-var-p-around_xxx-small"></lightning-button>
+                    <template if:false={autoPaymentEnabled}>
+                        <lightning-button variant="brand" label="Enable automatic payments" onclick={enableAuto}></lightning-button>
+                    </template>
+                    <template if:true={autoPaymentEnabled} class="slds-var-p-around_xxx-small">
+                        <lightning-button variant="destructive-text" label="Disable automatic payments" onclick={disableAuto}></lightning-button>
+                    </template>
+                </template>
+            </footer>
+        </div>
+    </section>
+    <div class="backdropDiv slds-backdrop"></div>
+</template>

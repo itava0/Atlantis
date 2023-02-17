@@ -1,0 +1,139 @@
+<template>
+    <lightning-button label="Update Lease"
+        onclick={openModal}>Update Lease</lightning-button>
+    <template if:true={showModal}>
+        <section role="dialog" tabindex="-1"
+            aria-modal="true"
+            aria-label="Meaningful description of the modal content"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <div class="slds-modal__content slds-var-p-around_medium slds-modal__content_headless"
+                    id="modal-content-id-1">
+                    <template if:true={showTypeSelection}>
+                        <div class="slds-form-element">
+                            <label
+                                class="slds-form-element__label slds-m-bottom_x-small slds-text-heading_medium"
+                                for="lease-update-type">Select
+                                Action Type:</label>
+                            <div
+                                class="slds-form-element__control">
+                                <select class="slds-select"
+                                    id="lease-update-type"
+                                    onchange={handleTypeChange}>
+                                    <option value="">
+                                    </option>
+                                    <option value="Pet">Pet
+                                    </option>
+                                    <option
+                                        value="Roommate">
+                                        Roommate</option>
+                                    <option value="Storage">
+                                        Storage</option>
+                                </select>
+                            </div>
+                        </div>
+                    </template>
+                    <template if:true={showPetQuestions}>
+                        <div class="slds-form-element">
+                            <label
+                                class="slds-form-element__label"
+                                for="pet-type">What type of
+                                pet?</label>
+                            <div
+                                class="slds-form-element__control">
+                                <input type="text"
+                                    id="pet-type"
+                                    class="slds-input"
+                                    onchange={handlePet} />
+                            </div>
+                        </div>
+                    </template>
+                    <template
+                        if:true={showRoommateQuestions}>
+                        <div class="slds-form-element">
+                            <label
+                                class="slds-form-element__label"
+                                for="roommate-fName">Roommate
+                                firstname</label>
+                            <div
+                                class="slds-form-element__control">
+                                <input type="text"
+                                    id="roommate-fName"
+                                    class="slds-input" 
+                                    onchange={handleFirstName}/>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <label
+                                class="slds-form-element__label"
+                                for="roommate-lName">Roommate
+                                lastname</label>
+                            <div
+                                class="slds-form-element__control">
+                                <input type="text"
+                                    id="roommate-lName"
+                                    class="slds-input" 
+                                    onchange={handleLastName}/>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <label
+                                class="slds-form-element__label"
+                                for="roommate-dateOfBirth">Roommate
+                                Birthdate</label>
+                            <div
+                                class="slds-form-element__control">
+                                <input type="date"
+                                    id="roommate-dateOfBirth"
+                                    class="slds-input" 
+                                    onchange={handleBirthdate}/>
+                            </div>
+                        </div>
+                        <div class="slds-form-element">
+                            <label
+                                class="slds-form-element__label"
+                                for="roommate-phone">Roommate
+                                phone</label>
+                            <div
+                                class="slds-form-element__control">
+                                <input type="phone"
+                                    id="roommate-phone"
+                                    class="slds-input" 
+                                    onchange={handlePhone}/>
+                            </div>
+                        </div>
+                    </template>
+                    <template
+                        if:true={showStorageQuestions}>
+                        <div class="slds-form-element">
+                            <label
+                                class="slds-form-element__label"
+                                for="storage-location">Storage
+                                Location</label>
+                            <div
+                                class="slds-form-element__control">
+                                <input type="text"
+                                    id="storage-location"
+                                    class="slds-input" 
+                                    onchange={handlestorage}/>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div class="slds-modal__footer">
+                    <lightning-button label="Cancel"
+                        class="slds-m-horizontal_x-small"
+                        onclick={closeModal}
+                        variant="neutral"></lightning-button>
+                    <lightning-button label="Save"
+                        class="slds-m-horizontal_x-small"
+                        onclick={onSubmit}
+                        variant="brand"></lightning-button>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"
+            role="presentation"></div>
+    </template>
+
+</template>

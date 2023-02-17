@@ -10,18 +10,19 @@
                         <div class="slds-col">
                             <lightning-icon icon-name="standard:people"></lightning-icon>
                         </div>
-                        <div class="slds-col">
+                        <div class="slds-col slds-align_absolute-center">
                             <p><strong>{staff.Account__r.Name}</strong></p>
                             <!-- <br><p>Role</p> -->
                         </div>
                         <div class="slds-col">
                             <lightning-button-menu alternative-text="Show menu">
                                 <lightning-menu-item value={staff.Account__c} label="View Profile" icon-name="utility:user" onclick={viewProfile}></lightning-menu-item>
-                                <!-- <lightning-menu-item value={staff.Account__c} label="Switch Role" icon-name="utility:product_transfer" onclick={switchRole}></lightning-menu-item> -->
+                                <lightning-menu-item value={staff.Id} label="Switch Role" icon-name="utility:product_transfer" onclick={switchRole}
+                                    data-role={staff.Role__c} data-accountname={staff.Account__r.Name}></lightning-menu-item>
                                 <lightning-menu-item value={staff.Id} data-accountid={staff.Account__c} data-accountname={staff.Account__r.Name}
-                                label="Reassign" icon-name="utility:replace" onclick={reassign}></lightning-menu-item>
+                                    label="Reassign" icon-name="utility:replace" onclick={reassign}></lightning-menu-item>
                                 <lightning-menu-item value={staff.Id} data-accountname={staff.Account__r.Name} data-propertyname={staff.Property__r.Name}
-                                label="Remove" icon-name="utility:close" onclick={remove}></lightning-menu-item>
+                                    label="Remove" icon-name="utility:close" onclick={remove}></lightning-menu-item>
                             </lightning-button-menu>
                         </div>
                     </div>

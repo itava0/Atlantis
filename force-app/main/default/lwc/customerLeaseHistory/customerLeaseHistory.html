@@ -1,0 +1,15 @@
+<template>
+    <template if:true={isCurrentUser}>
+        <lightning-card title="Lease History">
+            <lightning-datatable
+                key-field="id"
+                data={data}
+                columns={columns}
+                sorted-by={sortBy}
+                sorted-direction={sortDirection}
+                onsort={doSorting}
+                onrowaction={redirect}>
+            </lightning-datatable>
+        </lightning-card>
+    </template>
+</template>

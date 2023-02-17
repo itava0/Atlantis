@@ -200,17 +200,14 @@ export default class RatingAccount extends LightningElement {
             // When updating existing rating
             const evt = new ShowToastEvent({
                 title: "Rating updated",
-                // message: event.detail.id,
                 variant: "success"
             });
-            // this.ratingId = event.detail.id;
             this.dispatchEvent(evt);
             return refreshApex(this.wiredRatings);
         } else {
             // When submitting new rating
             const evt = new ShowToastEvent({
                 title: "Rating submitted",
-                // message: event.detail.id,
                 variant: "success"
             });
             this.ratingId = event.detail.id;

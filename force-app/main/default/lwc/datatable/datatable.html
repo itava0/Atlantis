@@ -1,0 +1,27 @@
+<template>
+    <lightning-card>
+        <div class="slds-var-m-around_medium">
+            <lightning-input type="String" onchange={handleNameChange}></lightning-input>
+            <lightning-combobox
+                name="picklist"
+                value={value}
+                data-id="reset"
+                placeholder="Select Level"
+                options={pickList}
+                onchange={handlePickChange}
+            ></lightning-combobox>
+        </div>
+        <div class="slds-var-m-around_medium">
+            <lightning-button variant="brand" label="Search by Name" onclick={handleSearchName}></lightning-button>
+            <lightning-button variant="brand" label="Search by Level" onclick={handleSearchLevel}></lightning-button>
+            <lightning-button variant="success" label="Get All Contacts!" onclick={handleAll}></lightning-button>
+        </div>
+        <div style="height: 300px;">
+            <lightning-datatable
+            key-field="id"
+            data={data}
+            columns={columns}>
+        </lightning-datatable>
+    </div>
+    </lightning-card>
+</template>

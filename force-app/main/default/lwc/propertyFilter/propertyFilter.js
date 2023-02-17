@@ -252,33 +252,23 @@ export default class PropertyFilter extends LightningElement {
     this.evtPostalCode = this.curPostalCode;
 
     // Apex method which geocodes property from inputted address information
-    doAddressGeocodeInput({
-      iStreet: this.evtStreet,
-      iCity: this.evtCity,
-      iState: this.evtState,
-      iPostalCode: this.evtPostalCode
+    doAddressGeocodeInput({ iStreet: this.evtStreet, iCity: this.evtCity, iState: this.evtState, iPostalCode: this.evtPostalCode })
+    .then(() => {
+      if (this.evtStreet && this.evtCity && this.evtState && this.evtPostalCode) {
+        const toastEvt = new ShowToastEvent({
+          title: "Address geocoded",
+          variant: "success"
+        });
+        this.dispatchEvent(toastEvt);
+      }
+
+      refreshApex(this.wiredAddresses);
+
+      this.geocoded = true;
     })
-      .then(() => {
-        if (
-          this.evtStreet &&
-          this.evtCity &&
-          this.evtState &&
-          this.evtPostalCode
-        ) {
-          const toastEvt = new ShowToastEvent({
-            title: "Address geocoded",
-            variant: "success"
-          });
-          this.dispatchEvent(toastEvt);
-        }
-
-        refreshApex(this.wiredAddresses);
-
-        this.geocoded = true;
-      })
-      .catch((error) => {
-        console.log(error.message);
-      });
+    .catch((error) => {
+      console.log(error.message);
+    });
   }
 
   // Gets distance for each property from the given location
@@ -287,12 +277,8 @@ export default class PropertyFilter extends LightningElement {
 
     // Geocodes address if values have changed (allows users to resubmit without refreshing)
     if (
-      (this.curStreet !== this.evtStreet ||
-      this.curCity !== this.evtCity ||
-      this.curState !== this.evtState ||
-      this.curPostalCode !== this.evtPostalCode) &&
-      this.useCurrentLocation === false
-    ) {
+      (this.curStreet !== this.evtStreet || this.curCity !== this.evtCity || this.curState !== this.evtState ||
+      this.curPostalCode !== this.evtPostalCode) && this.useCurrentLocation === false) {
       this.geocoded = false;
     }
 
@@ -410,8 +396,7 @@ export default class PropertyFilter extends LightningElement {
     lat2 = lat2 * (Math.PI / 180);
   
     // Apply the Haversine formula to calculate the distance between the two points
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const d = R * c;
   

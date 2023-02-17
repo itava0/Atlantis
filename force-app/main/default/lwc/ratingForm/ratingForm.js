@@ -12,7 +12,6 @@ import RATING_OBJECT from "@salesforce/schema/Rating__c";
 import SCORE_FIELD from "@salesforce/schema/Rating__c.Score__c";
 import REVIEW_FIELD from "@salesforce/schema/Rating__c.Review__c";
 import ID_FIELD from "@salesforce/user/Id";
-import getRatingCount from "@salesforce/apex/getProperties.getRatingCount";
 import getUniqueRating from "@salesforce/apex/getProperties.getUniqueRating";
 import getSingleProperty from "@salesforce/apex/getProperties.getSingleProperty";
 
@@ -120,16 +119,13 @@ export default class RatingForm extends LightningElement {
       // When updating existing rating
       const evt = new ShowToastEvent({
         title: "Rating updated",
-        // message: event.detail.id,
         variant: "success"
       });
-      // this.ratingId = event.detail.id;
       this.dispatchEvent(evt);
     } else {
       // When submitting new rating
       const evt = new ShowToastEvent({
         title: "Rating submitted",
-        // message: event.detail.id,
         variant: "success"
       });
       this.ratingId = event.detail.id;
