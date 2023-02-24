@@ -29,7 +29,8 @@ public without sharing class PropertyController {
     String[] cities,
     Object[] mapMarkers,
     Integer pageSize,
-    Integer pageNumber
+    Integer pageNumber,
+    List<String> companies
   ) {
     // Normalize inputs
     Decimal safeMaxPrice = (maxPrice == null ? DEFAULT_MAX_PRICE : maxPrice);
@@ -58,7 +59,7 @@ public without sharing class PropertyController {
             (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
             OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND RecordType.Name = :recordType AND Rent__c <= :safeMaxPrice
             AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available'
-            AND Billing_Street__c IN :streets AND Billing_City__c IN :cities AND Approval_Status__c = 'Approved'
+            AND Billing_Street__c IN :streets AND Billing_City__c IN :cities AND Approval_Status__c = 'Approved' AND Origin_Company__c IN :companies
         ];
         result.records = [
           SELECT
@@ -69,7 +70,7 @@ public without sharing class PropertyController {
             (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
             OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND RecordType.Name = :recordType AND Rent__c <= :safeMaxPrice
             AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Approval_Status__c = 'Approved'
-            AND Billing_Street__c IN :streets AND Billing_City__c IN :cities
+            AND Billing_Street__c IN :streets AND Billing_City__c IN :cities AND Origin_Company__c IN :companies
           WITH SECURITY_ENFORCED
           ORDER BY Rent__c
           LIMIT :safePageSize
@@ -84,6 +85,7 @@ public without sharing class PropertyController {
             (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
             OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND RecordType.Name = :recordType AND Rent__c <= :safeMaxPrice
             AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Approval_Status__c = 'Approved'
+            AND Origin_Company__c IN :companies
         ];
         result.records = [
           SELECT
@@ -94,6 +96,7 @@ public without sharing class PropertyController {
             (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
             OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND RecordType.Name = :recordType AND Rent__c <= :safeMaxPrice
             AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Approval_Status__c = 'Approved'
+            AND Origin_Company__c IN :companies
           WITH SECURITY_ENFORCED
           ORDER BY Rent__c
           LIMIT :safePageSize
@@ -110,7 +113,7 @@ public without sharing class PropertyController {
             (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
             OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms
             AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Billing_Street__c IN :streets AND Billing_City__c IN :cities
-            AND Approval_Status__c = 'Approved'
+            AND Approval_Status__c = 'Approved' AND Origin_Company__c IN :companies
         ];
         result.records = [
           SELECT
@@ -121,7 +124,7 @@ public without sharing class PropertyController {
             (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
             OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms
             AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Billing_Street__c IN :streets AND Billing_City__c IN :cities
-            AND Approval_Status__c = 'Approved'
+            AND Approval_Status__c = 'Approved' AND Origin_Company__c IN :companies
           WITH SECURITY_ENFORCED
           ORDER BY Rent__c
           LIMIT :safePageSize
@@ -135,7 +138,7 @@ public without sharing class PropertyController {
           WHERE
             (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
             OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms
-            AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Approval_Status__c = 'Approved'
+            AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Approval_Status__c = 'Approved' AND Origin_Company__c IN :companies
         ];
         result.records = [
           SELECT
@@ -145,7 +148,7 @@ public without sharing class PropertyController {
           WHERE
             (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
             OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND Rent__c <= :safeMaxPrice AND Bedrooms__c >= :safeMinBedrooms
-            AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Approval_Status__c = 'Approved'
+            AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Approval_Status__c = 'Approved' AND Origin_Company__c IN :companies
           WITH SECURITY_ENFORCED
           ORDER BY Rent__c
           LIMIT :safePageSize

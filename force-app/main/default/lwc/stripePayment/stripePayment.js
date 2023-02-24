@@ -52,7 +52,8 @@ export default class StripePayment extends LightningElement {
     @track account;
     charge;
     loading = false;
-    showChangeCardModal;
+    showChangeCardModal = false;
+    currentDelete;
 
 
     @wire(getRecord, { recordId: USER_ID, fields: [CONTACT_ID] }) user;
@@ -123,7 +124,9 @@ export default class StripePayment extends LightningElement {
     charges({error,data}) {
         if (data) {
             for (let key in data) {
-            this.leasePricings.push({value:data[key].toFixed(2), key:key});
+                console.log(key);
+                console.log(data[key]);
+                this.leasePricings.push({value:parseFloat(data[key]).toFixed(2), key:key});
             }
         } else if (error) {
             window.console.log(error);
@@ -249,6 +252,12 @@ export default class StripePayment extends LightningElement {
         this.showAddCard = false;
     }
 
+    //hide modal for when opening confirmation modal
+    hideModal(){
+        this.querySelectorHelper('.modalSection').classList.remove('slds-fade-in-open');
+        this.querySelectorHelper('.backdropDiv').classList.remove('slds-backdrop_open');
+    }
+
     //open auto payment confirmation modal
     autoPaymentModal(){
         getCustomerDefault({ customerId: this.customerId })
@@ -317,6 +326,7 @@ export default class StripePayment extends LightningElement {
         })
     }
 
+    //remap some fields of an object
     objectMap(object, mapFn) {
         return Object.keys(object).reduce(function(result, key) {
           result[key] = mapFn(object[key])
@@ -324,6 +334,7 @@ export default class StripePayment extends LightningElement {
         }, {})
     }
 
+    //Use selected card and close modal
     saveSelection(event) {
         if(this.tempCard != null) {
             console.log(this.tempCard['last4']);
@@ -333,6 +344,7 @@ export default class StripePayment extends LightningElement {
         this.closeModal();
     }
 
+    //Check if all form fields are filled in and are valid
     get cardFormValidation() {
         if(this.cardNum == null || this.expMonth == null || this.expYear == null || this.cvc == null) {
             return false;
@@ -349,8 +361,11 @@ export default class StripePayment extends LightningElement {
         this.showAddCard = !this.showAddCard;
     }
 
+    //Save card and add it to customer through Stripe API
     saveNewCard() {
+        //If all form fields are filled in and are valid
         if(this.cardFormValidation) {
+            //create token and then convert token into a payment method on the customer
             createToken({
                 accountId: this.accountId,
                 cardNumber: this.cardNum, 
@@ -370,6 +385,7 @@ export default class StripePayment extends LightningElement {
                     if(response[0] == "200") {
                         this.validCard = true;
                         this.cardId = response[1];
+                        //Re-query all cards and map them into desired format
                         viewAllCards({
                             customerId: this.customerId
                         })
@@ -402,7 +418,6 @@ export default class StripePayment extends LightningElement {
                                         element.variant = "neutral";
                                     }
                                 });
-                                // console.log("After check buttons");
                             })
                             .catch((error) =>{
                                 console.log(error);
@@ -417,6 +432,7 @@ export default class StripePayment extends LightningElement {
                     }
                 })
                 .then((res) => {
+                    //Check if card is not valid. If not valid then show error
                     if(!this.validCard) {
                         const cardError = res;
                         this.errorCode;
@@ -443,6 +459,7 @@ export default class StripePayment extends LightningElement {
                 console.log(error);
             })
         }
+        //else show error
         else {
             var inputCmp = this.template.querySelector('.inputYear2');
             var value = inputCmp.value;
@@ -463,8 +480,11 @@ export default class StripePayment extends LightningElement {
         }
     }
 
+    //Save card and add it to customer through Stripe API
     addFirstCard() {
+        //If all form fields are filled in and are valid
         if(this.cardFormValidation) {
+            //create token and then convert token into a payment method on the customer
             createToken({
                 accountId: this.accountId,
                 cardNumber: this.cardNum, 
@@ -506,6 +526,7 @@ export default class StripePayment extends LightningElement {
                     }
                 })
                 .then((res) => {
+                    //Check if card is not valid. If not valid then show error
                     if(!this.validCard) {
                         const cardError = res;
                         this.errorCode;
@@ -532,6 +553,7 @@ export default class StripePayment extends LightningElement {
                 console.log(error);
             })
         }
+        //else show error
         else {
             const evt = new ShowToastEvent({
                 title: "Error!",
@@ -543,8 +565,10 @@ export default class StripePayment extends LightningElement {
         }
     }
 
+    //Creates invoice and attempts payment
     pay() {
         this.loading = true;
+        this.closeModal3();
         createInvoice({
             accId: this.accountId,
             contactId: this.contactId,
@@ -581,6 +605,7 @@ export default class StripePayment extends LightningElement {
                     });
                     this.dispatchEvent(evt);
                 }
+                //if payment not successful, show error
                 else {
                     const evt = new ShowToastEvent({
                         title: "Payment failed: " + this.invoice.last_finalization_error.code,
@@ -598,6 +623,7 @@ export default class StripePayment extends LightningElement {
         })
     }
 
+    //Add flag to account for auto payments
     enableAuto() {
         setAutoPayments({ accountId: this.accountId, setting: true })
         .then((response) => {
@@ -609,6 +635,7 @@ export default class StripePayment extends LightningElement {
         })
     }
 
+    //Remove aut payments flag from account
     disableAuto() {
         setAutoPayments({ accountId: this.accountId, setting: false })
         .then((response) => {
@@ -620,8 +647,9 @@ export default class StripePayment extends LightningElement {
         })
     }
 
+    //Delete card item
     deleteCardItem() {
-        deleteCard({ customerId: this.customerId, cardId: event.target.dataset.key })
+        deleteCard({ customerId: this.customerId, cardId: this.currentDelete })
         .then((response) => {
             viewAllCards({
                 customerId: this.customerId
@@ -635,8 +663,7 @@ export default class StripePayment extends LightningElement {
                 if(this.cards.length > 0) {
                     this.curCard = this.cards[0];
                 }
-                console.log(this.cards);
-                console.log("cards length: ", this.cards.length);
+                this.closeModal4();
             })
             .catch((error) =>{
                 console.log(error);
@@ -645,6 +672,29 @@ export default class StripePayment extends LightningElement {
         .catch((error) =>{
             console.log(error);
         })
+    }
+
+    payModal() {
+        this.querySelectorHelper('.modalSection3').classList.add('slds-fade-in-open');
+        this.querySelectorHelper('.backdropDiv').classList.add('slds-backdrop_open');
+    }
+
+    closeModal3() {
+        this.querySelectorHelper('.modalSection3').classList.remove('slds-fade-in-open');
+        this.querySelectorHelper('.backdropDiv').classList.remove('slds-backdrop_open');
+    }
+
+    deleteConfirm(event) {
+        this.currentDelete = event.target.dataset.key;
+        this.hideModal();
+        this.querySelectorHelper('.modalSection4').classList.add('slds-fade-in-open');
+        this.querySelectorHelper('.backdropDiv').classList.add('slds-backdrop_open');
+    }
+
+    closeModal4() {
+        this.querySelectorHelper('.modalSection4').classList.remove('slds-fade-in-open');
+        this.querySelectorHelper('.backdropDiv').classList.remove('slds-backdrop_open');
+        this.changePayment();
     }
 
 }

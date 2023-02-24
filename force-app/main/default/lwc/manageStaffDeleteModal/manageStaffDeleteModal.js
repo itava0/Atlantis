@@ -19,6 +19,7 @@ export default class ManageStaffDeleteModal extends LightningModal {
 
     // Delete staff member after user confirmation
     handleDelete() {
+        // Apex method to delete staff record
         deleteStaff({ staffId: this.recordId, propId: this.propertyId })
         .then(() => {
             const evt = new ShowToastEvent({

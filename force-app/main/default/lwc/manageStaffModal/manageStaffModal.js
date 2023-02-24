@@ -25,6 +25,7 @@ export default class ManageStaffModal extends LightningModal {
     @api accountName;
     @api accountId;
     @api staffId;
+    @api staffRole;
     @track propertyPicklist = [];
     @track wiredAvailableProperties = [];
     @track availableProperties = [];
@@ -54,7 +55,7 @@ export default class ManageStaffModal extends LightningModal {
         }
     }
 
-    // ADD: Determine picklist options for roles
+    // Determine picklist options for roles
     @wire(getObjectInfo, { objectApiName: STAFF_OBJECT }) staffObj;
     @wire(getPicklistValues, { recordTypeId: '$staffObj.data.defaultRecordTypeId', fieldApiName: ROLE_FIELD}) rolePicklist;
 
@@ -71,7 +72,7 @@ export default class ManageStaffModal extends LightningModal {
     handlePropertyPicklist(event) {
         this.curProperty = event.target.value;
         // Enable button only if both property and role selected
-        if (this.curProperty && this.curRole) {
+        if (this.curProperty && (this.curRole || this.staffRole)) {
             this.submitReady = true;
         }
     }
@@ -79,14 +80,16 @@ export default class ManageStaffModal extends LightningModal {
     // Update selected role
     handleRolePicklist(event) {
         this.curRole = event.target.value;
-        // Enable button only if both role and either property or staff selected (depending on assignment or reassignment)
-        if ((!this.hasStaff && this.curStaff && this.curRole) || (this.hasStaff && this.curProperty && this.curRole)) {
+        // Enable button only if both role and either property or staff selected
+        // First part: ADD variant, second part: MANAGE variant. In latter case, role value will have a default set, so only need to check if property selected
+        if ((!this.hasStaff && this.curStaff && this.curRole) || (this.hasStaff && this.curProperty)) {
             this.submitReady = true;
         }
     }
 
     // ADD: Assign new staff to a property
     assignNewStaff() {
+        // Apex method to insert staff record
         createStaff({ propId: this.propertyId, accId: this.curStaff, role: this.curRole })
         .then((result) => {
             const evt = new ShowToastEvent({
@@ -110,6 +113,11 @@ export default class ManageStaffModal extends LightningModal {
 
     // MANAGE: Reassign staff member to new property
     reassignStaff() {
+        // If role remains default (from previous assignment), ensure it carries over to new assignment
+        if (!this.curRole) {
+            this.curRole = this.staffRole;
+        }
+        // Apex method to update staff record
         updateStaff({ staffId: this.staffId, propId: this.curProperty, role: this.curRole })
         .then((result) => {
             const evt = new ShowToastEvent({

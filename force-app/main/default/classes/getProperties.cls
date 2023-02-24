@@ -35,10 +35,16 @@ public with sharing class getProperties {
         return [SELECT Id, Property__c FROM Tenant__c WHERE Account__c =: accId];
 	}
     
-    // Staff Junction Object from Accounts
+    // Staff Junction Object from Single Account
+    @AuraEnabled(cacheable=true)
+    public static List<Staff__c> getStaffFromAccount(Id accId) {
+        return [SELECT Id, Property__c, Role__c FROM Staff__c WHERE Account__c =: accId];
+    }
+    
+    // Staff Junction Object from Multiple Accounts
     @AuraEnabled(cacheable=true)
     public static List<Staff__c> getStaffFromAccounts(List<Id> accIds) {
-        return [SELECT Id, Account__c, Property__c, Account__r.Name, Account__r.Phone, Account__r.Email__c, Property__r.Name FROM Staff__c WHERE Account__c IN: accIds];
+        return [SELECT Id, Account__c, Property__c, Role__c, Account__r.Name, Account__r.Phone, Account__r.Email__c, Property__r.Name FROM Staff__c WHERE Account__c IN: accIds];
     }
     
     // Property Owner Junction Object from Property
@@ -133,7 +139,7 @@ public with sharing class getProperties {
     // Staff Junction Object from Property
     @AuraEnabled(cacheable=true)
     public static List<Staff__c> getStaffMembers(Id propId) {
-        return [SELECT Id, Account__c, Property__c, Account__r.Name, Account__r.Phone, Account__r.Email__c, Property__r.Name FROM Staff__c WHERE Property__c =: propId];
+        return [SELECT Id, Account__c, Property__c, Role__c, Account__r.Name, Property__r.Billing_Street__c, Property__r.Name FROM Staff__c WHERE Property__c =: propId];
     }
     
     // Available Staff Properties from Property
@@ -154,6 +160,23 @@ public with sharing class getProperties {
         
         // Return filtered results
         return [SELECT Id, Name, Billing_Street__c FROM Property__c WHERE Id IN: propsToInclude AND Id NOT IN: propsToExclude];
+    }
+    
+    // Staff Role From Property + Account
+    @AuraEnabled(cacheable=true)
+    public static List<Staff__c> getStaffRole(Id propId, Id accId) {
+        return [SELECT Id, Property__c, Account__c, Role__c FROM Staff__c WHERE Property__c =: propId AND Account__c =: accId];
+    }
+    
+    // Accounts for Property Owners from Property
+    @AuraEnabled(cacheable=true)
+    public static List<Account> getPropertyOwnerAccounts(Id propId) {
+        List<Property_Owner__c> ownerList = [SELECT Id, Account__c FROM Property_Owner__c WHERE Property__c =: propId];
+        List<Id> accIds = new List<Id>();
+        for (Property_Owner__c owner : ownerList) {
+            accIds.add(owner.Account__c);
+        }
+        return [SELECT Id, Name, FirstName, LastName FROM Account WHERE Id IN: accIds];
     }
     
     // Name From Property

@@ -41,7 +41,7 @@
                             variant="brand"
                             label="Pay"
                             title="Pay"
-                            onclick={pay}
+                            onclick={payModal}
                             disabled={cannotPay}
                             class="slds-var-p-around_medium">
                         </lightning-button>
@@ -139,7 +139,7 @@
             </lightning-spinner>
         </template>
     </lightning-card>
-    <c-stripe-payment-change-card-modal showmodal={showChangeCardModal}></c-stripe-payment-change-card-modal>
+    <c-stripe-payment-change-card-modal showmodal={showChangeCardModal} modal-class="slds-modal slds-fade-in-open slds-modal_medium"></c-stripe-payment-change-card-modal>
 
     <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="modalSection slds-modal">
         <div class="slds-modal__container">
@@ -170,7 +170,7 @@
                                                 variant="destructive"
                                                 data-key={card.id} 
                                                 title="Delete"
-                                                onclick={deleteCardItem}
+                                                onclick={deleteConfirm}
                                                 class="slds-float_right">
                                                 <label>Delete</label>
                                             </lightning-button-icon>
@@ -340,5 +340,81 @@
             </footer>
         </div>
     </section>
+
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="modalSection3 slds-modal">
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                    <lightning-icon variant="inverse" onclick={closeModal3} alternative-text="close" icon-name="utility:close" size="small"></lightning-icon>
+                </button>
+                <h2 id="modal-heading-03" class="slds-modal__title slds-hyphenate">Payment Confirmation:</h2>
+            </header>
+            <div class="slds-modal__content slds-var-p-around_medium" id="modal-content-id-3">
+                <template if:true={curCard}>
+                    <div>Are you sure you want to make a payment of <strong>$<lightning-formatted-number value={balanceDue} maximum-fraction-digits="2" minimum-fraction-digits="2"></lightning-formatted-number></strong> to this card?</div>
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_1-of-1">
+                            <lightning-input
+                                type="text"
+                                label="Card Number:"
+                                value={curCard.last4}
+                                readonly>
+                            </lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_1-of-4">
+                            <lightning-input
+                                type="text"
+                                label="Expiration Month:"
+                                value={curCard.exp_month}
+                                readonly>
+                            </lightning-input>
+                        </div>
+                        <div class="slds-col slds-size_3-of-4">
+                            <lightning-input
+                                type="text"
+                                label="Expiration Year:"
+                                value={curCard.exp_year}
+                                readonly>
+                            </lightning-input>
+                        </div>
+                    </div>
+                </template>
+                <template if:false={curCard}>
+                    <div>Current card payment method not available.</div>
+                </template>
+                
+            </div>
+            <footer class="slds-modal__footer">
+                <template if:false={curCard}>
+                    <lightning-button label="Cancel" onclick={closeModal3} class="slds-var-p-around_xxx-small"></lightning-button>
+                </template>
+                <template if:true={curCard}>
+                    <lightning-button label="Cancel" onclick={closeModal3} class="slds-var-p-around_xxx-small"></lightning-button>
+                    <lightning-button variant="brand" label="Pay" onclick={pay}></lightning-button>
+                </template>
+            </footer>
+        </div>
+    </section>
+
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="modalSection4 slds-modal">
+        <div class="slds-modal__container">
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close">
+                    <lightning-icon variant="inverse" onclick={closeModal4} alternative-text="close" icon-name="utility:close" size="small"></lightning-icon>
+                </button>
+                <h2 id="modal-heading-04" class="slds-modal__title slds-hyphenate">Delete Card Confirmation:</h2>
+            </header>
+            <div class="slds-modal__content slds-var-p-around_medium" id="modal-content-id-4">
+                <div>Are you sure you want to delete this payment method?</div>                
+            </div>
+            <footer class="slds-modal__footer">
+                <lightning-button label="Cancel" onclick={closeModal4} class="slds-var-p-around_xxx-small"></lightning-button>
+                <lightning-button variant="destructive" label="Delete" onclick={deleteCardItem}></lightning-button>
+            </footer>
+        </div>
+    </section>
+
     <div class="backdropDiv slds-backdrop"></div>
+
+    
 </template>

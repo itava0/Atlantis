@@ -12,6 +12,7 @@ import RATING_OBJECT from "@salesforce/schema/Rating__c";
 import SCORE_FIELD from "@salesforce/schema/Rating__c.Score__c";
 import REVIEW_FIELD from "@salesforce/schema/Rating__c.Review__c";
 import ID_FIELD from "@salesforce/user/Id";
+import getRatingCount from "@salesforce/apex/getProperties.getRatingCount";
 import getUniqueRating from "@salesforce/apex/getProperties.getUniqueRating";
 import getSingleProperty from "@salesforce/apex/getProperties.getSingleProperty";
 
@@ -27,17 +28,16 @@ export default class RatingForm extends LightningElement {
   @track ratingCount;
   @track error;
 
-  // Tracking information from wired queries
   @track ratingId = "";
   @track wiredRatings = [];
   @track ratings = [];
   @track wiredProperties = [];
   @track properties = [];
 
-  // Various rating status information
   ratingObj = RATING_OBJECT;
   hasRating = false;
   wasDeleted = false;
+
   fields = [SCORE_FIELD, REVIEW_FIELD];
   score = SCORE_FIELD;
   review = REVIEW_FIELD;
@@ -53,6 +53,7 @@ export default class RatingForm extends LightningElement {
       this.ratings = result.data;
       if (this.ratings.length > 0) {
         this.hasRating = true;
+        console.log("RATINGID", this.ratings[0].Id);
         this.ratingId = this.ratings[0].Id;
         this.error = undefined;
       }
@@ -67,6 +68,9 @@ export default class RatingForm extends LightningElement {
     this.wiredProperties = result;
     if (result.data) {
       this.properties = result.data;
+      console.log("PROPERTYID", this.properties[0].Id);
+      console.log("SCORE", this.properties[0].Score__c);
+      console.log("REVIEW", this.properties[0].Review__c);
       this.error = undefined;
     } else if (result.error) {
       this.error = result.error;
@@ -74,22 +78,19 @@ export default class RatingForm extends LightningElement {
     }
   }
 
-  // Update rating score
   handleScoreChange(event) {
     this.currentScore = event.target.value;
+    // console.log(this.recordId, this.currentScore);
   }
 
-  // Update review
   handleReviewChange(event) {
     this.currentReview = event.target.value;
   }
 
-  // Update displayed rating for property
   updateRecordView(recordId) {
     updateRecord({ fields: { Id: recordId } });
   }
 
-  // Insert/update form submission
   handleSubmit(event) {
     if (this.hasRating) {
       // When updating existing rating
@@ -113,19 +114,21 @@ export default class RatingForm extends LightningElement {
     }
   }
 
-  // Insert/update form success
   handleSuccess(event) {
     if (this.hasRating) {
       // When updating existing rating
       const evt = new ShowToastEvent({
         title: "Rating updated",
+        // message: event.detail.id,
         variant: "success"
       });
+      // this.ratingId = event.detail.id;
       this.dispatchEvent(evt);
     } else {
       // When submitting new rating
       const evt = new ShowToastEvent({
         title: "Rating submitted",
+        // message: event.detail.id,
         variant: "success"
       });
       this.ratingId = event.detail.id;
@@ -135,12 +138,10 @@ export default class RatingForm extends LightningElement {
     }
   }
 
-  // Delete form submission
   handleDelete() {
     // Delete Rating
     deleteRecord(this.ratingId)
       .then(() => {
-        // On success
         const toastEvt = new ShowToastEvent({
           title: "Rating deleted",
           variant: "error"
@@ -152,7 +153,6 @@ export default class RatingForm extends LightningElement {
         this.hasRating = false;
       })
       .catch((error) => {
-        // On error
         const toastEvt = new ShowToastEvent({
           title: "Error deleting rating",
           message: error.message,

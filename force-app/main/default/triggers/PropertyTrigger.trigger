@@ -13,7 +13,6 @@ trigger PropertyTrigger on Property__c (before insert, after insert, before upda
             PropertySchools.AddSchools(prop, String.valueOf(prop.Billing_Postal_Code__c));
             if (prop.Geolocation__Latitude__s == null || prop.Geolocation__Longitude__s == null) {
                 PropertyGeocode.DoAddressGeocode(prop.id);
-                // PropertyGeocode.DoAddressGeocodeProperty(Trigger.new, prop.Billing_Street__c, prop.Billing_City__c, prop.Billing_State__c, prop.Billing_Postal_Code__c);
             }
         }
     }
@@ -32,7 +31,6 @@ trigger PropertyTrigger on Property__c (before insert, after insert, before upda
                 prop.Billing_Street__c != Trigger.oldMap.get(prop.id).Billing_Street__c || prop.Billing_City__c != Trigger.oldMap.get(prop.id).Billing_City__c ||
                 prop.Billing_State__c != Trigger.oldMap.get(prop.id).Billing_State__c || prop.Billing_Postal_Code__c != Trigger.oldMap.get(prop.id).Billing_Postal_Code__c) {
                     PropertyGeocode.DoAddressGeocode(prop.id);
-                    // PropertyGeocode.DoAddressGeocodeProperty(Trigger.new, prop.Billing_Street__c, prop.Billing_City__c, prop.Billing_State__c, prop.Billing_Postal_Code__c);
                 }
         }
     }
@@ -40,7 +38,7 @@ trigger PropertyTrigger on Property__c (before insert, after insert, before upda
 
     if (Trigger.isBefore && Trigger.isDelete) {
         for (Property__c prop : Trigger.old) {
-            // Before Delete: For cleanup purposes, delete related records to the property, including ratings, schools, and junction objects
+            // Before Delete: For cleanup purposes, delete related records to the property (only ratings right now, but could support more if necessary)
             PropertyDelete.DeleteRelated(Trigger.old);
         }
 	}

@@ -1,0 +1,28 @@
+<template>
+    <lightning-card>
+        <div class="slds-box">
+            <div class="slds-text-heading_medium">
+                <template if:true={oneOwner}>
+                    <p><strong>Owner:</strong></p>
+                </template>
+                <template if:false={oneOwner}>
+                    <p><strong>Owners:</strong></p>
+                </template>
+            </div>
+            <br>
+            <template for:each={ownerAccounts} for:item="owner">
+                <div key={owner.Id}>
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_1-of-10">
+                            <lightning-button-icon icon-name="utility:user" variant="brand" alternative-text="View Profile" value={owner.Id} onclick={viewProfile}></lightning-button-icon>
+                        </div>
+                        <div class="slds-col slds-size_9-of-10">           
+                            <h2>{owner.Name}</h2>
+                        </div>
+                        <br><br>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

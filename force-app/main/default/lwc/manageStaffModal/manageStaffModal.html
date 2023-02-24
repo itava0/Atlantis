@@ -9,7 +9,7 @@
                         <lightning-radio-group label="Select Property:" options={propertyPicklist} onchange={handlePropertyPicklist} style="margin-right:10px"></lightning-radio-group>
                     </template>
                     <template if:true={rolePicklist.data}>
-                        <lightning-radio-group label="Select Role:" options={rolePicklist.data.values} onchange={handleRolePicklist} style="margin-right:10px"></lightning-radio-group>
+                        <lightning-radio-group label="Select Role:" options={rolePicklist.data.values} onchange={handleRolePicklist} value={staffRole} style="margin-right:10px"></lightning-radio-group>
                     </template>
                     <template if:true={submitReady}>
                         <lightning-button label="Reassign Staff" variant="brand" onclick={reassignStaff}></lightning-button>

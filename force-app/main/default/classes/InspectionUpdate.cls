@@ -7,6 +7,7 @@ public class InspectionUpdate {
         List<Event> evtList = [SELECT Id, OwnerId FROM Event WHERE Inspection__c IN: insIds];
         List<Event> evtToDelete = new List<Event>();
         
+        // For storing information that needs to be passed from updated inspection to event
         Boolean newEvent = false;
         DateTime newDateTime;
         Id newInspector;

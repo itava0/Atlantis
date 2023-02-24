@@ -1,0 +1,45 @@
+<template>
+  <lightning-modal-header label="Edit User"></lightning-modal-header>
+  <lightning-modal-body>
+    <div class="slds-grid slds-gutters slds-wrap">
+      <div class="slds-col slds-size_1-of-2">
+        <lightning-input
+          label="First Name"
+          name="firstName"
+          value={firstName}
+          onchange={handleFirstNameChange}
+        ></lightning-input>
+      </div>
+      <div class="slds-col slds-size_1-of-2">
+        <lightning-combobox
+          label="Record Type"
+          name="recordType"
+          value={recordTypeId}
+          options={recordTypeOptions}
+          onchange={handleRecordTypeChange}
+        ></lightning-combobox>
+      </div>
+      <div class="slds-col slds-size_1-of-2">
+        <lightning-input
+          label="Last Name"
+          name="lastName"
+          value={lastName}
+          onchange={handleLastNameChange}
+        ></lightning-input>
+      </div>
+      <div class="slds-col slds-size_1-of-2">
+        <lightning-input
+          class="slds-var-m-top_medium"
+          label="Active"
+          type="checkbox"
+          name="active"
+          checked={active}
+          onchange={handleActiveChange}
+        ></lightning-input>
+      </div>
+    </div>
+  </lightning-modal-body>
+  <lightning-modal-footer>
+    <lightning-button label="Save" onclick={handleSave}></lightning-button>
+  </lightning-modal-footer>
+</template>

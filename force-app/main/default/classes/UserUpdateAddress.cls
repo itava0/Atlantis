@@ -1,5 +1,39 @@
 public class UserUpdateAddress {
-    public static void UserAddressUpdate(List<User> usrList, Map<Id, User> usrOldMap) {
+    // Check if any address fields have been modified
+    public static boolean CheckUpdateAddress(List<User> usrList, Map<Id, User> usrOldMap) {
+        for (User usr : usrList) {
+            if (usr.Street != usrOldMap.get(usr.Id).Street) return true;
+            if (usr.City != usrOldMap.get(usr.Id).City) return true;
+            if (usr.State != usrOldMap.get(usr.Id).State) return true;
+            if (usr.PostalCode != usrOldMap.get(usr.Id).PostalCode) return true;
+            if (usr.Country != usrOldMap.get(usr.Id).Country) return true;
+        }
+        return false;
+    }
+    
+    // Update address fields for contacts and accounts linked to users
+    @future
+    public static void UserAddressUpdate(Set<Id> userIdList) {
+        // Get contacts and accounts linked to users by Id
+        Map<Id,Account> accMap = new Map<Id,Account>();
+        Map<Id,Contact> conMap = new Map<Id,Contact>();
+        List<User> usrList = [SELECT Id, ContactId, AccountId, Street, City, State, PostalCode, Country FROM User WHERE Id IN :userIdList];
+        // Update address fields for contacts and accounts
+        for(User usr : usrList) {
+            if (usr.ContactId != null) {
+                Contact con = new Contact(Id = usr.ContactId, MailingStreet = usr.Street, MailingCity = usr.City, MailingState = usr.State, MailingPostalCode = usr.PostalCode, MailingCountry = usr.Country);
+                conMap.put(usr.Id, con);
+            }
+            if (usr.AccountId != null) {
+                Account acc = new Account(Id = usr.AccountId, BillingStreet = usr.Street, BillingCity = usr.City, BillingState = usr.State, BillingPostalCode = usr.PostalCode, BillingCountry = usr.Country);
+                accMap.put(usr.Id, acc);
+            }
+        }
+        // Update contacts and accounts
+        update conMap.values();
+        update accMap.values();
+    }
+    /*public static void UserAddressUpdate(List<User> usrList, Map<Id, User> usrOldMap) {
         for (User usr : usrList) {
             // Get Contact and Account Information from User
             Id conId;
@@ -47,5 +81,5 @@ public class UserUpdateAddress {
             if (acc != null) update acc;
             if (con != null) update con;
         }
-    }
+    }*/
 }

@@ -1,0 +1,15 @@
+<template>
+  <lightning-card title="User Manager">
+    <lightning-datatable
+      key-field="Id"
+      data={afterUsers}
+      columns={columns}
+      hide-checkbox-column="true"
+      onrowaction={handleRowAction}
+      sorted-by={sortedBy}
+      sorted-direction={sortedDirection}
+      onsort={handleSort}
+    >
+    </lightning-datatable>
+  </lightning-card>
+</template>

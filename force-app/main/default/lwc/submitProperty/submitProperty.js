@@ -8,6 +8,7 @@ const MAX_FILE_SIZE = 30000000;
 const APARTMENT_ID = '012Dn000000gZGMIA2';
 const SINGLE_FAMILY_ID = '012Dn000000gZGqIAM';
 const TOWNHOUSE_ID = '012Dn000000gZGRIA2';
+const CONDO_ID = '012Dn000000iXMVIA2';
 
 export default class SubmitProperty extends NavigationMixin(LightningElement) {
     // Tracking inputted parameters for fields
@@ -105,7 +106,8 @@ export default class SubmitProperty extends NavigationMixin(LightningElement) {
     recordTypeOptions = [
         { label: "Apartment", value: APARTMENT_ID },
         { label: "Single Family", value: SINGLE_FAMILY_ID },
-        { label: "Townhouse", value: TOWNHOUSE_ID }
+        { label: "Townhouse", value: TOWNHOUSE_ID },
+        { label: "Condo", value: CONDO_ID }
     ];
 
     // Form Update: Name

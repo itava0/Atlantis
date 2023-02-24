@@ -76,9 +76,14 @@ public with sharing class PropertyGeocode {
     		}
     		// update co-ordinates on address if we get them back
     		if(latitude != null) {
-      			geoProperty.Geolocation__Latitude__s = latitude;
-      			geoProperty.Geolocation__Longitude__s = longitude;
-                // System.debug('well we got here');
+                // In edge case of lat or lon values going over field limits, truncate to 7 decimal places -- should prevent any errors from surfacing
+                String latString = String.valueOf(latitude).subString(0, String.valueOf(latitude).indexOf('.') + 8);
+                String lonString = String.valueOf(longitude).subString(0, String.valueOf(longitude).indexOf('.') + 8);
+                Decimal latRounded = Decimal.valueOf(latString);
+                Decimal lonRounded = Decimal.valueOf(lonString);
+                
+      			geoProperty.Geolocation__Latitude__s = latRounded;
+      			geoProperty.Geolocation__Longitude__s = lonRounded;
       			update geoProperty;
     		}
   		} catch (Exception e) {
@@ -91,7 +96,6 @@ public with sharing class PropertyGeocode {
     public static Decimal returnedLon;
 
     // Below are very similar functions, but parameters are address strings instead of Id. Used specifically for the distance filter to store address information & geolocate it.
-    // Might move this into a separate class down the line for better readability.
     
     @AuraEnabled
     public static void DoAddressGeocodeInput(String iStreet, String iCity, String iState, String iPostalCode) {
@@ -164,7 +168,13 @@ public with sharing class PropertyGeocode {
     		}
     		// update co-ordinates on address if we get them back
     		if(latitude != null) {
-      			Address__c add = new Address__c(Latitude__c = latitude, Longitude__c = longitude, Street__c = iStreet, City__c = iCity, State__c = iState, PostalCode__c = iPostalCode);
+                // In edge case of lat or lon values going over field limits, truncate to 7 decimal places -- should prevent any errors from surfacing
+                String latString = String.valueOf(latitude).subString(0, String.valueOf(latitude).indexOf('.') + 8);
+                String lonString = String.valueOf(longitude).subString(0, String.valueOf(longitude).indexOf('.') + 8);
+                Decimal latRounded = Decimal.valueOf(latString);
+                Decimal lonRounded = Decimal.valueOf(lonString);
+                
+      			Address__c add = new Address__c(Latitude__c = latRounded, Longitude__c = lonRounded, Street__c = iStreet, City__c = iCity, State__c = iState, PostalCode__c = iPostalCode);
                 insert add;
     		}
   		} catch (Exception e) {

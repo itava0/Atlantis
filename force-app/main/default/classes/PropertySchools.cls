@@ -1,5 +1,7 @@
 public class PropertySchools {
     public static void AddSchools(Property__c propMain, String postalCode) {
+        // Class and related component deprecated by modal map, still leaving up as a useful reference
+        
         // Establish if a property already exists with the same postal code
         List<Property__c> propsWithZip = [SELECT Id FROM Property__c WHERE Billing_Postal_Code__c =: postalCode AND Id !=: propMain.Id];
         List<Id> propIds = new List<Id>();
@@ -8,8 +10,6 @@ public class PropertySchools {
 		}
         
         // If one or more properties at postal code already exist, create matching schools for the new property
-        // --A junction object might be better practice here, but for the purposes of our org I think creating a
-        // junction object for every school would use more data than simply having occasional duplicates)
         if (propsWithZip.size() > 0) {
             Id propSingle = propIds[0];
             List<School__c> schList = [SELECT Id, Name, Property__c, Rating__c, City__c, State__c, Postal_Code__c, Type__c, Maps_URL__c FROM School__c WHERE Property__c =: propSingle];

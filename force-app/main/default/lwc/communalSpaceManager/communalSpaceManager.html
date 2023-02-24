@@ -1,46 +1,85 @@
 <template>
-    <template if:true={inCommunity}>
-        <lightning-card title={communityName} icon-name="standard:customers">
-                <div class="slds-scrollable_x">
-                    <template for:each={communalSpaces.data} for:item="cms">
-                        <article class="slds-card" key={cms.Id}>
-                            <div class="slds-card__body slds-card__body_inner">
-                                <h3>{cms.Name}</h3>
-                                {cms.Space_Type__c}
-                                <lightning-button-icon if:true={isUserOwner} icon-name="utility:delete" data-id={cms.Id} variant="border-filled" alternative-text="Delete" onclick={handleDelete} class="slds-float_right"></lightning-button-icon>
-                            </div>
-                        </article>
-                    </template>
-                </div>
-                <template if:true={isUserOwner}>
-                    <lightning-combobox label="Space Type" value={spaceType} options={spaceTypes} onchange={handleSpaceTypeChange} class="slds-var-m-around_small"></lightning-combobox>
-                    <template if:true={spaceType}>
-                        <lightning-input label="Space Name" value={spaceName} onchange={handleSpaceNameChange} class="slds-var-m-around_small"></lightning-input>
-                        <lightning-button-group class="slds-var-m-around_small">
-                            <lightning-button label="New" variant="brand" onclick={handleNew}></lightning-button>
-                        </lightning-button-group>
-                    </template>
-                </template>
-        </lightning-card>
-    </template>
-    <template if:false={inCommunity}>
-        <lightning-card title="Select a community this property belongs to" icon-name="standard:customers">
-            <template for:each={ownerCommunities.data} for:item="community">
-                <!--Create a card for each community with a join button-->
-                <article class="slds-card" key={community.Id}>
-                    <div class="slds-card__body slds-card__body_inner">
-                        <h3>{community.Name}</h3>
-                        <lightning-button-icon icon-name="utility:forward" data-name={community.Name} data-id={community.Id} variant="border-filled" alternative-text="Join" onclick={handleJoin}></lightning-button-icon>
-                    </div>
-                </article>
-            </template>
-            <!--Create new community button-->
-            <lightning-input label="Community Name" value={communityName} onchange={handleCommunityNameChange} class="slds-var-m-around_small"></lightning-input>
-            <div if:true={communityName}>
-                <lightning-button-group class="slds-var-m-around_small">
-                    <lightning-button label="New" variant="brand" onclick={handleNewCommunity}></lightning-button>
-                </lightning-button-group>
+  <template if:true={inCommunity}>
+    <lightning-card title={communityName}>
+      <div class="slds-scrollable_x">
+        <template for:each={communalSpaces.data} for:item="cms">
+          <article class="slds-card" key={cms.Id}>
+            <div class="slds-card__body slds-card__body_inner">
+              <h3>{cms.Name}</h3>
+              {cms.Space_Type__c}
+              <lightning-button-icon
+                if:true={isUserOwner}
+                icon-name="utility:delete"
+                data-id={cms.Id}
+                variant="border-filled"
+                alternative-text="Delete"
+                onclick={handleDelete}
+                class="slds-float_right"
+              ></lightning-button-icon>
             </div>
-        </lightning-card>
-    </template>
+          </article>
+        </template>
+      </div>
+      <template if:true={isUserOwner}>
+        <lightning-combobox
+          label="Space Type"
+          value={spaceType}
+          options={spaceTypes}
+          onchange={handleSpaceTypeChange}
+          class="slds-var-m-around_small"
+        ></lightning-combobox>
+        <template if:true={spaceType}>
+          <lightning-input
+            label="Space Name"
+            value={spaceName}
+            onchange={handleSpaceNameChange}
+            class="slds-var-m-around_small"
+          ></lightning-input>
+          <lightning-button-group class="slds-var-m-around_small">
+            <lightning-button
+              label="New"
+              variant="brand"
+              onclick={handleNew}
+            ></lightning-button>
+          </lightning-button-group>
+        </template>
+      </template>
+    </lightning-card>
+  </template>
+  <template if:false={inCommunity}>
+    <lightning-card title="Select a community this property belongs to">
+      <template for:each={ownerCommunities.data} for:item="community">
+        <!--Create a card for each community with a join button-->
+        <article class="slds-card" key={community.Id}>
+          <div class="slds-card__body slds-card__body_inner">
+            <h3>{community.Name}</h3>
+            <lightning-button-icon
+              icon-name="utility:forward"
+              data-name={community.Name}
+              data-id={community.Id}
+              variant="border-filled"
+              alternative-text="Join"
+              onclick={handleJoin}
+            ></lightning-button-icon>
+          </div>
+        </article>
+      </template>
+      <!--Create new community button-->
+      <lightning-input
+        label="Community Name"
+        value={communityName}
+        onchange={handleCommunityNameChange}
+        class="slds-var-m-around_small"
+      ></lightning-input>
+      <div if:true={communityName}>
+        <lightning-button-group class="slds-var-m-around_small">
+          <lightning-button
+            label="New"
+            variant="brand"
+            onclick={handleNewCommunity}
+          ></lightning-button>
+        </lightning-button-group>
+      </div>
+    </lightning-card>
+  </template>
 </template>

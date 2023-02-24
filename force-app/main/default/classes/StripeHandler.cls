@@ -72,7 +72,6 @@ public without sharing class StripeHandler {
             return String.valueOf(response);
             // Handle error
         }
-        //return NULL;
     }
 
     //Update the account record with the customerId
@@ -114,32 +113,6 @@ public without sharing class StripeHandler {
 
     }
 
-    //Add the token to a customer
-    @AuraEnabled
-    public static void addTokenInfo(String customerId, String token) {
-        // Set up the HTTP request
-        Http http = new Http();
-        HttpRequest request = new HttpRequest();
-        request.setEndpoint('https://api.stripe.com/v1/customers/' + customerId + '/sources');
-        request.setMethod('POST');
-        request.setHeader('Content-Type', 'application/x-www-form-urlencoded');
-        request.setHeader('Authorization', 'Bearer ' + STRIPE_SECRET_KEY);
-
-        // Set the request body
-        String body = 'source=' + token;
-        request.setBody(body);
-
-        // Send the HTTP request and handle the response
-        HttpResponse response = http.send(request);
-        if (response.getStatusCode() == 200) {
-            // Success - parse the response data
-            Map<String, Object> data = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
-            // Use the updated customer data...
-        } else {
-            // Handle error
-        }
-    }
-
     //Make a payment using charge method
     @AuraEnabled
     public static String makePayment(String token, Decimal amount, String customerId) {
@@ -167,7 +140,6 @@ public without sharing class StripeHandler {
             return String.valueOf(response);
             // Handle error
         }
-        //return NULL;
 
     }
 
@@ -200,7 +172,6 @@ public without sharing class StripeHandler {
             // Handle error
         }
         return returnList;
-        //return NULL;
     }
 
     //return a list of cards belonging to the customer
@@ -225,7 +196,6 @@ public without sharing class StripeHandler {
             return String.valueOf(response);
             // Handle error
         }
-        //return NULL;
     }
 
     //return specific card
@@ -281,7 +251,8 @@ public without sharing class StripeHandler {
     public static Map<String,Decimal> getLeasePricings(Id accountId) {
         //query leases
         List<Contract> contractList = [SELECT Id, AccountId, Property__r.Billing_Street__c, Monthly_Rent__c, StartDate, EndDate,
-        Long_Term_Resident_Discount__c, Veteran_Discount__c, Senior_Discount__c, Deposit_Required__c FROM Contract WHERE EndDate >= TODAY AND StartDate <= TODAY 
+            Long_Term_Resident_Discount__c, Veteran_Discount__c, Senior_Discount__c, Deposit_Required__c,
+            Renewal_Discount__c FROM Contract WHERE EndDate >= TODAY AND StartDate <= TODAY 
             AND status = 'activated' AND AccountId =: accountId];
         Map<String,Decimal> leasePricing = new Map<String,Decimal>();
         Decimal overall = 0;
@@ -309,6 +280,12 @@ public without sharing class StripeHandler {
                 overall -= discount;
                 curItemPrice -= discount;
             }
+            if(con.Renewal_Discount__c != NULL && con.Renewal_Discount__c != 0) {
+                Decimal discount = con.Renewal_Discount__c * 0.01 * curItemPrice;
+                leasePricing.put(con.Property__r.Billing_Street__c + ' - Renewal discount', discount*-1);
+                overall -= discount;
+                curItemPrice -= discount;
+            }
             if(con.Deposit_Required__c && Date.Today().Month() == con.StartDate.Month() && Date.Today().Year() == con.StartDate.Year()) {
                 String depositName = con.Property__r.Billing_Street__c + ' - Deposit';
                 leasePricing.put(depositName, con.Monthly_Rent__c/2);
@@ -324,7 +301,8 @@ public without sharing class StripeHandler {
     public static Map<String,Decimal> addLeasePricingsToInvoice(Id accountId, String customerId, String invoiceId) {
         //Query leases
         List<Contract> contractList = [SELECT Id, AccountId, Property__r.Billing_Street__c, Monthly_Rent__c, StartDate, EndDate,
-            Long_Term_Resident_Discount__c, Veteran_Discount__c, Senior_Discount__c, Deposit_Required__c FROM Contract WHERE EndDate >= TODAY AND StartDate <= TODAY 
+            Long_Term_Resident_Discount__c, Veteran_Discount__c, Senior_Discount__c, Deposit_Required__c,
+            Renewal_Discount__c FROM Contract WHERE EndDate >= TODAY AND StartDate <= TODAY 
             AND status = 'activated' AND AccountId =: accountId];
         Map<String,Decimal> leasePricing = new Map<String,Decimal>();
         Decimal overall = 0;
@@ -342,6 +320,9 @@ public without sharing class StripeHandler {
             }
             if(con.Senior_Discount__c != NULL && con.Senior_Discount__c != 0) {
                 discounts.add(createCoupon(con.Senior_Discount__c, 'Eldery discount'));
+            }
+            if(con.Renewal_Discount__c != NULL && con.Renewal_Discount__c != 0) {
+                discounts.add(createCoupon(con.Renewal_Discount__c, 'Renewal discount'));
             }
             String invoiceItemId = createInvoiceItem(customerId, con.Monthly_Rent__c, itemName, invoiceId, discounts);
             overall += con.Monthly_Rent__c;
@@ -441,7 +422,7 @@ public without sharing class StripeHandler {
         }
     }
 
-    //pay invoice
+    //Pay invoice
     @AuraEnabled
     public static String payInvoice(String invoiceId){
         Http http = new Http();

@@ -10,17 +10,17 @@
                         <div class="slds-col">
                             <lightning-icon icon-name="standard:people"></lightning-icon>
                         </div>
-                        <div class="slds-col slds-align_absolute-center">
+                        <div class="slds-col">
                             <p><strong>{staff.Account__r.Name}</strong></p>
-                            <!-- <br><p>Role</p> -->
+                            <p>{staff.Role__c}</strong></p>
                         </div>
                         <div class="slds-col">
                             <lightning-button-menu alternative-text="Show menu">
                                 <lightning-menu-item value={staff.Account__c} label="View Profile" icon-name="utility:user" onclick={viewProfile}></lightning-menu-item>
                                 <lightning-menu-item value={staff.Id} label="Switch Role" icon-name="utility:product_transfer" onclick={switchRole}
-                                    data-role={staff.Role__c} data-accountname={staff.Account__r.Name}></lightning-menu-item>
+                                    data-role={staff.Role__c} data-accountname={staff.Account__r.Name} data-propertyname={staff.Property__r.Billing_Street__c}></lightning-menu-item>
                                 <lightning-menu-item value={staff.Id} data-accountid={staff.Account__c} data-accountname={staff.Account__r.Name}
-                                    label="Reassign" icon-name="utility:replace" onclick={reassign}></lightning-menu-item>
+                                    data-role={staff.Role__c} label="Reassign" icon-name="utility:replace" onclick={reassign}></lightning-menu-item>
                                 <lightning-menu-item value={staff.Id} data-accountname={staff.Account__r.Name} data-propertyname={staff.Property__r.Name}
                                     label="Remove" icon-name="utility:close" onclick={remove}></lightning-menu-item>
                             </lightning-button-menu>

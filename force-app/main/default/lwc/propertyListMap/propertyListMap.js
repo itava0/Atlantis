@@ -24,6 +24,8 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
   zoomLevel;
   listView;
   center;
+  cxpwEnabled = false;
+  moorelandEnabled = false;
   newMapMarker;
   selectedMarkerValue;
   geoLat = 0;
@@ -48,6 +50,7 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
   streets = [];
   cities = [];
   distance = 0;
+  companies = ['Atlantis'];
 
   // For tracking wired information
   @track properties;
@@ -71,7 +74,8 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
     streets: "$streets",
     cities: "$cities",
     pageSize: "$propertyCount",
-    pageNumber: "$pageNumber"
+    pageNumber: "$pageNumber",
+    companies: "$companies"
   })
   getPagedPropertyList(result) {
     this.properties = result;
@@ -207,14 +211,42 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
     this.distance = filters.distance;
     this.geoLat = filters.latitude;
     this.geoLong = filters.longitude;
+    this.cxpwEnabled = filters.cxpwEnabled;
+    this.moorelandEnabled = filters.moorelandEnabled;
+    this.companies = filters.companies;
+    this.updateMapFocus();
 
     this.locGot = true;
 
     refreshApex(this.properties);
   }
 
+  // Update map zoom level and centering based on if partners enabled
+  updateMapFocus() {
+    if (this.cxpwEnabled || this.moorelandEnabled) {
+      // Partners Enabled: Focus on US
+      this.zoomLevel = 4;
+      this.center = {
+        location: {
+          Latitude: "40.806862",
+          Longitude: "-96.681679"
+        }
+      };
+    } else {
+      // No Partners Enabled: Focus on Atlanta
+      this.zoomLevel = 11;
+      this.center = {
+        location: {
+          Latitude: "33.7760321146953",
+          Longitude: "-84.3872206235533"
+        }
+      };
+    }
+  }
+
   // When property marker selected
   handleMarkerSelect(event) {
+    // console.log("partners", this.cxpwEnabled, this.moorelandEnabled);
     if (event.target.selectedMarkerValue !== "userLocation") {
       this.selectedMarkerValue = event.target.selectedMarkerValue;
       this.handlePropertySelected();

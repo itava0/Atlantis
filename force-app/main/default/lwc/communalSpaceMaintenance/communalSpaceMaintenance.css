@@ -1,19 +1,19 @@
-.com-box{
-    display: flex;
-    align-items: center;
+.com-box {
+  display: flex;
+  align-items: center;
 }
 
 .com-box:hover[c-communalSpaceMaintenance_communalSpaceMaintenance] {
-    box-shadow: 2px 2px 4px lightgray;
-    cursor: pointer;
+  box-shadow: 2px 2px 4px lightgray;
+  cursor: pointer;
 }
 
 .arrow[c-communalSpaceMaintenance_communalSpaceMaintenance][c-communalSpaceMaintenance_communalSpaceMaintenance] {
-    border: solid lightgray;
-    border-width: 0 3px 3px 0;
-    display: inline-block;
-    margin-left: auto;
-    padding: 4px;
-    transform: rotate(-45deg);
-    -webkit-transform: rotate(-45deg);
+  border: solid lightgray;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+  margin-left: auto;
+  padding: 4px;
+  transform: rotate(-45deg);
+  -webkit-transform: rotate(-45deg);
 }

@@ -14,7 +14,8 @@ const PAGE_SIZE = 12;
 export default class PropertyTileList extends LightningElement {
     pageNumber = 1;
     pageSize = PAGE_SIZE;
-
+    cxpwEnabled = false;
+    moorelandEnabled = false;
     searchKey = '';
     recordType = 'Any';
     maxPrice = 50000;
@@ -23,6 +24,7 @@ export default class PropertyTileList extends LightningElement {
     minRating = 0;
     streets = [];
     cities = [];
+    companies = ['Atlantis'];
 
     @track properties;
     @track curProperties;
@@ -42,7 +44,8 @@ export default class PropertyTileList extends LightningElement {
         streets: '$streets',
         cities: '$cities',
         pageSize: '$pageSize',
-        pageNumber: '$pageNumber'
+        pageNumber: '$pageNumber',
+        companies: '$companies'
     })
     getPagedPropertyList(result) {
         this.properties = result;
@@ -83,6 +86,9 @@ export default class PropertyTileList extends LightningElement {
         this.streets = filters.streets;
         this.cities = filters.cities;
         this.pageNumber = filters.pageNumber;
+        this.cxpwEnabled = filters.cxpwEnabled;
+        this.moorelandEnabled = filters.moorelandEnabled;
+        this.companies = filters.companies;
     }
 
     // Move to previous page of tiles
@@ -92,6 +98,7 @@ export default class PropertyTileList extends LightningElement {
 
     // Move to next page of tiles
     handleNextPage() {
+        // console.log("partners", this.cxpwEnabled, this.moorelandEnabled);
         this.pageNumber = this.pageNumber + 1;
     }
 

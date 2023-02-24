@@ -9,6 +9,7 @@ import { refreshApex } from "@salesforce/apex";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import FILTERSCHANGEMC from "@salesforce/messageChannel/FiltersChange__c";
 import GOTUSERLOCATIONMC from "@salesforce/messageChannel/GotUserLocation__c";
+import MAPGRIDSWAPMC from "@salesforce/messageChannel/MapGridSwap__c";
 import doAddressGeocodeInput from "@salesforce/apex/PropertyGeocode.DoAddressGeocodeInput";
 import getAddresses from "@salesforce/apex/getAddresses.getAddressInfo";
 import getProperties from "@salesforce/apex/getProperties.getAllProperties";
@@ -25,12 +26,16 @@ export default class PropertyFilter extends LightningElement {
   minBathrooms = 0;
   minRating = 0;
   value = "Any";
+  companies = ["Atlantis"];
   subscription;
+  subscription2;
   pageNumber = 1;
   userLatitude = 0;
   userLongitude = 0;
   userLocated = false;
   useCurrentLocation = false;
+  @track cxpwEnabled = false;
+  @track moorelandEnabled = false;
 
   // Stores address location (cur = inputted value, evt = sent to API)
   curStreet;
@@ -129,7 +134,8 @@ export default class PropertyFilter extends LightningElement {
       { label: "Any", value: "Any" },
       { label: "Apartment", value: "Apartment" },
       { label: "Single Family", value: "Single Family" },
-      { label: "Townhouse", value: "Townhouse" }
+      { label: "Townhouse", value: "Townhouse" },
+      { label: "Condo", value: "Condo" }
     ];
   }
 
@@ -147,6 +153,9 @@ export default class PropertyFilter extends LightningElement {
     this.streets = [];
     this.cities = [];
     this.pageNumber = 1;
+    this.cxpwEnabled = false;
+    this.moorelandEnabled = false;
+    this.companies = ["Atlantis"];
     this.fireChangeEvent();
   }
 
@@ -208,11 +217,20 @@ export default class PropertyFilter extends LightningElement {
 
   // Subscribe to message channel
   connectedCallback() {
+    // Subscription 1: User location message channel
     this.subscription = subscribe(
       this.messageContext,
       GOTUSERLOCATIONMC,
       (message) => {
         this.handleMessage(message);
+      }
+    );
+    // Subscription 2: Message channel to update filters again if user switches between map and grid
+    this.subscription2 = subscribe(
+      this.messageContext,
+      MAPGRIDSWAPMC,
+      () => {
+        this.fireChangeEvent();
       }
     );
   }
@@ -223,6 +241,8 @@ export default class PropertyFilter extends LightningElement {
     // being called within a delay of DELAY. This is to avoid a very large number of Apex
     // method calls in components listening to this event.
     window.clearTimeout(this.delayTimeout);
+    
+    this.updatePartners();
 
     // Sends variables, primarily for filters, through message channel
     this.delayTimeout = setTimeout(() => {
@@ -238,10 +258,21 @@ export default class PropertyFilter extends LightningElement {
         distance: this.curDistance,
         latitude: this.lat1,
         longitude: this.lon1,
-        pageNumber: this.pageNumber
+        pageNumber: this.pageNumber,
+        cxpwEnabled: this.cxpwEnabled,
+        moorelandEnabled: this.moorelandEnabled,
+        companies: this.companies
       };
       publish(this.messageContext, FILTERSCHANGEMC, filters);
     }, DELAY);
+  }
+
+  // Update which partner properties to display using an array of strings to match Origin Company field
+  updatePartners() {
+    if (!this.cxpwEnabled && !this.moorelandEnabled) this.companies = ['Atlantis'];
+    else if (this.cxpwEnabled && !this.moorelandEnabled) this.companies = ['Atlantis', 'CXPW'];
+    else if (!this.cxpwEnabled && this.moorelandEnabled) this.companies = ['Atlantis', 'Mooreland'];
+    else if (this.cxpwEnabled && this.moorelandEnabled) this.companies = ['Atlantis', 'CXPW', 'Mooreland'];
   }
 
   // Get geo of inputted address
@@ -427,5 +458,19 @@ export default class PropertyFilter extends LightningElement {
   // Updating max distance in distance calculator
   handleDistanceChange(event) {
     this.curDistance = event.target.value;
+  }
+
+  // Enable partner properties from CXPW
+  handleCXPWProperties() {
+    this.cxpwEnabled = !this.cxpwEnabled;
+    console.log("cxpw", this.cxpwEnabled);
+    this.fireChangeEvent();
+  }
+
+  // Enable partner properties from Mooreland
+  handleMoorelandProperties() {
+    this.moorelandEnabled = !this.moorelandEnabled;
+    console.log("mooreland", this.moorelandEnabled);
+    this.fireChangeEvent();
   }
 }

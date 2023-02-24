@@ -1,0 +1,67 @@
+<template>
+    <template if:true={isStaff}>
+        <template if:true={recordTypeId}>
+            <div class="slds-align_absolute-center">
+                <!--<p><strong>Welcome, staff!</strong></p>-->
+            </div>
+            <template if:true={myAssignments}>
+                <article class="slds-card">
+                    <div class="slds-card__header slds-grid">
+                        <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                            <div class="slds-media__figure">
+                            <span class="slds-icon_container slds-icon-standard-account" title="property">
+                                <svg class="slds-icon slds-icon_small" aria-hidden="true">
+                                
+                                </svg>
+                                <span class="slds-assistive-text">property</span>
+                            </span>
+                            </div>
+                            <div class="slds-media__body slds-align_absolute-center">
+                                <template if:false={oneAssignment}>
+                                    <h2 class="slds-card__header-title">
+                                        Welcome, {userFirstName} {userLastName}! Here are your current assignments:
+                                    </h2>
+                                </template>
+                                <template if:true={oneAssignment}>
+                                    <h2 class="slds-card__header-title">
+                                        Welcome, {userFirstName} {userLastName}! Here is your current assignment:
+                                    </h2>
+                                </template>
+                            </div>
+                        </header>
+                    </div>
+                    <div class="slds-card__body slds-card__body_inner">
+                        <template for:each={myAssignments} for:item="property">
+                            <div key={property.Id} class="slds-box">
+                                <div class="slds-grid slds-gutters">
+                                    <div class="slds-col slds-size_4-of-7">
+                                        <c-property-info-card property-id={property.Id} name={property.Name} street={property.Billing_Street__c} city={property.Billing_City__c}
+                                        type={property.RecordType.Name} status={property.Status__c} state={property.Billing_State__c} postal-code={property.Billing_Postal_Code__c}
+                                        lat={property.Geolocation__Latitude__s} lon={property.Geolocation__Longitude__s} country={property.Billing_Country__c rent={property.Rent__c}
+                                        market-price={property.Market_Price__c} date-listed={property.Date_Listed__c} days-on-market={property.Days_On_Market__c}
+                                        bedrooms={property.Bedrooms__c} bathrooms={property.Bathrooms__c} picture={property.Picture__c}></c-property-info-card>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-7">
+                                        <c-staff-role property-id={property.Id} account-id={staffAccount}></c-staff-role>
+                                    </div>
+                                    <div class="slds-col slds-size_2-of-7">
+                                        <c-staff-property-owner property-id={property.Id}></c-staff-property-owner>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </article>
+            </template>
+            <template if:false={myAssignments}>
+                <p><strong>You have no current assignments at this time.</strong></p>
+            </template>
+        </template>
+        <template if:false={recordTypeId}>
+            <p><strong>An error has occurred in verifying user is staff. :(</strong></p>
+        </template>
+    </template>
+    <template if:false={isStaff}>
+        <!--<p><strong>This user is NOT staff.</strong></p>-->
+    </template>
+</template>

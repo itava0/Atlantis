@@ -1,0 +1,17 @@
+<template>
+    <lightning-card>
+        <!-- FOR UPDATING ROLE OF STAFF ASSIGNMENT -->
+        <lightning-modal-header label={roleHeader}></lightning-modal-header>
+        <lightning-modal-body>
+            <div class="slds-align_absolute-center">
+                <template if:true={rolePicklist.data}>
+                    <lightning-radio-group label="Select Role:" options={rolePicklist.data.values} onchange={handleRolePicklist} value={staffRole} style="margin-right:10px"></lightning-radio-group>
+                </template>
+                <lightning-button label="Update Role" variant="brand" onclick={updateRole}></lightning-button>
+            </div>
+        </lightning-modal-body>
+        <lightning-modal-footer>
+            <lightning-button label="Close" variant="destructive" onclick={handleClose}></lightning-button>
+        </lightning-modal-footer>
+    </lightning-card>
+</template>

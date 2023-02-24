@@ -1,5 +1,6 @@
 <template>
   <lightning-card title="Filters" icon-name="standard:calibration">
+    <!-- PRIMARY FILTER OPTIONS START HERE -->
     <lightning-button
       slot="actions"
       label="Reset"
@@ -59,7 +60,7 @@
         </div>
       </div>
     </div>
-
+    <!-- DISTANCE CALCULATOR OPTIONS START HERE -->
     <div class="slds-var-m-around_medium">
       <p><strong>Limit by Max Distance</strong></p>
       <lightning-input
@@ -76,7 +77,6 @@
         value={curCity}
         disabled={useCurrentLocation}
       ></lightning-input>
-      <!--<lightning-input type="text" label="Enter state: " onchange={handleStateChange}></lightning-input>-->
       <div class="slds-grid">
         <div class="slds-col">
           <div class="slds-form-element">
@@ -110,7 +110,6 @@
         onchange={handleDistanceChange}
       ></lightning-input>
       <br />
-      <!--<lightning-button variant="brand" label="Geo Address" onclick={geoAddress}></lightning-button>-->
       <div class="slds-grid">
         <div class="slds-col slds-size_1-of-2">
           <lightning-button
@@ -126,6 +125,34 @@
               label="Current Location"
               onchange={handleUseCurrentLocationChange}
             ></lightning-input>
+          </template>
+        </div>
+      </div>
+      <br>
+      <!-- PARTNER PROPERTY OPTIONS START HERE -->
+      <div class="slds-align_absolute-center">
+        <p><i>Atlantis is partnering with CXPW and Mooreland to display even more property options. Click below to toggle these properties.</i></p>
+      </div>
+      <br>
+      <div class="slds-grid">
+        <div class="slds-col">
+          <template if:true={cxpwEnabled}>
+            <lightning-input type="toggle" value={cxpwEnabled} label="CXPW" checked
+              message-toggle-active="Enabled" message-toggle-inactive="Disabled" onchange={handleCXPWProperties}></lightning-input>
+          </template>
+          <template if:false={cxpwEnabled}>
+            <lightning-input type="toggle" value={cxpwEnabled} label="CXPW"
+              message-toggle-active="Enabled" message-toggle-inactive="Disabled" onchange={handleCXPWProperties}></lightning-input>
+          </template>
+        </div>
+        <div class="slds-col">
+          <template if:true={moorelandEnabled}>
+            <lightning-input type="toggle" value={moorelandEnabled} label="Mooreland" checked
+              message-toggle-active="Enabled" message-toggle-inactive="Disabled" onchange={handleMoorelandProperties}></lightning-input>
+          </template>
+          <template if:false={moorelandEnabled}>
+            <lightning-input type="toggle" value={moorelandEnabled} label="Mooreland"
+              message-toggle-active="Enabled" message-toggle-inactive="Disabled" onchange={handleMoorelandProperties}></lightning-input>
           </template>
         </div>
       </div>

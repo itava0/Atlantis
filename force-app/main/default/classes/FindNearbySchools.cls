@@ -1,4 +1,7 @@
 public with sharing class FindNearbySchools {
+	// NOTE: This whole class has been deprecated by the Modal Map component and classes, but I'm keeping it
+	// up as a reference for API queries and storing that information
+	
     private static Boolean apiCalled = false;
 
 	/* DEPRECATED    

@@ -37,5 +37,17 @@
         <description>Map Markers</description>
         <fieldName>mapMarkers</fieldName>
     </lightningMessageFields>
+    <lightningMessageFields>
+        <description>CXPW enabled?</description>
+        <fieldName>cxpwEnabled</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <description>Mooreland enabled?</description>
+        <fieldName>moorelandEnabled</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <description>Origin Companies</description>
+        <fieldName>companies</fieldName>
+    </lightningMessageFields>
     <masterLabel>Filters Change Message Channel</masterLabel>
 </LightningMessageChannel>

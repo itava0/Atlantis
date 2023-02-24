@@ -8,6 +8,7 @@ import getStaffMembers from '@salesforce/apex/getProperties.getStaffMembers';
 import getPropertyName from '@salesforce/apex/getProperties.getPropertyName';
 import ManageStaffModal from 'c/manageStaffModal';
 import ManageStaffDeleteModal from 'c/manageStaffDeleteModal';
+import ManageStaffRoleModal from 'c/manageStaffRoleModal';
 
 export default class ManageStaff extends NavigationMixin(LightningElement) {
     @api recordId;
@@ -86,7 +87,7 @@ export default class ManageStaff extends NavigationMixin(LightningElement) {
         }
     }
 
-    // Get name of current property
+    // Get name (billing street) of current property
     @wire(getPropertyName, { propId: "$recordId" }) getPropertyName(result) {
         if (result.data) {
             this.propertyName = result.data[0].Billing_Street__c;
@@ -97,7 +98,12 @@ export default class ManageStaff extends NavigationMixin(LightningElement) {
         }
     }
 
-    // View profile of staff member
+    // SELECTABLE OPTION: Assign staff members to a property without staff
+    assignStaff() {
+        this.loadModal(false);
+    }
+
+    // SELECTABLE OPTION: View profile of staff member
     viewProfile(event) {
         this[NavigationMixin.Navigate]({
             type: 'standard__recordPage',
@@ -109,28 +115,25 @@ export default class ManageStaff extends NavigationMixin(LightningElement) {
         });
     }
 
-    // Switch staff member's assigned role
+    // SELECTABLE OPTION: Switch staff member's assigned role
     switchRole(event) {
         this.staffId = event.target.value;
         this.staffRole = event.target.dataset.role;
-        this.accountName = event.target.dataset.accountname; 
-        console.log("ROLE", this.staffRole, this.accountName, this.staffId);
+        this.accountName = event.target.dataset.accountname;
+        this.propertyName = event.target.dataset.propertyname;
+        this.loadRoleModal(event.target.value);
     }
 
-    // Reassign staff member to different property
+    // SELECTABLE OPTION: Reassign staff member to different property
     reassign(event) {
         this.staffId = event.target.value;
+        this.staffRole = event.target.dataset.role;
         this.accountId = event.target.dataset.accountid;
         this.accountName = event.target.dataset.accountname;
         this.loadModal(true);
     }
 
-    // Assign staff members to a property without staff
-    assignStaff() {
-        this.loadModal(false);
-    }
-
-    // Remove staff member from property
+    // SELECTABLE OPTION: Remove staff member from property
     remove(event) {
         this.accountName = event.target.dataset.accountName;
         this.propertyName = event.target.dataset.propertyName;
@@ -151,18 +154,33 @@ export default class ManageStaff extends NavigationMixin(LightningElement) {
             propertyId: this.recordId,
             propertyName: this.propertyName,
             staffId: this.staffId,
+            staffRole: this.staffRole,
             accountId: this.accountId,
             accountName: this.accountName
         })
     }
 
-    // Load modal for managing staff (separate component to confirm assignment removal)
+    // Load modal for removing staff assignment
     async loadDeleteModal(staffId) {
         await ManageStaffDeleteModal.open({
             size: 'small',
             description: 'description',
             content: 'content',
             recordId: staffId,
+            propertyId: this.recordId
+        })
+    }
+
+    // Load modal for updating staff role
+    async loadRoleModal(staffId) {
+        await ManageStaffRoleModal.open({
+            size: 'small',
+            description: 'description',
+            content: 'content',
+            recordId: staffId,
+            staffRole: this.staffRole,
+            accountName: this.accountName,
+            propertyName: this.propertyName,
             propertyId: this.recordId
         })
     }
