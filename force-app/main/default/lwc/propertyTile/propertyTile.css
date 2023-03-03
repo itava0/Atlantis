@@ -13,6 +13,17 @@ img {
   background-repeat: no-repeat;
 }
 
+.upper-third {
+  max-height: 65px;
+  max-width: 65px;
+  min-height: 65px;
+  min-width: 65px;
+  align-items: center;
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 2px solid rgba(0, 0, 0, 0.9);
+}
+
 .lower-third {
   position: absolute;
   /* @sldsValidatorIgnore */

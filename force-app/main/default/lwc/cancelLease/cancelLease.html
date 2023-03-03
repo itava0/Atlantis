@@ -1,0 +1,62 @@
+<template>
+    <template if:true={showbutton}>
+        <lightning-button label="Cancel Lease"
+            onclick={handleOpen}></lightning-button>
+    </template>
+    <template if:true={showcard}>
+        <lightning-card>
+            <div class="slds-var-m-around_medium">
+                <template if:true={showform}>
+                    <h1
+                        class="slds-align_absolute-center slds-text-heading_medium">
+                        SUBMIT A CANCELLATION REQUEST</h1>
+                    <br>
+                    <lightning-record-view-form
+                        record-id={accountName}
+                        object-api-name="Account">
+                        <lightning-output-field
+                            field-name="Name">
+                        </lightning-output-field>
+                    </lightning-record-view-form>
+                    <lightning-record-view-form
+                        object-api-name="Property__c"
+                        record-id={propertyId}>
+                        <lightning-output-field
+                            field-name="Name">
+                        </lightning-output-field>
+                    </lightning-record-view-form>
+                    <!-- <div>Description:</div> -->
+                    <lightning-textarea type="text"
+                        label="Description:" rows=3
+                        onchange={descriptionHandler}
+                        data-id="reset"
+                        placeholder="Enter Description..."
+                        required>
+                    </lightning-textarea>
+                    <div
+                        class="slds-align_absolute-center slds-var-m-around_medium">
+                        <lightning-button
+                            style="border-radius: 0;"
+                            variant="brand" label="SUBMIT"
+                            title="SUBMIT" onclick={submit}>
+                        </lightning-button>
+                    </div>
+                </template>
+                <template if:true={showmessage}>
+                    <div>
+                        <h1
+                            class="slds-align_absolute-center">
+                            Thank
+                            you! Your cancellation request
+                            has been
+                            submitted. We will respond back
+                            to you
+                            at the earliest possible
+                            convenience.
+                        </h1>
+                    </div>
+                </template>
+            </div>
+        </lightning-card>
+    </template>
+</template>

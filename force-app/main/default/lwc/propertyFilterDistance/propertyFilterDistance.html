@@ -1,0 +1,66 @@
+<template>
+    <div class="slds-var-m-around_medium">
+        <p><strong>Find Properties Near an Address</strong></p>
+        <lightning-input type="text" label="Enter street: " onchange={handleStreetChange} value={curStreet}></lightning-input>
+        <div class="slds-grid">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-input type="text" label="Enter city: " onchange={handleCityChange} value={curCity}></lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <div class="slds-form-element">
+                    <div class="slds-form-element__control">
+                        <lightning-combobox id="select-01" name="State" label="Select State:" value={curState} placeholder="Georgia"
+                        options={stateOptions} onchange={handleStateChange}></lightning-combobox>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slds-grid">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-input type="text" label="Enter postal code: " onchange={handlePostalCodeChange} value={curPostalCode}></lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-input type="number" label="Enter max distance (mi): " onchange={handleDistanceChange}></lightning-input>
+            </div>
+        </div>
+        <br />
+        <lightning-button variant="success" label="Filter by Distance" onclick={getDistance}></lightning-button>
+
+        <!-- ORIGINAL CODE
+        <p><strong>Limit by Max Distance</strong></p>
+        <lightning-input type="text" label="Enter street: " onchange={handleStreetChange} value={curStreet} disabled={useCurrentLocation}></lightning-input>
+        <div class="slds-grid">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-input type="text" label="Enter city: " onchange={handleCityChange} value={curCity} disabled={useCurrentLocation}></lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <div class="slds-form-element">
+                    <div class="slds-form-element__control">
+                        <lightning-combobox id="select-01" name="State" label="Select State:" value={curState} placeholder="Georgia"
+                        options={stateOptions} onchange={handleStateChange} disabled={useCurrentLocation}></lightning-combobox>
+                    </div>
+                </div>
+            </div>
+            </div>
+            <div class="slds-grid">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-input type="text" label="Enter postal code: " onchange={handlePostalCodeChange} value={curPostalCode} disabled={useCurrentLocation}></lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-input type="number" label="Enter max distance (mi): " onchange={handleDistanceChange}></lightning-input>
+            </div>
+            </div>
+            <br />
+            <div class="slds-grid">
+            <div class="slds-col slds-size_1-of-2">
+                <lightning-button variant="success" label="Filter by Distance" onclick={getDistance}></lightning-button>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+                <template if:true={userLocated}>
+                <lightning-input type="checkbox" label="Current Location" onchange={handleUseCurrentLocationChange}></lightning-input>
+                </template>
+            </div>
+        </div>
+        -->
+    </div>
+</template>

@@ -1,0 +1,22 @@
+<template>
+    <div class="slds-var-m-around_medium">
+        <div class="slds-grid">
+            <div class="slds-col">
+            <lightning-input label="Search Address" type="text" value={searchKey} onchange={handleSearchKeyChange}></lightning-input>
+            </div>
+            <div class="slds-col">
+            <lightning-combobox label="Property Type" value={recordType} placeholder="Select Property Type" options={options} onchange={handleRecordTypeChange}></lightning-combobox>
+            </div>
+        </div>
+        <lightning-slider label="Max Rent" step="1000" min="0" max="100000" value={maxPrice} onchange={handleMaxPriceChange}></lightning-slider>
+        <lightning-slider label="Min Rating" step="1" min="0" max="5" value={minRating} onchange={handleMinRatingChange}></lightning-slider>
+        <div class="slds-grid">
+            <div class="slds-col">
+            <lightning-slider label="Min Bedrooms" step="1" min="0" max="6" value={minBedrooms} onchange={handleMinBedroomsChange}></lightning-slider>
+            </div>
+            <div class="slds-col">
+            <lightning-slider label="Min Bathrooms" step="1" min="0" max="6" value={minBathrooms} onchange={handleMinBathroomsChange}></lightning-slider>
+            </div>
+        </div>
+    </div>
+</template>

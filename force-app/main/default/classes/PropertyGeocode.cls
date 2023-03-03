@@ -14,7 +14,7 @@ public with sharing class PropertyGeocode {
  
     // Given a property Id, geocode the property based on its address fields
 	@future (callout=true)
-	static private void geocodeAddress(id propertyId){ 
+	static private void geocodeAddress(Id propertyId){ 
   		// Key for Google Maps Geocoding API
   		String geocodingKey = 'AIzaSyDnGBdEG1XOodEdlPwRnqaFA5PRG2xnbFc';
   		// get the passed in address
@@ -77,10 +77,8 @@ public with sharing class PropertyGeocode {
     		// update co-ordinates on address if we get them back
     		if(latitude != null) {
                 // In edge case of lat or lon values going over field limits, truncate to 7 decimal places -- should prevent any errors from surfacing
-                String latString = String.valueOf(latitude).subString(0, String.valueOf(latitude).indexOf('.') + 8);
-                String lonString = String.valueOf(longitude).subString(0, String.valueOf(longitude).indexOf('.') + 8);
-                Decimal latRounded = Decimal.valueOf(latString);
-                Decimal lonRounded = Decimal.valueOf(lonString);
+                Decimal latRounded = Decimal.valueOf(latitude).setScale(7);
+                Decimal lonRounded = Decimal.valueOf(longitude).setScale(7);
                 
       			geoProperty.Geolocation__Latitude__s = latRounded;
       			geoProperty.Geolocation__Longitude__s = lonRounded;
@@ -90,34 +88,25 @@ public with sharing class PropertyGeocode {
     		System.debug(LoggingLevel.ERROR, 'Error Geocoding Address - ' + e.getMessage());
   		}
 	}
-	
 
-    public static Decimal returnedLat;
-    public static Decimal returnedLon;
-
-    // Below are very similar functions, but parameters are address strings instead of Id. Used specifically for the distance filter to store address information & geolocate it.
+    // Below is a similar function, but parameters are address strings instead of Id. Used specifically for the distance filter to store address information & geolocate it
+    // (It has recently been reworked to no longer store in separate Address record, instead returning the lat & lon to the LWC)
     
-    @AuraEnabled
-    public static void DoAddressGeocodeInput(String iStreet, String iCity, String iState, String iPostalCode) {
-        System.debug('HELLO: ' + iStreet + ' ' + iCity + ' ' + iState + ' ' + iPostalCode);
-        if(geocodingCalled || System.isFuture()) {
-    		System.debug(LoggingLevel.WARN,'***Address Geocoding Future Method Already Called - Aborting...');
-    		return;
-        }
-		
-        geocodingCalled = true;
-		geocodeAddressInput(iStreet, iCity, iState, iPostalCode);
-	}
-    
-    @AuraEnabled @future (callout=true)
-	static public void geocodeAddressInput(String iStreet, String iCity, String iState, String iPostalCode){ 
-  		// Key for Google Maps Geocoding API
+    @AuraEnabled(cacheable = true)
+    public static Map<String, Decimal> geocodeAddressForDistance(String iStreet, String iCity, String iState, String iPostalCode) {
+        // Key for Google Maps Geocoding API
   		String geocodingKey = 'AIzaSyDnGBdEG1XOodEdlPwRnqaFA5PRG2xnbFc';
+        
+        // Determine return values (lat & lon if successful, or if not, an effectively null lat & lon)
+        Map<String, Decimal> latLon = new Map<String, Decimal>();
+        Map<String, Decimal> nullReturn = new Map<String, Decimal>();
+        nullReturn.put('lat', 0.0);
+        nullReturn.put('lon', 0.0);
     
   		// check that we have enough information to geocode the address
 		if((iStreet == null) || (iCity == null)) {
     		System.debug(LoggingLevel.WARN, 'Insufficient Data to Geocode Address');
-    		return;
+    		return nullReturn;
   		}
   		// create a string for the address to pass to Google Geocoding API
   		String geoAddress = '';
@@ -168,17 +157,20 @@ public with sharing class PropertyGeocode {
     		}
     		// update co-ordinates on address if we get them back
     		if(latitude != null) {
-                // In edge case of lat or lon values going over field limits, truncate to 7 decimal places -- should prevent any errors from surfacing
-                String latString = String.valueOf(latitude).subString(0, String.valueOf(latitude).indexOf('.') + 8);
-                String lonString = String.valueOf(longitude).subString(0, String.valueOf(longitude).indexOf('.') + 8);
-                Decimal latRounded = Decimal.valueOf(latString);
-                Decimal lonRounded = Decimal.valueOf(lonString);
+                Decimal latRounded = Decimal.valueOf(latitude).setScale(7);
+                Decimal lonRounded = Decimal.valueOf(longitude).setScale(7);
                 
-      			Address__c add = new Address__c(Latitude__c = latRounded, Longitude__c = lonRounded, Street__c = iStreet, City__c = iCity, State__c = iState, PostalCode__c = iPostalCode);
-                insert add;
-    		}
+				System.debug('HELLO: ' + latRounded + lonRounded);
+                
+      			latLon.put('lat', latRounded);
+        		latLon.put('lon', lonRounded);
+                return latLon;
+            } else {
+                return nullReturn;
+            }
   		} catch (Exception e) {
     		System.debug(LoggingLevel.ERROR, 'Error Geocoding Address - ' + e.getMessage());
+            return nullReturn;
   		}
-	}
+    }
 }

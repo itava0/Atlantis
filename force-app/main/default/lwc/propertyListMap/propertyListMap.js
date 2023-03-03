@@ -1,18 +1,15 @@
 import { LightningElement, wire, track } from "lwc";
 import { NavigationMixin } from "lightning/navigation";
 import { refreshApex } from "@salesforce/apex";
-import {
-  publish,
-  subscribe,
-  unsubscribe,
-  MessageContext
-} from "lightning/messageService";
+import { publish, subscribe, unsubscribe, MessageContext } from "lightning/messageService";
 import FILTERSCHANGEMC from "@salesforce/messageChannel/FiltersChange__c";
 import PROPERTYSELECTEDMC from "@salesforce/messageChannel/PropertySelected__c";
 import GOTUSERLOCATIONMC from "@salesforce/messageChannel/GotUserLocation__c";
 import getPagedPropertyList from "@salesforce/apex/PropertyController.getPagedPropertyList";
 import getAllProperties from '@salesforce/apex/getProperties.getAllProperties';
-//import ReverseGeocodeApex from "@salesforce/apex/ReverseGeocodingService.ReverseGeocode";
+import ATLANTIS_LOGO from '@salesforce/resourceUrl/AtlantisLogo';
+import CXPW_LOGO from '@salesforce/resourceUrl/CXPWLogo';
+import MOORELAND_LOGO from '@salesforce/resourceUrl/MoorelandLogo';
 
 const PAGE_SIZE = 12;
 
@@ -24,8 +21,12 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
   zoomLevel;
   listView;
   center;
+  selectedName;
+  selectedCompany;
+  selectedLogo = ATLANTIS_LOGO;
   cxpwEnabled = false;
   moorelandEnabled = false;
+  partnersEnabled = false;
   newMapMarker;
   selectedMarkerValue;
   geoLat = 0;
@@ -43,13 +44,11 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
   markersRendered;
   searchKey = "";
   recordType = "Any";
-  maxPrice = 50000;
+  maxPrice = 100000;
   minBedrooms = 0;
   minBathrooms = 0;
   minRating = 0;
-  streets = [];
-  cities = [];
-  distance = 0;
+  propsInDistance = [];
   companies = ['Atlantis'];
 
   // For tracking wired information
@@ -71,8 +70,7 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
     minBedrooms: "$minBedrooms",
     minBathrooms: "$minBathrooms",
     minRating: "$minRating",
-    streets: "$streets",
-    cities: "$cities",
+    propsInDistance: "$propsInDistance",
     pageSize: "$propertyCount",
     pageNumber: "$pageNumber",
     companies: "$companies"
@@ -142,11 +140,6 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
               // Create a new map marker using property's geolocation values
               this.newMapMarker = {
                 location: {
-                  // Street: this.properties.data.records[i].Billing_Street__c,
-                  // City: this.properties.data.records[i].Billing_City__c,
-                  // State: this.properties.data.records[i].Billing_State__c,
-                  // PostalCode: this.properties.data.records[i].Billing_Postal_Code__c,
-                  // Country: this.properties.data.records[i].Billing_Country__c
                   Latitude:
                     this.properties.data.records[i].Geolocation__Latitude__s,
                   Longitude:
@@ -154,9 +147,7 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
                 },
                 value: this.properties.data.records[i].Id,
                 title: this.properties.data.records[i].Billing_Street__c,
-                description:
-                  // this.properties.data.records[i].Billing_City__c + ", " + this.properties.data.records[i].Billing_State__c + " " + this.properties.data.records[i].Billing_Postal_Code__c
-                  "Beds: " + this.properties.data.records[i].Bedrooms__c + ", Baths: " + this.properties.data.records[i].Bathrooms__c + ", Rent: $" + this.properties.data.records[i].Rent__c
+                description: "Beds: " + this.properties.data.records[i].Bedrooms__c + ", Baths: " + this.properties.data.records[i].Bathrooms__c + ", Rent: $" + this.properties.data.records[i].Rent__c
               };
               this.mapMarkers.push(this.newMapMarker);
             }
@@ -206,15 +197,14 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
     this.minBedrooms = filters.minBedrooms;
     this.minBathrooms = filters.minBathrooms;
     this.minRating = filters.minRating;
-    this.streets = filters.streets;
-    this.cities = filters.cities;
-    this.distance = filters.distance;
-    this.geoLat = filters.latitude;
-    this.geoLong = filters.longitude;
+    this.propsInDistance = filters.propsInDistance;
+    // this.geoLat = filters.latitude;
+    // this.geoLong = filters.longitude;
     this.cxpwEnabled = filters.cxpwEnabled;
     this.moorelandEnabled = filters.moorelandEnabled;
     this.companies = filters.companies;
     this.updateMapFocus();
+    this.updatePartners();
 
     this.locGot = true;
 
@@ -244,12 +234,44 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
     }
   }
 
+  // Determine if company logos should be displayed based on if partners enabled
+  updatePartners() {
+    if (this.cxpwEnabled || this.moorelandEnabled) {
+      this.partnersEnabled = true;
+    } else {
+      this.partnersEnabled = false;
+    }
+  }
+
   // When property marker selected
   handleMarkerSelect(event) {
-    // console.log("partners", this.cxpwEnabled, this.moorelandEnabled);
     if (event.target.selectedMarkerValue !== "userLocation") {
       this.selectedMarkerValue = event.target.selectedMarkerValue;
+      this.getPropertyInfo(this.selectedMarkerValue);
       this.handlePropertySelected();
+    }
+  }
+
+  // Update name and company of selected property (given Id) for template to use
+  getPropertyInfo(propertyId) {
+    for (let i = 0; i < this.properties.data.records.length; i++) {
+      if (propertyId == this.properties.data.records[i].Id) {
+        this.selectedName = this.properties.data.records[i].Billing_Street__c;
+        this.selectedCompany = this.properties.data.records[i].Origin_Company__c;
+      }
+    }
+    switch (this.selectedCompany) {
+      case 'Atlantis':
+        this.selectedLogo = ATLANTIS_LOGO;
+        break;
+      case 'CXPW':
+        this.selectedLogo = CXPW_LOGO;
+        break;
+      case 'Mooreland':
+        this.selectedLogo = MOORELAND_LOGO;
+        break;
+      default:
+        this.selectedLogo = ATLANTIS_LOGO;
     }
   }
 
@@ -276,12 +298,34 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
     //set sessionStorage values
     sessionStorage.setItem("id", this.selectedMarkerValue);
 
-    this[NavigationMixin.Navigate]({
-      type: "standard__namedPage",
-      attributes: {
-        pageName: "application"
-      }
-    });
+    switch (this.selectedCompany) {
+      case 'Atlantis':
+        this[NavigationMixin.Navigate]({
+          type: "standard__namedPage",
+          attributes: {
+            pageName: "application"
+          }
+        });
+        break;
+      case 'CXPW':
+        this[NavigationMixin.Navigate]({
+          type: "standard__webPage",
+          attributes: {
+            url: 'https://smoothstack9-dev-ed.develop.my.site.com/cxpw/s/'
+          }
+        });
+        break;
+      case 'Mooreland':
+        this[NavigationMixin.Navigate]({
+          type: "standard__webPage",
+          attributes: {
+            url: 'https://smoothstack35-dev-ed.develop.my.site.com/accountportal/s/'
+          }
+        });
+        break;
+      default:
+        // default
+    }
   }
 
   // Attempts to retrieve user's current geolocation

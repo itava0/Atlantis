@@ -7,8 +7,10 @@ import MaintenanceModal from "./maintenanceModal";
 export default class CommunalSpaceMaintenance extends LightningElement {
   communities = undefined;
   communityId = undefined;
+  communitySelected = false;
   communalSpaces = undefined;
   communalSpaceId = undefined;
+  communalSpaceSelected = false;
   communalSpaceMaintenance = undefined;
   error = undefined;
 
@@ -31,6 +33,8 @@ export default class CommunalSpaceMaintenance extends LightningElement {
     this.communityId = event.target.dataset.id;
     this.communalSpaceId = undefined;
     this.communalSpaceMaintenance = undefined;
+    this.communitySelected = true;
+    this.communalSpaceSelected = false;
     getCommunalSpaces({ communityId: this.communityId })
       .then((result) => {
         this.communalSpaces = result;
@@ -50,6 +54,7 @@ export default class CommunalSpaceMaintenance extends LightningElement {
       .then((result) => {
         this.communalSpaceMaintenance = result;
         console.log("maintenance", result);
+        this.communalSpaceSelected = true;
       })
       .catch((error) => {
         this.error = error;

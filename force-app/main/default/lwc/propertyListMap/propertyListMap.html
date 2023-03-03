@@ -2,39 +2,42 @@
   <div class="slds-card slds-var-p-around_small">
     <template if:true={properties.data}>
       <div class="slds-align_absolute-center">
-        <!--<lightning-button variant="brand" label="Refresh Properties" onclick={updateMarkers}></lightning-button>-->
       </div>
       <br />
-      <!--<template for:each={properties.data.records} for:item="property">
-                <div key={property.Id}>
-                    <p>{property.Name}</p>
-                </div>
-            </template>-->
-      <lightning-map
-        map-markers={mapMarkers}
-        zoom-level={zoomLevel}
-        list-view={listView}
-        onmarkerselect={handleMarkerSelect}
-        selected-marker-value={selectedMarkerValue}
-        center={center}
-      >
-      </lightning-map>
-      <div class="slds-align_absolute-center" style="margin-top:5px">
+      <lightning-map map-markers={mapMarkers} zoom-level={zoomLevel} list-view={listView}
+      onmarkerselect={handleMarkerSelect} selected-marker-value={selectedMarkerValue} center={center}></lightning-map>
+      <div class="footer-container slds-align_absolute-center">
+        <template if:true={partnersEnabled}>
+          <div class="logo-outer">
+            <div class="logo-inner slds-align_absolute-center">
+              <img src={selectedLogo}>
+            </div>
+          </div>
+        </template>
         <template if:true={selectedMarkerValue}>
-          <lightning-button variant="brand" label="View Details" onclick={handleNavigateToRecord} style="margin-right:4px; display:grid; width:40%"></lightning-button>
-          <lightning-button variant="brand" label="Apply Online" onclick={navigateToApplicationPage} style="display:grid; width:40%"></lightning-button>
+          <div class="current-property">
+            <div class="slds-align_absolute-center">
+              <lightning-icon icon-name="utility:checkin" size="small" variant="error"></lightning-icon>
+              <b>{selectedName}</b>
+            </div>
+          </div>
+          <lightning-button variant="brand" class="view-button" icon-name="utility:list" label="View Details" onclick={handleNavigateToRecord}></lightning-button>
+          <lightning-button variant="brand" class="apply-button" icon-name="utility:priority" label="Apply Online" onclick={navigateToApplicationPage}></lightning-button>
         </template>
         <template if:false={selectedMarkerValue}>
-          <lightning-button variant="brand" label="View Details" disabled style="margin-right:4px; display:grid; width:40%"></lightning-button>
-          <lightning-button variant="brand" label="Apply Online" disabled style="display:grid; width:40%"></lightning-button>
+          <div class="current-property">
+            <div class="slds-align_absolute-center">
+              <lightning-icon icon-name="utility:checkin" size="small"></lightning-icon>
+              <i>No property selected</i>
+            </div>
+          </div>
+          <lightning-button variant="brand" class="view-button" icon-name="utility:list" label="View Details" disabled></lightning-button>
+          <lightning-button variant="brand" class="apply-button" icon-name="utility:priority" label="Apply Online" disabled></lightning-button>
         </template>
       </div>
     </template>
     <template if:true={properties.error}>
-      <c-error-panel
-        friendly-message="Error retrieving data"
-        errors={properties.error}
-      ></c-error-panel>
+      <c-error-panel friendly-message="Error retrieving data" errors={properties.error}></c-error-panel>
     </template>
   </div>
 </template>

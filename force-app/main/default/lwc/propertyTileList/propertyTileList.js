@@ -1,10 +1,5 @@
 import { LightningElement, wire, track } from 'lwc';
-import {
-    publish,
-    subscribe,
-    unsubscribe,
-    MessageContext
-} from 'lightning/messageService';
+import { publish, subscribe, unsubscribe, MessageContext } from 'lightning/messageService';
 import FILTERSCHANGEMC from '@salesforce/messageChannel/FiltersChange__c';
 import PROPERTYSELECTEDMC from '@salesforce/messageChannel/PropertySelected__c';
 import getPagedPropertyList from '@salesforce/apex/PropertyController.getPagedPropertyList';
@@ -18,12 +13,11 @@ export default class PropertyTileList extends LightningElement {
     moorelandEnabled = false;
     searchKey = '';
     recordType = 'Any';
-    maxPrice = 50000;
+    maxPrice = 100000;
     minBedrooms = 0;
     minBathrooms = 0;
     minRating = 0;
-    streets = [];
-    cities = [];
+    propsInDistance = [];
     companies = ['Atlantis'];
 
     @track properties;
@@ -41,8 +35,7 @@ export default class PropertyTileList extends LightningElement {
         minBedrooms: '$minBedrooms',
         minBathrooms: '$minBathrooms',
         minRating: '$minRating',
-        streets: '$streets',
-        cities: '$cities',
+        propsInDistance: '$propsInDistance',
         pageSize: '$pageSize',
         pageNumber: '$pageNumber',
         companies: '$companies'
@@ -83,8 +76,7 @@ export default class PropertyTileList extends LightningElement {
         this.minBedrooms = filters.minBedrooms;
         this.minBathrooms = filters.minBathrooms;
         this.minRating = filters.minRating;
-        this.streets = filters.streets;
-        this.cities = filters.cities;
+        this.propsInDistance = filters.propsInDistance;
         this.pageNumber = filters.pageNumber;
         this.cxpwEnabled = filters.cxpwEnabled;
         this.moorelandEnabled = filters.moorelandEnabled;
@@ -98,7 +90,6 @@ export default class PropertyTileList extends LightningElement {
 
     // Move to next page of tiles
     handleNextPage() {
-        // console.log("partners", this.cxpwEnabled, this.moorelandEnabled);
         this.pageNumber = this.pageNumber + 1;
     }
 

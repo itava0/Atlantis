@@ -1,0 +1,34 @@
+.footer-container {
+    margin-top: 5px;
+}
+
+.logo-outer {
+    margin-right: 4px;
+    display: grid;
+    width: 10%;
+}
+
+.logo-inner {
+    margin-right: 4px;
+    max-height: 80px;
+    max-width: 80px;
+    min-height: 80px;
+    min-width: 80px;
+}
+
+.current-property {
+    margin-right: 4px;
+    display: grid;
+    width: 24%;
+}
+
+.view-button {
+    margin-right: 4px;
+    display: grid;
+    width: 28%;
+}
+
+.apply-button {
+    display: grid;
+    width: 28%;
+}

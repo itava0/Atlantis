@@ -2,6 +2,13 @@
   <a onclick={handlePropertySelected} onmouseover={handlePropertySelected} onmouseleave={handlePropertyDeselected}>
     <!-- Below line throws an error in VSCode, but runs properly when pushed -->
     <div class="tile" style={backgroundImageStyle}>
+      <template if:true={partnersEnabled}>
+        <div class="upper-third">
+          <div class="slds-align_absolute-center">
+            <img src={companyLogo}></img>
+          </div>
+        </div>
+      </template>
       <div
         class="lower-third slds-var-p-horizontal_x-small slds-var-p-vertical_xx-small slds-text-color_inverse"
       >
@@ -24,13 +31,6 @@
             </p>
           </div>
         </template>
-        <p>
-          <lightning-formatted-number
-            format-style="currency"
-            currency-code="USD"
-            value={property.Market_Price__c}
-          ></lightning-formatted-number>
-        </p>
       </div>
     </div>
   </a>

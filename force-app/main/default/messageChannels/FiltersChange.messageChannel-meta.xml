@@ -26,12 +26,8 @@
         <fieldName>minRating</fieldName>
     </lightningMessageFields>
     <lightningMessageFields>
-        <description>Streets</description>
-        <fieldName>streets</fieldName>
-    </lightningMessageFields>
-    <lightningMessageFields>
-        <description>Cities</description>
-        <fieldName>cities</fieldName>
+        <description>Props In Distance</description>
+        <fieldName>propsInDistance</fieldName>
     </lightningMessageFields>
     <lightningMessageFields>
         <description>Map Markers</description>

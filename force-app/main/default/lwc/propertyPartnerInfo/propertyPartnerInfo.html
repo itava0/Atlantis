@@ -3,7 +3,7 @@
         <img src={logo} class="logo"></img>
         {partnerName}
     </div>
-    <div>
-        <lightning-button variant="brand" label="Schedule a viewing" title="Schedule a viewing" icon-name="utility:clock" icon-position="left" class="slds-m-left_x-small"></lightning-button>
+    <div class="slds-align_absolute-center">
+        <lightning-button style="display:grid; width:80%" variant="brand" label="Schedule a viewing" title="Schedule a viewing" icon-name="utility:clock" icon-position="left" class="slds-var-m-top_small" onclick={handleScheduleClick}></lightning-button>
     </div>
 </template>

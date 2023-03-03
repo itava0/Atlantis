@@ -1,137 +1,76 @@
 <template>
   <lightning-card title="Filters" icon-name="standard:calibration">
-    <!-- PRIMARY FILTER OPTIONS START HERE -->
-    <lightning-button
-      slot="actions"
-      label="Reset"
-      onclick={handleReset}
-    ></lightning-button>
+    <lightning-button slot="actions" label="Reset" onclick={handleReset}></lightning-button>
+    <c-property-filter-fields properties={properties} onfieldsupdate={handleFieldsUpdate}></c-property-filter-fields>
+    <hr />
+    <c-property-filter-distance properties={properties} ondistanceupdate={handleDistanceUpdate}></c-property-filter-distance>
+    <hr />
+    <c-property-filter-partners properties={properties} onpartnersupdate={handlePartnersUpdate}></c-property-filter-partners>
 
+    <!-- ORIGINAL FILTERS, LEAVING UNTOUCHED UNTIL I CAN CONFIRM NEW VERSION WORKS WITH CHILD COMPONENTS -->
+    <!--
+    <lightning-button slot="actions" label="Reset" onclick={handleReset}></lightning-button>
     <div class="slds-var-m-around_medium">
-      <lightning-input
-        label="Search Address"
-        type="text"
-        value={searchKey}
-        onchange={handleSearchKeyChange}
-      ></lightning-input>
-      <lightning-combobox
-        label="Property Type"
-        value={recordType}
-        placeholder="Select Property Type"
-        options={options}
-        onchange={handleRecordTypeChange}
-      ></lightning-combobox>
-      <lightning-slider
-        label="Max Rent"
-        step="1000"
-        min="0"
-        max="10000"
-        value={maxPrice}
-        onchange={handleMaxPriceChange}
-      ></lightning-slider>
-      <lightning-slider
-        label="Min Rating"
-        step="1"
-        min="0"
-        max="5"
-        value={minRating}
-        onchange={handleMinRatingChange}
-      ></lightning-slider>
       <div class="slds-grid">
         <div class="slds-col">
-          <lightning-slider
-            label="Min Bedrooms"
-            step="1"
-            min="0"
-            max="6"
-            value={minBedrooms}
-            onchange={handleMinBedroomsChange}
-          ></lightning-slider>
+          <lightning-input label="Search Address" type="text" value={searchKey} onchange={handleSearchKeyChange}></lightning-input>
         </div>
         <div class="slds-col">
-          <lightning-slider
-            label="Min Bathrooms"
-            step="1"
-            min="0"
-            max="6"
-            value={minBathrooms}
-            onchange={handleMinBathroomsChange}
-          ></lightning-slider>
+          <lightning-combobox label="Property Type" value={recordType} placeholder="Select Property Type" options={options} onchange={handleRecordTypeChange}></lightning-combobox>
+        </div>
+      </div>
+      <lightning-slider label="Max Rent" step="1000" min="0" max="100000" value={maxPrice} onchange={handleMaxPriceChange}></lightning-slider>
+      <lightning-slider label="Min Rating" step="1" min="0" max="5" value={minRating} onchange={handleMinRatingChange}></lightning-slider>
+      <div class="slds-grid">
+        <div class="slds-col">
+          <lightning-slider label="Min Bedrooms" step="1" min="0" max="6" value={minBedrooms} onchange={handleMinBedroomsChange}></lightning-slider>
+        </div>
+        <div class="slds-col">
+          <lightning-slider label="Min Bathrooms" step="1" min="0" max="6" value={minBathrooms} onchange={handleMinBathroomsChange}></lightning-slider>
         </div>
       </div>
     </div>
-    <!-- DISTANCE CALCULATOR OPTIONS START HERE -->
+    <hr />
     <div class="slds-var-m-around_medium">
       <p><strong>Limit by Max Distance</strong></p>
-      <lightning-input
-        type="text"
-        label="Enter street: "
-        onchange={handleStreetChange}
-        value={curStreet}
-        disabled={useCurrentLocation}
-      ></lightning-input>
-      <lightning-input
-        type="text"
-        label="Enter city: "
-        onchange={handleCityChange}
-        value={curCity}
-        disabled={useCurrentLocation}
-      ></lightning-input>
+      <lightning-input type="text" label="Enter street: " onchange={handleStreetChange} value={curStreet} disabled={useCurrentLocation}></lightning-input>
       <div class="slds-grid">
-        <div class="slds-col">
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input type="text" label="Enter city: " onchange={handleCityChange} value={curCity} disabled={useCurrentLocation}></lightning-input>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
           <div class="slds-form-element">
             <div class="slds-form-element__control">
-              <lightning-combobox
-                id="select-01"
-                name="State"
-                label="Select State:"
-                value={curState}
-                placeholder="Georgia"
-                options={stateOptions}
-                onchange={handleStateChange}
-                disabled={useCurrentLocation}
-              ></lightning-combobox>
+              <lightning-combobox id="select-01" name="State" label="Select State:" value={curState} placeholder="Georgia"
+              options={stateOptions} onchange={handleStateChange} disabled={useCurrentLocation}></lightning-combobox>
             </div>
           </div>
         </div>
-        <div class="slds-col">
-          <lightning-input
-            type="text"
-            label="Enter postal code: "
-            onchange={handlePostalCodeChange}
-            value={curPostalCode}
-            disabled={useCurrentLocation}
-          ></lightning-input>
+      </div>
+      <div class="slds-grid">
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input type="text" label="Enter postal code: " onchange={handlePostalCodeChange} value={curPostalCode} disabled={useCurrentLocation}></lightning-input>
+        </div>
+        <div class="slds-col slds-size_1-of-2">
+          <lightning-input type="number" label="Enter max distance (mi): " onchange={handleDistanceChange}></lightning-input>
         </div>
       </div>
-      <lightning-input
-        type="number"
-        label="Enter max distance (mi): "
-        onchange={handleDistanceChange}
-      ></lightning-input>
       <br />
       <div class="slds-grid">
         <div class="slds-col slds-size_1-of-2">
-          <lightning-button
-            variant="success"
-            label="Filter by Distance"
-            onclick={getDistance}
-          ></lightning-button>
+          <lightning-button variant="success" label="Filter by Distance" onclick={getDistance}></lightning-button>
         </div>
         <div class="slds-col slds-size_1-of-2">
           <template if:true={userLocated}>
-            <lightning-input
-              type="checkbox"
-              label="Current Location"
-              onchange={handleUseCurrentLocationChange}
-            ></lightning-input>
+            <lightning-input type="checkbox" label="Current Location" onchange={handleUseCurrentLocationChange}></lightning-input>
           </template>
         </div>
       </div>
-      <br>
-      <!-- PARTNER PROPERTY OPTIONS START HERE -->
+    </div>
+    <hr />
+    <div class="slds-var-m-around_medium">
       <div class="slds-align_absolute-center">
-        <p><i>Atlantis is partnering with CXPW and Mooreland to display even more property options. Click below to toggle these properties.</i></p>
+        <p><i>Atlantis is partnering with CXPW and Mooreland to display even more property options. Click below to enable these properties.</i></p>
       </div>
       <br>
       <div class="slds-grid">
@@ -157,5 +96,6 @@
         </div>
       </div>
     </div>
+    -->
   </lightning-card>
 </template>

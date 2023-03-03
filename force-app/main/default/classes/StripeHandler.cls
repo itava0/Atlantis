@@ -683,12 +683,119 @@ public without sharing class StripeHandler {
         HttpResponse response = http.send(request);
     }
 
-    // @AuraEnabled
-    // public static void sendEmail(String accountId, String invoiceId){
-    //     User communityUser = [SELECT Id,Name,Email FROM User WHERE ContactId =:contactId];
-    //     Id userId = communityUser.Id;
-    //     Map<String, Object> data = (Map<String, Object>) JSON.deserializeUntyped(getInvoice(invoice));
-    //     String pdfLink = (String) data.get('invoice_pdf');
-    // }
+    //save pdf to users files
+    @AuraEnabled
+    public static void addPdfToPropertyManager(String invoice) {
+        User PropManager = [SELECT Id, Name, FirstName, Email FROM User WHERE Id = '005Dn0000010qW4IAI'];
+        Id userId = PropManager.Id;
+        Map<String, Object> data = (Map<String, Object>) JSON.deserializeUntyped(getInvoice(invoice));
+        String pdfLink = (String) data.get('invoice_pdf');
+        HttpRequest request = new HttpRequest();
+        HttpResponse response;
+
+        // Set the URL of the PDF file you want to download
+        system.debug(pdfLink);
+        request.setEndpoint(pdfLink);
+        request.setMethod('GET');
+        response = new Http().send(request);
+        System.debug('res is>>>>>>'+response);
+        System.debug('res.getBody()>>>>>>'+response.getBody());
+
+        response = new Http().send(request);
+        //Redirect if needed
+        while (response.getStatusCode() == 302) {
+            request.setEndpoint(response.getHeader('Location'));
+            response = new Http().send(request);
+            System.debug('res is>>>>>>'+response);
+            System.debug('res.getBody()>>>>>>'+response.getBody());
+        }
+
+        // Check the status code of the response
+        if (response.getStatusCode() == 200) {
+            system.debug('was 200');
+
+            String name = (String) data.get('customer_name');
+            String todayDate = Date.today().format();
+            String pdfName = 'Invoice_'+name.replace(' ', '_')+'_'+todayDate.replace('/', '-')+'.pdf';
+
+            //create the file under the current user
+            ContentVersion version = new ContentVersion();
+            version.firstPublishLocationId = userinfo.getUserId();
+            version.VersionData = response.getBodyAsBlob();
+            version.Title = pdfName;
+            version.PathOnClient = pdfName;
+            version.ContentLocation = 'S'; // S means "Salesforce CRM Content"
+            version.SharingOption = 'A';
+            version.Origin = 'H';
+            version.OwnerId = userinfo.getUserId();
+            insert version;
+
+            ContentVersion conDoc = [SELECT Id, OwnerId FROM ContentVersion WHERE Id =:version.Id];
+
+            conDoc.OwnerId = userId;
+            update conDoc;
+
+
+            //Send email
+            Set<Messaging.SingleEmailMessage> emailList = new Set<Messaging.SingleEmailMessage>();
+            EmailTemplate emailTemplate = [SELECT Id, Subject, HtmlValue, Body FROM EmailTemplate WHERE Id = '00XDn000000qHAzMAM'];
+            
+            Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+            mail.setTemplateId('00XDn000000qT94MAE');
+            mail.setTargetObjectId('005Dn0000010qW4IAI');
+            mail.setSaveAsActivity(false);
+            mail.setUseSignature(false);
+
+            //Add pdf to email
+            Messaging.EmailFileAttachment emlAtt = new Messaging.EmailFileAttachment();
+            emlAtt.setFilename(pdfName);
+            emlAtt.setBody(response.getBodyAsBlob());
+            mail.setFileAttachments(new List<Messaging.EmailFileAttachment>{emlAtt});
+            
+            emailList.add(mail);
+            
+            //Send email
+            if(!emailList.isEmpty()){
+                Messaging.sendEmail(new List<Messaging.SingleEmailMessage>(emailList));
+            }    
+        }
+        else {
+                system.debug('Was not 200');
+                system.debug(response.getStatusCode());
+        }
+
+    }
+
+    @AuraEnabled
+    public static String chargePartnerReferralFee(Decimal price){
+        Http http = new Http();
+        HttpRequest request = new HttpRequest();
+        request.setEndpoint('https://api.stripe.com/v1/invoices');
+        request.setMethod('POST');
+        request.setHeader('Content-Type', 'application/x-www-form-urlencoded');
+        request.setHeader('Authorization', 'Bearer ' + STRIPE_SECRET_KEY);
+
+        // Set the request body
+        String body = 'auto_advance=true&collection_method=charge_automatically&customer=cus_NPwakKaY5cIBzp&default_payment_method=card_1MgMaCD15KhrjJEhy391XKtM';
+        request.setBody(body);
+
+        // Send the HTTP request and handle the response
+        HttpResponse response = http.send(request);
+        List<String> returnList = new List<String>();
+        returnList.add(String.valueOf(response.getStatusCode()));
+        if (response.getStatusCode() == 200) {
+            // Success - parse the response data
+            Map<String, Object> data = (Map<String, Object>) JSON.deserializeUntyped(response.getBody());
+            String invoiceId = (String) data.get('id');
+            createInvoiceItem('cus_NPwakKaY5cIBzp', price, 'Partner Referral Fee', invoiceId, new List<String>());
+            finalizeInvoice(invoiceId);
+            payInvoice(invoiceId);
+            addPdfToPropertyManager(invoiceId);
+            return invoiceId;
+        } else {
+            return String.valueOf(response.getBody());
+            // Handle error
+        }
+    }
 
 }

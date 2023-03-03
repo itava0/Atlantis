@@ -1,0 +1,30 @@
+<template>
+    <div class="slds-var-m-around_medium">
+        <div class="slds-align_absolute-center">
+            <p><i>Atlantis is partnering with CXPW and Mooreland to display even more property options. Click below to enable these properties.</i></p>
+        </div>
+        <br>
+        <div class="slds-grid">
+            <div class="slds-col">
+                <template if:true={cxpwEnabled}>
+                <lightning-input type="toggle" value={cxpwEnabled} label="CXPW" checked
+                    message-toggle-active="Enabled" message-toggle-inactive="Disabled" onchange={handleCXPWProperties}></lightning-input>
+                </template>
+                <template if:false={cxpwEnabled}>
+                <lightning-input type="toggle" value={cxpwEnabled} label="CXPW"
+                    message-toggle-active="Enabled" message-toggle-inactive="Disabled" onchange={handleCXPWProperties}></lightning-input>
+                </template>
+            </div>
+            <div class="slds-col">
+                <template if:true={moorelandEnabled}>
+                <lightning-input type="toggle" value={moorelandEnabled} label="Mooreland" checked
+                    message-toggle-active="Enabled" message-toggle-inactive="Disabled" onchange={handleMoorelandProperties}></lightning-input>
+                </template>
+                <template if:false={moorelandEnabled}>
+                <lightning-input type="toggle" value={moorelandEnabled} label="Mooreland"
+                    message-toggle-active="Enabled" message-toggle-inactive="Disabled" onchange={handleMoorelandProperties}></lightning-input>
+                </template>
+            </div>
+        </div>
+    </div>
+</template>

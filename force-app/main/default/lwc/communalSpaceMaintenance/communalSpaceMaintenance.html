@@ -8,7 +8,7 @@
         <h3>Communities</h3>
         <div class="slds-scrollable_x" style="max-height: 40rem">
           <template for:each={communities} for:item="com">
-            <div class="slds-var-m-around_x-small" key={com} data-id={com.Id}>
+            <div class="slds-var-m-around_x-small" key={com.Id} data-id={com.Id}>
               <div
                 class="slds-box com-box"
                 onclick={handleCommunitySelect}
@@ -26,8 +26,8 @@
       >
         <h3>Communal Spaces</h3>
         <div class="slds-scrollable_x" style="max-height: 40rem">
-          <template for:each={communalSpaces} for:item="cms">
-            <div class="slds-var-m-around_x-small" key={cms} data-id={cms.Id}>
+          <template if:true={communitySelected} for:each={communalSpaces} for:item="cms">
+            <div class="slds-var-m-around_x-small" key={cms.Id} data-id={cms.Id}>
               <div
                 class="slds-box com-box"
                 onclick={handleSpaceSelect}
@@ -49,8 +49,8 @@
       >
         <h3>Scheduled Maintenance</h3>
         <div class="slds-scrollable_x" style="max-height: 40rem">
-          <template for:each={communalSpaceMaintenance} for:item="maint">
-            <div class="slds-var-m-around_x-small" key={maint}>
+          <template if:true={communalSpaceSelected} for:each={communalSpaceMaintenance} for:item="maint">
+            <div class="slds-var-m-around_x-small" key={maint.Id}>
               <div
                 class="slds-box"
                 onclick={handleMaintenanceSelect}

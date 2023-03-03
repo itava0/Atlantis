@@ -1,6 +1,6 @@
 <template>
   <template if:true={inCommunity}>
-    <lightning-card title={communityName}>
+    <lightning-card title={communityName} icon-name="standard:customers">
       <div class="slds-scrollable_x">
         <template for:each={communalSpaces.data} for:item="cms">
           <article class="slds-card" key={cms.Id}>
@@ -47,7 +47,7 @@
     </lightning-card>
   </template>
   <template if:false={inCommunity}>
-    <lightning-card title="Select a community this property belongs to">
+    <lightning-card title="Select a community this property belongs to" icon-name="standard:customers">
       <template for:each={ownerCommunities.data} for:item="community">
         <!--Create a card for each community with a join button-->
         <article class="slds-card" key={community.Id}>

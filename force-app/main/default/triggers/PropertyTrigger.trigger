@@ -7,10 +7,9 @@ trigger PropertyTrigger on Property__c (before insert, after insert, before upda
         }
 	}
     
-    if (Trigger.isAfter && Trigger.isInsert) {
+    if (Trigger.isAfter && Trigger.isInsert && !System.isFuture()) {
         for (Property__c prop : Trigger.new) {
-            // After Insert: Geocode property if necessary, and add new schools if necessary
-            PropertySchools.AddSchools(prop, String.valueOf(prop.Billing_Postal_Code__c));
+            // After Insert: Geocode property if necessary
             if (prop.Geolocation__Latitude__s == null || prop.Geolocation__Longitude__s == null) {
                 PropertyGeocode.DoAddressGeocode(prop.id);
             }
@@ -24,7 +23,7 @@ trigger PropertyTrigger on Property__c (before insert, after insert, before upda
         }
 	}
     
-    if (Trigger.isAfter && Trigger.isUpdate) {
+    if (Trigger.isAfter && Trigger.isUpdate && !System.isFuture()) {
         for (Property__c prop : Trigger.new) {
             // After Update: Geocode property if necessary
             if (prop.Geolocation__Latitude__s == null || prop.Geolocation__Longitude__s == null ||

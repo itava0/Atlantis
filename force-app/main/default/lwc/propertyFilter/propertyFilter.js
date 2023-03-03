@@ -1,23 +1,122 @@
 import { LightningElement, wire, track } from "lwc";
-import {
-  publish,
-  MessageContext,
-  subscribe,
-  unsubscribe
-} from "lightning/messageService";
-import { refreshApex } from "@salesforce/apex";
-import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import { publish, MessageContext } from "lightning/messageService";
 import FILTERSCHANGEMC from "@salesforce/messageChannel/FiltersChange__c";
-import GOTUSERLOCATIONMC from "@salesforce/messageChannel/GotUserLocation__c";
-import MAPGRIDSWAPMC from "@salesforce/messageChannel/MapGridSwap__c";
-import doAddressGeocodeInput from "@salesforce/apex/PropertyGeocode.DoAddressGeocodeInput";
-import getAddresses from "@salesforce/apex/getAddresses.getAddressInfo";
 import getProperties from "@salesforce/apex/getProperties.getAllProperties";
 
 const DELAY = 350;
-const MAX_PRICE = 10000;
+const MAX_PRICE = 100000;
+
+//
+// If you're reading this, I'm currently in the process of splitting up the property explorer filter into three smaller components.
+// This is to make it more readable and make it easier to eventually rework the distance filtering.
+// Many of the filters may not work properly until this is done.
+//
 
 export default class PropertyFilter extends LightningElement {
+
+  // Properties
+  @track properties = [];
+  @track error;
+  
+  // Variables from child components to update filters
+  searchKey = "";
+  recordType = "Any";
+  maxPrice = MAX_PRICE;
+  minBedrooms = 0;
+  minBathrooms = 0;
+  minRating = 0;
+  pageNumber = 1;
+  cxpwEnabled = false;
+  moorelandEnabled = false;
+  companies = ['Atlantis'];
+  propsInDistance = [];
+
+  @wire(MessageContext)
+  messageContext;
+  
+  // Fetch Property Records
+  @wire(getProperties) getProperties(result) {
+    if (result.data) {
+      this.properties = result.data;
+      this.error = undefined;
+    } else if (result.error) {
+      this.error = result.error;
+      this.properties = [];
+    }
+  }
+
+  // Reset filter values from all child components
+  handleReset() {
+    this.template.querySelectorAll("lightning-input").forEach((element) => {
+      element.value = null;
+    });
+    this.searchKey = "";
+    this.recordType = "Any";
+    this.maxPrice = MAX_PRICE;
+    this.minBedrooms = 0;
+    this.minBathrooms = 0;
+    this.minRating = 0;
+    this.propsInDistance = [];
+    this.pageNumber = 1;
+    this.cxpwEnabled = false;
+    this.moorelandEnabled = false;
+    this.companies = ["Atlantis"];
+    this.fireChangeEvent();
+  }
+
+  // Custom Event from Child Component: Fields
+  handleFieldsUpdate(event) {
+    this.searchKey = event.detail.searchKey;
+    this.recordType = event.detail.recordType;
+    this.maxPrice = event.detail.maxPrice;
+    this.minBedrooms = event.detail.minBedrooms;
+    this.minBathrooms = event.detail.minBathrooms;
+    this.minRating = event.detail.minRating;
+    this.pageNumber = event.detail.pageNumber;
+    this.fireChangeEvent();
+  }
+
+  // Custom Event from Child Component: Distance
+  handleDistanceUpdate(event) {
+    this.propsInDistance = event.detail.propsInDistance;
+    this.pageNumber = event.detail.pageNumber;
+    this.fireChangeEvent();
+  }
+
+  // Custom Event from Child Component: Partners
+  handlePartnersUpdate(event) {
+    this.cxpwEnabled = event.detail.cxpwEnabled;
+    this.moorelandEnabled = event.detail.moorelandEnabled;
+    this.companies = event.detail.companies;
+    this.pageNumber = event.detail.pageNumber;
+    this.fireChangeEvent();
+  }
+
+  // After receiving an update from one of the child custom events, calls message channel to update map & grid
+  fireChangeEvent() {
+    window.clearTimeout(this.delayTimeout);
+
+    // Sends variables, primarily for filters, through message channel
+    this.delayTimeout = setTimeout(() => {
+      const filters = {
+        searchKey: this.searchKey,
+        recordType: this.recordType,
+        maxPrice: this.maxPrice,
+        minBedrooms: this.minBedrooms,
+        minBathrooms: this.minBathrooms,
+        minRating: this.minRating,
+        propsInDistance: this.propsInDistance,
+        pageNumber: this.pageNumber,
+        cxpwEnabled: this.cxpwEnabled,
+        moorelandEnabled: this.moorelandEnabled,
+        companies: this.companies
+      };
+      publish(this.messageContext, FILTERSCHANGEMC, filters);
+    }, DELAY);
+  }
+
+  /*
+  LONG COMMENT: Original combined filters, keeping for now in case I need to revert to working version
   // Variables handled by filters and list map
   searchKey = "";
   recordType = "Any";
@@ -50,10 +149,9 @@ export default class PropertyFilter extends LightningElement {
   evtDistance;
   geocoded = false;
 
-  // Wired values, in pairs to allow refreshApex() to function
+  // Wired values
   @track wiredAddresses = [];
   @track addresses = [];
-  @track wiredProperties = [];
   @track properties = [];
   @track error;
 
@@ -200,7 +298,7 @@ export default class PropertyFilter extends LightningElement {
     this.minRating = event.detail.value;
     this.fireChangeEvent();
   }
- 
+
   // Get user location
   handleMessage(message) {
     const toastEvt = new ShowToastEvent({
@@ -215,7 +313,7 @@ export default class PropertyFilter extends LightningElement {
     unsubscribe(this.subscription);
   }
 
-  // Subscribe to message channel
+  // Subscribe to message channels
   connectedCallback() {
     // Subscription 1: User location message channel
     this.subscription = subscribe(
@@ -233,6 +331,12 @@ export default class PropertyFilter extends LightningElement {
         this.fireChangeEvent();
       }
     );
+  }
+
+  // Unsubscribe from message channel
+  disconnectedCallback() {
+    unsubscribe(this.subscription2);
+    this.subscription2 = null;
   }
 
   // Calls message channel to update other components
@@ -405,8 +509,6 @@ export default class PropertyFilter extends LightningElement {
 
   // Fetch Property Records
   @wire(getProperties) getProperties(result) {
-    this.wiredProperties = result;
-
     if (result.data) {
       this.properties = result.data;
       this.error = undefined;
@@ -463,14 +565,13 @@ export default class PropertyFilter extends LightningElement {
   // Enable partner properties from CXPW
   handleCXPWProperties() {
     this.cxpwEnabled = !this.cxpwEnabled;
-    console.log("cxpw", this.cxpwEnabled);
     this.fireChangeEvent();
   }
 
   // Enable partner properties from Mooreland
   handleMoorelandProperties() {
     this.moorelandEnabled = !this.moorelandEnabled;
-    console.log("mooreland", this.moorelandEnabled);
     this.fireChangeEvent();
   }
+  */
 }

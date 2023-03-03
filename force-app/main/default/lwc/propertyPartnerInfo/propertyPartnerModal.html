@@ -1,0 +1,35 @@
+<template>
+    <lightning-modal-header label="Submit contact information"></lightning-modal-header>
+    <lightning-modal-body>
+        <lightning-input
+            type="text"
+            label="First Name"
+            value={fName}
+            onchange={fNameHandler}>
+        </lightning-input>
+
+        <lightning-input
+            type="text"
+            label="Last Name"
+            value={lName}
+            onchange={lNameHandler}>
+        </lightning-input>
+
+        <lightning-input
+            type="email"
+            label="Email Address"
+            value={email}
+            onchange={emailHandler}>
+        </lightning-input>
+
+        <lightning-input
+            type="tel"
+            label="Phone Number"
+            value={phone}
+            onchange={phoneHandler}>
+        </lightning-input>
+    </lightning-modal-body>
+    <lightning-modal-footer>
+        <lightning-button label="OK" onclick={handleOkay}></lightning-button>
+    </lightning-modal-footer>
+</template>

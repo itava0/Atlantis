@@ -19,8 +19,10 @@ global with sharing class PropertyAPIController {
         Picture__c,
         Rent__c,
         Year_Built__c,
-        Origin_Company__c
+        Origin_Company__c,
+        Score__c
       FROM Property__c
+      where Origin_Company__c = 'Atlantis'
     ];
 
     return result;
