@@ -1,16 +1,35 @@
 <template>
     <div class="slds-card slds-var-p-around_small">
         <template if:true={properties.data}>
-            <c-paginator page-number={pageNumber} page-size={pageSize} total-item-count={properties.data.totalItemCount}
-            onprevious={handlePreviousPage} onnext={handleNextPage}></c-paginator>
+            <template if:false={noProperties}>
+                <c-paginator page-number={pageNumber} page-size={pageSize} total-item-count={properties.data.totalItemCount}
+                onprevious={handlePreviousPage} onnext={handleNextPage}></c-paginator>
+            </template>
+            <template if:true={filteringDistance}>
+                <template if:true={useLocation}>
+                    <div class="slds-text-heading_small">
+                        <lightning-icon icon-name="utility:checkin" size="small" variant="error"></lightning-icon> Properties within {distance} miles of your location:
+                    </div>
+                </template>
+                <template if:false={useLocation}>
+                    <div class="slds-text-heading_small">
+                        <lightning-icon icon-name="utility:checkin" size="small" variant="error"></lightning-icon> Properties within {distance} miles of this address:
+                    </div>
+                </template>
+            </template>
             <div class="slds-grid slds-wrap">
                 <template for:each={properties.data.records} for:item="property">
                     <c-property-tile property={property} cxpw-enabled={cxpwEnabled} mooreland-enabled={moorelandEnabled}
                     key={property.Id} onselected={handlePropertySelected} class="slds-col slds-var-m-around_xx-small"></c-property-tile>
                 </template>
             </div>
-            <c-paginator page-number={pageNumber} page-size={pageSize} total-item-count={properties.data.totalItemCount}
-            onprevious={handlePreviousPage} onnext={handleNextPage}></c-paginator>
+            <template if:true={noProperties}>
+                <div class="slds-text-heading_small slds-align_absolute-center">There are no properties that match the given criteria.</div>
+            </template>
+            <template if:false={noProperties}>
+                <c-paginator page-number={pageNumber} page-size={pageSize} total-item-count={properties.data.totalItemCount}
+                onprevious={handlePreviousPage} onnext={handleNextPage}></c-paginator>
+            </template>
         </template>
         <template if:true={properties.error}>
             <c-error-panel friendly-message="Error retrieving data" errors={properties.error}></c-error-panel>

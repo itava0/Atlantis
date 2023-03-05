@@ -7,8 +7,8 @@ public class LeaseTriggerHandler {
         for(Referral__c referral : referrals) {
             emails.add(referral.email__c);
         }
-        List<Contract> leases1 = [SELECT Id, Monthly_Rent__c FROM Contract WHERE Id IN: leaseIds];
-        System.debug(leases1.size());
+        //List<Contract> leases1 = [SELECT Id, Monthly_Rent__c FROM Contract WHERE Id IN: leaseIds];
+        //System.debug(leases1.size());
         List<Contract> leases = [SELECT Id, Monthly_Rent__c FROM Contract WHERE Id IN: leaseIds AND Account.Email__c IN: emails];
         System.debug(leases.size());
         for(Contract lease : leases) {

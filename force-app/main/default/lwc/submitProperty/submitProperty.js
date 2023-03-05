@@ -1,5 +1,7 @@
-import { LightningElement, track} from 'lwc';
+import { LightningElement, wire, track } from 'lwc';
 import saveRecord from '@salesforce/apex/PropertyController.newProperty';
+import { getPicklistValues } from 'lightning/uiObjectInfoApi';
+import STATE_FIELD from '@salesforce/schema/Property__c.Billing_State__c';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 const MAX_FILE_SIZE = 30000000;
@@ -36,60 +38,9 @@ export default class SubmitProperty extends NavigationMixin(LightningElement) {
     fileUploaded = false;
     errorMsg;
 
-    // Options for Billing State field
-    stateOptions = [
-        { label: "Alabama", value: "Alabama" },
-        { label: "Alaska", value: "Alaska" },
-        { label: "Arizona", value: "Arizona" },
-        { label: "Arkansas", value: "Arkansas" },
-        { label: "California", value: "California" },
-        { label: "Colorado", value: "Colorado" },
-        { label: "Connecticut", value: "Connecticut" },
-        { label: "Delaware", value: "Delaware" },
-        { label: "District of Columbia", value: "District of Columbia" },
-        { label: "Florida", value: "Florida" },
-        { label: "Georgia", value: "Georgia" },
-        { label: "Hawaii", value: "Hawaii" },
-        { label: "Idaho", value: "Idaho" },
-        { label: "Illinois", value: "Illinois" },
-        { label: "Indiana", value: "Indiana" },
-        { label: "Iowa", value: "Iowa" },
-        { label: "Kansas", value: "Kansas" },
-        { label: "Kentucky", value: "Kentucky" },
-        { label: "Louisiana", value: "Louisiana" },
-        { label: "Maine", value: "Maine" },
-        { label: "Maryland", value: "Maryland" },
-        { label: "Massachusetts", value: "Massachusetts" },
-        { label: "Michigan", value: "Michigan" },
-        { label: "Minnesota", value: "Minnesota" },
-        { label: "Mississippi", value: "Mississippi" },
-        { label: "Missouri", value: "Missouri" },
-        { label: "Montana", value: "Montana" },
-        { label: "Nebraska", value: "Nebraska" },
-        { label: "Nevada", value: "Nevada" },
-        { label: "New Hampshire", value: "New Hampshire" },
-        { label: "New Jersey", value: "New Jersey" },
-        { label: "New Mexico", value: "New Mexico" },
-        { label: "New York", value: "New York" },
-        { label: "North Carolina", value: "North Carolina" },
-        { label: "North Dakota", value: "North Dakota" },
-        { label: "Ohio", value: "Ohio" },
-        { label: "Oklahoma", value: "Oklahoma" },
-        { label: "Oregon", value: "Oregon" },
-        { label: "Pennsylvania", value: "Pennsylvania" },
-        { label: "Rhode Island", value: "Rhode Island" },
-        { label: "South Carolina", value: "South Carolina" },
-        { label: "South Dakota", value: "South Dakota" },
-        { label: "Tennessee", value: "Tennessee" },
-        { label: "Texas", value: "Texas" },
-        { label: "Utah", value: "Utah" },
-        { label: "Vermont", value: "Vermont" },
-        { label: "Virginia", value: "Virginia" },
-        { label: "Washington", value: "Washington" },
-        { label: "West Virginia", value: "West Virginia" },
-        { label: "Wisconsin", value: "Wisconsin" },
-        { label: "Wyoming", value: "Wyoming" }
-    ];
+    // Get options for state picklist (using Property's Billing State picklist options)
+    @wire(getPicklistValues, { recordTypeId: '012Dn000000gZGMIA2', fieldApiName: STATE_FIELD })
+    stateOptions;
 
     // Only one option for Billing Country field
     countryOptions = [
@@ -246,7 +197,8 @@ export default class SubmitProperty extends NavigationMixin(LightningElement) {
             'Bedrooms__c': this.bedrooms,
             'Bathrooms__c': this.bathrooms,
             'RecordTypeId': this.recordType,
-            'Approval_Status__c': 'Pending'
+            'Approval_Status__c': 'Pending',
+            'Origin_Company__c': 'Atlantis'
         }
         saveRecord({
             propRec : prop,

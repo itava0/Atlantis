@@ -1,28 +1,38 @@
 import { LightningElement, wire, track } from 'lwc';
 import { publish, subscribe, unsubscribe, MessageContext } from 'lightning/messageService';
 import FILTERSCHANGEMC from '@salesforce/messageChannel/FiltersChange__c';
-import PROPERTYSELECTEDMC from '@salesforce/messageChannel/PropertySelected__c';
+import GOTUSERLOCATIONMC from '@salesforce/messageChannel/GotUserLocation__c';
 import getPagedPropertyList from '@salesforce/apex/PropertyController.getPagedPropertyList';
 
 const PAGE_SIZE = 12;
 
 export default class PropertyTileList extends LightningElement {
+    apiUrl = 'https://ipwho.is/';
+    locGot = false;
     pageNumber = 1;
     pageSize = PAGE_SIZE;
     cxpwEnabled = false;
     moorelandEnabled = false;
     searchKey = '';
     recordType = 'Any';
-    maxPrice = 100000;
+    maxPrice = 10000;
     minBedrooms = 0;
     minBathrooms = 0;
     minRating = 0;
     propsInDistance = [];
+    distance = 0;
+    useLocation = false;
+    filteringDistance = false;
     companies = ['Atlantis'];
+    userLatitude;
+    userLongitude;
+    addressLatitude;
+    addressLongitude;
 
     @track properties;
     @track curProperties;
     @track error;
+    noProperties = false;
 
     @wire(MessageContext)
     messageContext;
@@ -38,12 +48,15 @@ export default class PropertyTileList extends LightningElement {
         propsInDistance: '$propsInDistance',
         pageSize: '$pageSize',
         pageNumber: '$pageNumber',
-        companies: '$companies'
+        companies: '$companies',
+        filteringDistance: '$filteringDistance'
     })
     getPagedPropertyList(result) {
         this.properties = result;
         if (result.data) {
             this.curProperties = result.data;
+            this.noProperties = this.curProperties.records.length == 0 ? true : false;
+            if (!this.locGot) this.getLocation();
             this.error = undefined;
         } else if (result.error) {
             this.error = result.error;
@@ -77,10 +90,18 @@ export default class PropertyTileList extends LightningElement {
         this.minBathrooms = filters.minBathrooms;
         this.minRating = filters.minRating;
         this.propsInDistance = filters.propsInDistance;
+        this.distance = filters.distance;
+        this.useLocation = filters.useLocation;
+        this.filteringDistance = filters.filteringDistance;
         this.pageNumber = filters.pageNumber;
         this.cxpwEnabled = filters.cxpwEnabled;
         this.moorelandEnabled = filters.moorelandEnabled;
         this.companies = filters.companies;
+        this.userLatitude = filters.userLatitude;
+        this.userLongitude = filters.userLongitude;
+        this.addressLatitude = filters.addressLatitude;
+        this.addressLongitude = filters.addressLongitude;
+        this.locGot = filters.locGot;
     }
 
     // Move to previous page of tiles
@@ -93,9 +114,39 @@ export default class PropertyTileList extends LightningElement {
         this.pageNumber = this.pageNumber + 1;
     }
 
-    // Update current property based on message channel
-    handlePropertySelected(event) {
-        const message = { propertyId: event.detail };
-        publish(this.messageContext, PROPERTYSELECTEDMC, message);
+    // Attempts to retrieve user's current geolocation
+    // Copied from List Map and modified accordingly so that geolocation occurs on Property Grid as well as Property Map
+    // Previously, this method only fired after user opens Property Map. This way, user's geolocation can happen on page load regardless of if Map or Grid is default
+    getLocation() {
+        navigator.permissions.query({ name: "geolocation" }).then((geoStatus) => {
+            if (geoStatus.state === "granted" || geoStatus.state === "prompt") {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    this.userLatitude = position.coords.latitude;
+                    this.userLongitude = position.coords.longitude;
+                    this.locGot = true;
+                    publish(this.messageContext, GOTUSERLOCATIONMC, {
+                        latitude: this.userLatitude,
+                        longitude: this.userLongitude,
+                        locGot: this.locGot
+                    });
+                });
+            } else {
+                fetch(this.apiUrl)
+                .then((response) => response.json())
+                .then((data) => {
+                    this.userLatitude = data.latitude;
+                    this.userLongitude = data.longitude;
+                    this.locGot = true;
+                    publish(this.messageContext, GOTUSERLOCATIONMC, {
+                        latitude: this.userLatitude,
+                        longitude: this.userLongitude,
+                        locGot: this.locGot
+                    });
+                })
+                .catch(() => {
+                    return false;
+                });
+            }
+        });
     }
 }

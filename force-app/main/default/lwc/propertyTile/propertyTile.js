@@ -1,5 +1,4 @@
 import { LightningElement, api, wire } from "lwc";
-import FORM_FACTOR from "@salesforce/client/formFactor";
 import { NavigationMixin } from "lightning/navigation";
 import ATLANTIS_LOGO from '@salesforce/resourceUrl/AtlantisLogo';
 import CXPW_LOGO from '@salesforce/resourceUrl/CXPWLogo';
@@ -10,7 +9,6 @@ export default class PropertyTile extends NavigationMixin(LightningElement) {
   @api cxpwEnabled;
   @api moorelandEnabled;
   partnersEnabled = false;
-  formFactor = FORM_FACTOR;
   currentId;
   selected = false;
   companyLogo;
@@ -54,32 +52,14 @@ export default class PropertyTile extends NavigationMixin(LightningElement) {
     }
   }
 
-  // When mouse leaves property
-  handlePropertyDeselected() {
-    this.selected = false;
+  // When mouse hovers over property tile
+  handlePropertySelected() {
+    this.selected = true;
   }
 
-  // When property tile clicked or hovered over
-  handlePropertySelected() {
-    this.currentId = this.property.Id;
-    this.selected = true;
-    if (FORM_FACTOR === "Small") {
-      // In Phones, navigate to property record page directly
-      this[NavigationMixin.Navigate]({
-        type: "standard__recordPage",
-        attributes: {
-          recordId: this.property.Id,
-          objectApiName: "Property__c",
-          actionName: "view"
-        }
-      });
-    } else {
-      // In other devices, send message to other cmps on the page
-      const selectedEvent = new CustomEvent("selected", {
-        detail: this.property.Id
-      });
-      this.dispatchEvent(selectedEvent);
-    }
+  // When mouse leaves property tile
+  handlePropertyDeselected() {
+    this.selected = false;
   }
 
   // Navigate to record page

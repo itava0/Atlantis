@@ -1,13 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata">
     <isExposed>true</isExposed>
     <lightningMessageFields>
         <description>Search Key</description>
         <fieldName>searchKey</fieldName>
-    </lightningMessageFields>
-    <lightningMessageFields>
-        <description>Property Type</description>
-        <fieldName>recordType</fieldName>
     </lightningMessageFields>
     <lightningMessageFields>
         <description>Max Price</description>
@@ -22,12 +18,12 @@
         <fieldName>minBathrooms</fieldName>
     </lightningMessageFields>
     <lightningMessageFields>
-        <description>Minimum Rating</description>
-        <fieldName>minRating</fieldName>
+        <description>Property Type</description>
+        <fieldName>recordType</fieldName>
     </lightningMessageFields>
     <lightningMessageFields>
-        <description>Props In Distance</description>
-        <fieldName>propsInDistance</fieldName>
+        <description>Minimum Rating</description>
+        <fieldName>minRating</fieldName>
     </lightningMessageFields>
     <lightningMessageFields>
         <description>Map Markers</description>
@@ -44,6 +40,34 @@
     <lightningMessageFields>
         <description>Origin Companies</description>
         <fieldName>companies</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <description>Props In Distance</description>
+        <fieldName>propsInDistance</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <description>Distance</description>
+        <fieldName>distance</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <description>Use Location?</description>
+        <fieldName>useLocation</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <description>User Latitude</description>
+        <fieldName>userLatitude</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <description>User Longitude</description>
+        <fieldName>userLongitude</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <description>Address Latitude</description>
+        <fieldName>addressLatitude</fieldName>
+    </lightningMessageFields>
+    <lightningMessageFields>
+        <description>Address Longitude</description>
+        <fieldName>addressLongitude</fieldName>
     </lightningMessageFields>
     <masterLabel>Filters Change Message Channel</masterLabel>
 </LightningMessageChannel>

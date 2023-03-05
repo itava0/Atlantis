@@ -1,6 +1,4 @@
-import { LightningElement, wire, track, api } from "lwc";
-import { MessageContext, subscribe, unsubscribe } from "lightning/messageService";
-import MAPGRIDSWAPMC from "@salesforce/messageChannel/MapGridSwap__c";
+import { LightningElement, track, api } from "lwc";
 
 export default class PropertyFilterPartners extends LightningElement {
     // Variables handled by filters and list map
@@ -8,41 +6,32 @@ export default class PropertyFilterPartners extends LightningElement {
     @track cxpwEnabled = false;
     @track moorelandEnabled = false;
     @track eventDetail;
+    companies = ['Atlantis'];
     pageNumber = 1;
-    subscription;
-    companies = ["Atlantis"];
-    
-    @wire(MessageContext)
-    messageContext;
 
-    // Reset filters
-    handleReset() {
+    // Reset inputs and their values from parent's Reset button
+    @api resetInputs() {
         this.template.querySelectorAll("lightning-input").forEach((element) => {
             element.value = null;
         });
-        this.pageNumber = 1;
+
         this.cxpwEnabled = false;
         this.moorelandEnabled = false;
-        this.companies = ["Atlantis"];
+        this.companies = ['Atlantis'];
+        this.pageNumber = 1;
+        this.pageNumber = 1;
+    }
+
+    // Enable partner properties from CXPW
+    handleCXPWProperties() {
+        this.cxpwEnabled = !this.cxpwEnabled;
         this.fireChangeEvent();
     }
 
-    // Subscribe to message channels
-    connectedCallback() {
-        // Subscription: Message channel to update filters again if user switches between map and grid
-        this.subscription = subscribe(
-        this.messageContext,
-        MAPGRIDSWAPMC,
-        () => {
-            this.fireChangeEvent();
-        }
-        );
-    }
-
-    // Unsubscribe from message channels
-    disconnectedCallback() {
-        unsubscribe(this.subscription);
-        this.subscription = null;
+    // Enable partner properties from Mooreland
+    handleMoorelandProperties() {
+        this.moorelandEnabled = !this.moorelandEnabled;
+        this.fireChangeEvent();
     }
 
     // Update which partner properties to display using an array of strings to match Origin Company field
@@ -69,17 +58,5 @@ export default class PropertyFilterPartners extends LightningElement {
         });
 
         this.dispatchEvent(updatedPartners);
-    }
-
-    // Enable partner properties from CXPW
-    handleCXPWProperties() {
-        this.cxpwEnabled = !this.cxpwEnabled;
-        this.fireChangeEvent();
-    }
-
-    // Enable partner properties from Mooreland
-    handleMoorelandProperties() {
-        this.moorelandEnabled = !this.moorelandEnabled;
-        this.fireChangeEvent();
     }
 }

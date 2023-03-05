@@ -2,12 +2,12 @@
 <LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata">
     <isExposed>true</isExposed>
     <lightningMessageFields>
-        <description>CXPW enabled?</description>
-        <fieldName>cxpwEnabled</fieldName>
+        <description>Latitude</description>
+        <fieldName>latitude</fieldName>
     </lightningMessageFields>
     <lightningMessageFields>
-        <description>Mooreland enabled?</description>
-        <fieldName>moorelandEnabled</fieldName>
+        <description>Longitude</description>
+        <fieldName>longitude</fieldName>
     </lightningMessageFields>
-    <masterLabel>Partners Update Message Channel</masterLabel>
+    <masterLabel>Geolocation message channel</masterLabel>
 </LightningMessageChannel>

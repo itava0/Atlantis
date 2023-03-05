@@ -12,7 +12,9 @@
       </template>
     </lightning-layout-item>
     <lightning-layout-item size="8" class="nav-info slds-text-align_center">
-      {totalItemCount} items • page {currentPageNumber} of {totalPages}
+      <div class="slds-text-heading_small">
+        {totalItemCount} {labelItems} • page {currentPageNumber} of {totalPages}
+      </div>
     </lightning-layout-item>
     <lightning-layout-item size="2" class="nav-next slds-text-align_right">
       <template if:false={isLastPage}>

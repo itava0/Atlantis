@@ -1,8 +1,6 @@
-import { LightningElement, wire, track, api } from "lwc";
-import { MessageContext, subscribe, unsubscribe } from "lightning/messageService";
-import MAPGRIDSWAPMC from "@salesforce/messageChannel/MapGridSwap__c";
+import { LightningElement, track, api } from "lwc";
 
-const MAX_PRICE = 100000;
+const MAX_PRICE = 10000;
 
 export default class PropertyFilterFields extends LightningElement {
     // Variables handled by filters
@@ -13,20 +11,24 @@ export default class PropertyFilterFields extends LightningElement {
     minBathrooms = 0;
     minRating = 0;
     value = "Any";
-    companies = ["Atlantis"];
-    subscription;
     pageNumber = 1;
-    userLatitude = 0;
-    userLongitude = 0;
-    userLocated = false;
-    useCurrentLocation = false;
-    @track cxpwEnabled = false;
-    @track moorelandEnabled = false;
     @api properties;
     @track eventDetail;
 
-    @wire(MessageContext)
-    messageContext;
+    // Reset inputs and their values from parent's Reset button
+    @api resetInputs() {
+        this.template.querySelectorAll("lightning-input").forEach((element) => {
+            element.value = null;
+        });
+
+        this.searchKey = "";
+        this.recordType = "Any";
+        this.maxPrice = MAX_PRICE;
+        this.minBedrooms = 0;
+        this.minBathrooms = 0;
+        this.minRating = 0;
+        this.pageNumber = 1;
+    }
 
     // Options for Record Type picklist
     get options() {
@@ -74,24 +76,6 @@ export default class PropertyFilterFields extends LightningElement {
     handleMinRatingChange(event) {
         this.minRating = event.detail.value;
         this.fireChangeEvent();
-    }
-
-    // Subscribe to message channel
-    connectedCallback() {
-        // Message channel to update filters again if user switches between map and grid
-        this.subscription = subscribe(
-        this.messageContext,
-        MAPGRIDSWAPMC,
-        () => {
-            this.fireChangeEvent();
-        }
-        );
-    }
-
-    // Unsubscribe from message channel
-    disconnectedCallback() {
-        unsubscribe(this.subscription);
-        this.subscription = null;
     }
 
     // Sends custom event back to parent component with updated information

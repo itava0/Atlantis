@@ -111,7 +111,7 @@ public class ImportPartnerProperties {
                                          Billing_Country__c = country,
                                          Origin_Company__c = 'CXPW',
                                          External_Id__c = (String) partnerProp.get('Id'),
-                                         Rent__c = (Decimal) partnerProp.get('Rent__c'),
+                                         Rent__c = ((Decimal) partnerProp.get('Rent__c')).setScale(2),
                                          Date_Listed__c = date.valueof((String) partnerProp.get('Date_Listed__c')),
                                          Bathrooms__c = (Integer) partnerProp.get('Bathrooms__c'),
                                          Bedrooms__c = (Integer) partnerProp.get('Bedrooms__c'),
@@ -129,7 +129,7 @@ public class ImportPartnerProperties {
                 propMap.get((String) partnerProp.get('Id')).Billing_Country__c = country;
                 propMap.get((String) partnerProp.get('Id')).Origin_Company__c = 'CXPW';
                 propMap.get((String) partnerProp.get('Id')).External_Id__c = (String) partnerProp.get('Id');
-                propMap.get((String) partnerProp.get('Id')).Rent__c = (Decimal) partnerProp.get('Rent__c');
+                propMap.get((String) partnerProp.get('Id')).Rent__c = ((Decimal) partnerProp.get('Rent__c')).setScale(2);
                 propMap.get((String) partnerProp.get('Id')).Date_Listed__c = date.valueof((String) partnerProp.get('Date_Listed__c'));
                 propMap.get((String) partnerProp.get('Id')).Bathrooms__c = (Integer) partnerProp.get('Bathrooms__c');
                 propMap.get((String) partnerProp.get('Id')).Bedrooms__c = (Integer) partnerProp.get('Bedrooms__c');
@@ -214,7 +214,7 @@ public class ImportPartnerProperties {
                                          Billing_Country__c = country,
                                          Origin_Company__c = 'Mooreland',
                                          External_Id__c = (String) partnerProp.get('Id'),
-                                         Rent__c = (Decimal) partnerProp.get('Price__c'),
+                                         Rent__c = ((Decimal) partnerProp.get('Price__c')).setScale(2),
                                          Date_Listed__c = date.valueof((String) partnerProp.get('Date_Listed__c')),
                                          Bathrooms__c = (Integer) partnerProp.get('Baths__c'),
                                          Bedrooms__c = (Integer) partnerProp.get('Beds__c'),
@@ -233,7 +233,7 @@ public class ImportPartnerProperties {
                 propMap.get((String) partnerProp.get('Id')).Billing_Country__c = country;
                 propMap.get((String) partnerProp.get('Id')).Origin_Company__c = 'Mooreland';
                 propMap.get((String) partnerProp.get('Id')).External_Id__c = (String) partnerProp.get('Id');
-                propMap.get((String) partnerProp.get('Id')).Rent__c = (Decimal) partnerProp.get('Price__c');
+                propMap.get((String) partnerProp.get('Id')).Rent__c = ((Decimal) partnerProp.get('Price__c')).setScale(2);
                 propMap.get((String) partnerProp.get('Id')).Date_Listed__c = date.valueof((String) partnerProp.get('Date_Listed__c'));
                 propMap.get((String) partnerProp.get('Id')).Bathrooms__c = (Integer) partnerProp.get('Baths__c');
                 propMap.get((String) partnerProp.get('Id')).Bedrooms__c = (Integer) partnerProp.get('Beds__c');

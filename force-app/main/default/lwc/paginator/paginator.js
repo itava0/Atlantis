@@ -33,4 +33,8 @@ export default class Paginator extends LightningElement {
   get totalPages() {
     return Math.ceil(this.totalItemCount / this.pageSize);
   }
+
+  get labelItems() {
+    return this.totalItemCount === 1 ? "property" : "properties";
+  }
 }

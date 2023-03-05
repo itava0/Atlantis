@@ -1,11 +1,10 @@
-import { LightningElement, wire, track } from "lwc";
-import { NavigationMixin } from "lightning/navigation";
-import { refreshApex } from "@salesforce/apex";
-import { publish, subscribe, unsubscribe, MessageContext } from "lightning/messageService";
-import FILTERSCHANGEMC from "@salesforce/messageChannel/FiltersChange__c";
-import PROPERTYSELECTEDMC from "@salesforce/messageChannel/PropertySelected__c";
-import GOTUSERLOCATIONMC from "@salesforce/messageChannel/GotUserLocation__c";
-import getPagedPropertyList from "@salesforce/apex/PropertyController.getPagedPropertyList";
+import { LightningElement, wire, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import { refreshApex } from '@salesforce/apex';
+import { publish, subscribe, unsubscribe, MessageContext } from 'lightning/messageService';
+import FILTERSCHANGEMC from '@salesforce/messageChannel/FiltersChange__c';
+import PROPERTYSELECTEDMC from '@salesforce/messageChannel/PropertySelected__c';
+import getPagedPropertyList from '@salesforce/apex/PropertyController.getPagedPropertyList';
 import getAllProperties from '@salesforce/apex/getProperties.getAllProperties';
 import ATLANTIS_LOGO from '@salesforce/resourceUrl/AtlantisLogo';
 import CXPW_LOGO from '@salesforce/resourceUrl/CXPWLogo';
@@ -15,7 +14,7 @@ const PAGE_SIZE = 12;
 
 export default class PropertyListMap extends NavigationMixin(LightningElement) {
   // Address and geolocation information
-  apiUrl = "https://ipwho.is/";
+  apiUrl = 'https://ipwho.is/';
   locGot = false;
   userAddress;
   zoomLevel;
@@ -29,26 +28,27 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
   partnersEnabled = false;
   newMapMarker;
   selectedMarkerValue;
+  addressLat;
+  addressLon;
   geoLat = 0;
-  geoLong = 0;
-  mapIcon = {
-    path: "M6.1299-28.3483H5.7798C6.8433-29.5843 7.49-31.1861 7.49-32.9398 7.4899-36.8334 4.3219-40 .4305-40-3.4625-40-6.6279-36.8334-6.6279-32.9398-6.6279-31.1861-5.9802-29.5843-4.9186-28.3483H-5.2696C-7.2341-28.3483-8.8322-26.7486-8.8322-24.7838V-13.0733C-8.8322-11.1085-7.234-9.51-5.2696-9.51H-5.1324V3.297C-5.1324 5.3302-4.0627 6.8615-2.644 6.8615H3.5028C4.9236 6.8615 5.9936 5.3303 5.9936 3.297V-9.51H6.1299C8.0941-9.51 9.6938-11.1084 9.6938-13.0733V-24.7839C9.6932-26.7486 8.094-28.3483 6.1299-28.3483Z",
-    fillColor: "#FFFF11",
-    fillOpacity: 1
-  };
+  geoLon = 0;
+  mapIcon;
 
   // For filters and marker information
   pageNumber = 1;
   pageSize = PAGE_SIZE;
   mapMarkers = [];
   markersRendered;
-  searchKey = "";
-  recordType = "Any";
-  maxPrice = 100000;
+  searchKey = '';
+  recordType = 'Any';
+  maxPrice = 10000;
   minBedrooms = 0;
   minBathrooms = 0;
   minRating = 0;
   propsInDistance = [];
+  distance = 0;
+  useLocation = false;
+  filteringDistance = false;
   companies = ['Atlantis'];
 
   // For tracking wired information
@@ -64,16 +64,17 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
 
   // Gets property list, repeatedly updated from filters
   @wire(getPagedPropertyList, {
-    searchKey: "$searchKey",
-    recordType: "$recordType",
-    maxPrice: "$maxPrice",
-    minBedrooms: "$minBedrooms",
-    minBathrooms: "$minBathrooms",
-    minRating: "$minRating",
-    propsInDistance: "$propsInDistance",
-    pageSize: "$propertyCount",
-    pageNumber: "$pageNumber",
-    companies: "$companies"
+    searchKey: '$searchKey',
+    recordType: '$recordType',
+    maxPrice: '$maxPrice',
+    minBedrooms: '$minBedrooms',
+    minBathrooms: '$minBathrooms',
+    minRating: '$minRating',
+    propsInDistance: '$propsInDistance',
+    pageSize: '$propertyCount',
+    pageNumber: '$pageNumber',
+    companies: '$companies',
+    filteringDistance: '$filteringDistance'
   })
   getPagedPropertyList(result) {
     this.properties = result;
@@ -129,7 +130,6 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
   updateMarkers() {
     // Reset map markers and refresh properties
     this.mapMarkers = [];
-    // refreshApex(this.properties);
 
     // Multiple checks for information (otherwise, errors when anything was null)
     if (this.properties) {
@@ -140,10 +140,8 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
               // Create a new map marker using property's geolocation values
               this.newMapMarker = {
                 location: {
-                  Latitude:
-                    this.properties.data.records[i].Geolocation__Latitude__s,
-                  Longitude:
-                    this.properties.data.records[i].Geolocation__Longitude__s
+                  Latitude: this.properties.data.records[i].Geolocation__Latitude__s,
+                  Longitude: this.properties.data.records[i].Geolocation__Longitude__s
                 },
                 value: this.properties.data.records[i].Id,
                 title: this.properties.data.records[i].Billing_Street__c,
@@ -155,22 +153,46 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
         }
       }
     }
-    // If found, uses user's current location to display special marker, as well as circle outlining range set by inputted distance
+    // If found, add marker for user's current location
     if (this.locGot) {
       this.newMapMarker = {
         location: {
           Latitude: this.geoLat,
-          Longitude: this.geoLong
+          Longitude: this.geoLon
         },
         value: "userLocation",
         title: "Your Location",
-        mapIcon: this.mapIcon
+        mapIcon: {
+          path: "M6.1299-28.3483H5.7798C6.8433-29.5843 7.49-31.1861 7.49-32.9398 7.4899-36.8334 4.3219-40 .4305-40-3.4625-40-6.6279-36.8334-6.6279-32.9398-6.6279-31.1861-5.9802-29.5843-4.9186-28.3483H-5.2696C-7.2341-28.3483-8.8322-26.7486-8.8322-24.7838V-13.0733C-8.8322-11.1085-7.234-9.51-5.2696-9.51H-5.1324V3.297C-5.1324 5.3302-4.0627 6.8615-2.644 6.8615H3.5028C4.9236 6.8615 5.9936 5.3303 5.9936 3.297V-9.51H6.1299C8.0941-9.51 9.6938-11.1084 9.6938-13.0733V-24.7839C9.6932-26.7486 8.094-28.3483 6.1299-28.3483Z",
+          fillColor: "#FFFF11",
+          fillOpacity: 1
+        }
       };
+    }
+    // Display circle outlining user's inputted range (this version for user location)
+    if (this.filteringDistance && this.useLocation && this.geoLat && this.geoLon) {
       this.mapMarkers.push(this.newMapMarker);
       this.newMapMarker = {
         location: {
           Latitude: this.geoLat,
-          Longitude: this.geoLong
+          Longitude: this.geoLon
+        },
+        type: "Circle",
+        radius: this.distance * 1609.344,
+        strokeColor: "#0000FF",
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: "#0000F0",
+        fillOpacity: 0.35
+      };
+      this.mapMarkers.push(this.newMapMarker);
+    }
+    // Display circle outlining user's inputted range (this version for inputted address)
+    if (this.filteringDistance && !this.useLocation && this.addressLat & this.addressLon) {
+      this.newMapMarker = {
+        location: {
+          Latitude: this.addressLat,
+          Longitude: this.addressLon
         },
         type: "Circle",
         radius: this.distance * 1609.344,
@@ -198,8 +220,14 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
     this.minBathrooms = filters.minBathrooms;
     this.minRating = filters.minRating;
     this.propsInDistance = filters.propsInDistance;
-    // this.geoLat = filters.latitude;
-    // this.geoLong = filters.longitude;
+    this.distance = filters.distance;
+    this.useLocation = filters.useLocation;
+    this.filteringDistance = filters.filteringDistance;
+    this.geoLat = filters.userLatitude;
+    this.geoLon = filters.userLongitude;
+    this.addressLat = filters.addressLatitude;
+    this.addressLon = filters.addressLongitude;
+    this.locGot = filters.locGot;
     this.cxpwEnabled = filters.cxpwEnabled;
     this.moorelandEnabled = filters.moorelandEnabled;
     this.companies = filters.companies;
@@ -211,10 +239,28 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
     refreshApex(this.properties);
   }
 
-  // Update map zoom level and centering based on if partners enabled
+  // Update map zoom level and centering based on distance filtering or partner status
   updateMapFocus() {
-    if (this.cxpwEnabled || this.moorelandEnabled) {
-      // Partners Enabled: Focus on US
+    if (this.filteringDistance && this.useLocation && this.geoLat && this.geoLon) {
+      // Priority 1: Distance Filter w/ User Location: Focus On User Coordinates
+      this.zoomLevel = 11;
+      this.center = {
+        location: {
+          Latitude: this.geoLat,
+          Longitude: this.geoLon
+        }
+      };
+    } else if (this.filteringDistance && this.addressLat && this.addressLon) {
+      // Priority 2: Distance Filter w/ Inputted Address: Focus on Address Coordinates
+      this.zoomLevel = 11;
+      this.center = {
+        location: {
+          Latitude: this.addressLat,
+          Longitude: this.addressLon
+        }
+      }
+    } else if (this.cxpwEnabled || this.moorelandEnabled) {
+      // Priority 3: Partner(s) Enabled & No Distance Filtering: Focus on United States
       this.zoomLevel = 4;
       this.center = {
         location: {
@@ -223,7 +269,7 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
         }
       };
     } else {
-      // No Partners Enabled: Focus on Atlanta
+      // Priority 4: No Partners Enabled & No Distance Filtering: Focus on Atlanta
       this.zoomLevel = 11;
       this.center = {
         location: {
@@ -248,7 +294,6 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
     if (event.target.selectedMarkerValue !== "userLocation") {
       this.selectedMarkerValue = event.target.selectedMarkerValue;
       this.getPropertyInfo(this.selectedMarkerValue);
-      this.handlePropertySelected();
     }
   }
 
@@ -273,12 +318,6 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
       default:
         this.selectedLogo = ATLANTIS_LOGO;
     }
-  }
-
-  // Message channel to other components when a property is selected
-  handlePropertySelected() {
-    const message = { propertyId: this.selectedMarkerValue };
-    publish(this.messageContext, PROPERTYSELECTEDMC, message);
   }
 
   // Navigate to record page
@@ -334,12 +373,13 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
       if (geoStatus.state === "granted" || geoStatus.state === "prompt") {
         navigator.geolocation.getCurrentPosition((position) => {
           this.geoLat = position.coords.latitude;
-          this.geoLong = position.coords.longitude;
+          this.geoLon = position.coords.longitude;
+          this.locGot = true;
           publish(this.messageContext, GOTUSERLOCATIONMC, {
             latitude: this.geoLat,
-            longitude: this.geoLong
+            longitude: this.geoLon,
+            locGot: this.locGot
           });
-          this.locGot = true;
           this.updateMarkers();
         });
       } else {
@@ -347,16 +387,16 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
           .then((response) => response.json())
           .then((data) => {
             this.geoLat = data.latitude;
-            this.geoLong = data.longitude;
+            this.geoLon = data.longitude;
+            this.locGot = true;
             publish(this.messageContext, GOTUSERLOCATIONMC, {
               latitude: this.geoLat,
-              longitude: this.geoLong
+              longitude: this.geoLon,
+              locGot: this.locGot
             });
-            this.locGot = true;
             this.updateMarkers();
           })
-          .catch((error) => {
-            console.log(error);
+          .catch(() => {
             this.updateMarkers();
             return false;
           });
