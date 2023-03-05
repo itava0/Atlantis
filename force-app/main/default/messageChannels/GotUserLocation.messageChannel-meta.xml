@@ -9,5 +9,9 @@
         <description>Longitude</description>
         <fieldName>longitude</fieldName>
     </lightningMessageFields>
+    <lightningMessageFields>
+        <description>Location Got?</description>
+        <fieldName>locGot</fieldName>
+    </lightningMessageFields>
     <masterLabel>Geolocation message channel</masterLabel>
 </LightningMessageChannel>
