@@ -1,0 +1,35 @@
+<template>
+    <lightning-card>
+        <div class="slds-align_absolute-center">
+            <lightning-button label={showChartLabel} variant={showChartVariant} icon-name="utility:chart" onclick={handleShowChart}></lightning-button>
+        </div>
+        <template if:true={showChart}>
+            <lightning-tabset>
+                <lightning-tab label="Availability">
+                    <template if:true={statusConfig}> <c-property-chart chart-config={statusConfig}></c-property-chart> </template>
+                </lightning-tab>
+                <lightning-tab label="Rent">
+                    <template if:true={rentConfig}> <c-property-chart chart-config={rentConfig}></c-property-chart> </template>
+                </lightning-tab>
+                <lightning-tab label="Beds + Baths">
+                    <template if:true={bedsBathsConfig}> <c-property-chart chart-config={bedsBathsConfig}></c-property-chart> </template>
+                </lightning-tab>
+                <lightning-tab label="Ratings">
+                    <template if:true={ratingConfig}> <c-property-chart chart-config={ratingConfig}></c-property-chart> </template>
+                </lightning-tab>
+                <lightning-tab label="Cases">
+                    <template if:true={caseConfig}> <c-property-chart chart-config={caseConfig}></c-property-chart> </template>
+                </lightning-tab>
+                <lightning-tab label="Price Distribution">
+                    <template if:true={priceDistributionConfig}> <c-property-chart chart-config={priceDistributionConfig}></c-property-chart> </template>
+                </lightning-tab>
+                <lightning-tab label="Date Listed">
+                    <template if:true={dateListedConfig}> <c-property-chart chart-config={dateListedConfig}></c-property-chart> </template>
+                </lightning-tab>
+                <lightning-tab label="Communal Spaces">
+                    <template if:true={communalSpaceConfig}> <c-property-chart chart-config={communalSpaceConfig}></c-property-chart> </template>
+                </lightning-tab>
+            </lightning-tabset>
+        </template>
+    </lightning-card>
+</template>

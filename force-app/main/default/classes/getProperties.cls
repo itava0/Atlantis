@@ -191,4 +191,41 @@ public with sharing class getProperties {
         return [SELECT Id, Name, Billing_Street__c, Billing_City__c, Billing_State__c, Billing_Postal_Code__c,
                 Geolocation__Latitude__s, Geolocation__Longitude__s FROM Property__c WHERE Id =: propId];
     }
+    
+    // For Basic Property Info Chart
+    @AuraEnabled(cacheable=true)
+    public static List<Property__c> propertyChart(Id userId) {
+        Id conId;
+        Id accId;
+        List<Property_Owner__c> owners = new List<Property_Owner__c>();
+        List<Id> ownerPropIds = new List<Id>();
+        
+        if (userId != null) conId = getContactFromUser(userId)[0].ContactId;
+        if (conId != null) accId = getAccountFromContact(conId)[0].AccountId;
+        if (accId != null) owners = getPropertyOwnersFromAccount(accId);
+        for (Property_Owner__c own : owners) {
+            ownerPropIds.add(own.Property__c);
+        }
+        return [SELECT Id, Billing_Street__c, Rent__c, Bedrooms__c, Bathrooms__c, Status__c, Score__c, Date_Listed__c, Community__c, In_Community__c, Community__r.Name
+                FROM Property__c WHERE Id IN: ownerPropIds ORDER BY Rent__c];
+    }
+    
+    // Get Cases for Properties
+    @AuraEnabled(cacheable=true)
+    public static List<Case> propertyCases(Id userId) {
+        List<Property__c> propList = propertyChart(userId);
+        return [SELECT Id, PropertyId__c, Status FROM Case WHERE PropertyId__c IN: propList];
+    }
+    
+    // Get Communal Spaces for Properties
+    @AuraEnabled(cacheable=true)
+    public static List<Communal_Space__c> propertySpaces(Id userId) {
+        List<Property__c> propList = propertyChart(userId);
+        Set<Id> commSet = new Set<Id>();
+        for (Property__c prop : propList) {
+            if (prop.In_Community__c == true) commSet.add(prop.Community__c);
+        }
+        List<Communal_Space__c> spcList = [SELECT Id, Community__c, Community__r.Name FROM Communal_Space__c WHERE Community__c IN: commSet];
+        return spcList;
+    }
 }

@@ -3,7 +3,6 @@ import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
 import { publish, subscribe, unsubscribe, MessageContext } from 'lightning/messageService';
 import FILTERSCHANGEMC from '@salesforce/messageChannel/FiltersChange__c';
-import PROPERTYSELECTEDMC from '@salesforce/messageChannel/PropertySelected__c';
 import getPagedPropertyList from '@salesforce/apex/PropertyController.getPagedPropertyList';
 import getAllProperties from '@salesforce/apex/getProperties.getAllProperties';
 import ATLANTIS_LOGO from '@salesforce/resourceUrl/AtlantisLogo';
@@ -153,8 +152,8 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
         }
       }
     }
-    // If found, add marker for user's current location
-    if (this.locGot) {
+    // For user location distance filtering, display marker and circle outlining range
+    if (this.filteringDistance && this.useLocation && this.geoLat && this.geoLon) {
       this.newMapMarker = {
         location: {
           Latitude: this.geoLat,
@@ -168,9 +167,6 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
           fillOpacity: 1
         }
       };
-    }
-    // Display circle outlining user's inputted range (this version for user location)
-    if (this.filteringDistance && this.useLocation && this.geoLat && this.geoLon) {
       this.mapMarkers.push(this.newMapMarker);
       this.newMapMarker = {
         location: {
@@ -187,8 +183,22 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
       };
       this.mapMarkers.push(this.newMapMarker);
     }
-    // Display circle outlining user's inputted range (this version for inputted address)
+    // For address distance filtering, display marker and circle outlining range
     if (this.filteringDistance && !this.useLocation && this.addressLat & this.addressLon) {
+      this.newMapMarker = {
+        location: {
+          Latitude: this.addressLat,
+          Longitude: this.addressLon
+        },
+        value: "thisAddress",
+        title: "This Address",
+        mapIcon: {
+          path: "M6.1299-28.3483H5.7798C6.8433-29.5843 7.49-31.1861 7.49-32.9398 7.4899-36.8334 4.3219-40 .4305-40-3.4625-40-6.6279-36.8334-6.6279-32.9398-6.6279-31.1861-5.9802-29.5843-4.9186-28.3483H-5.2696C-7.2341-28.3483-8.8322-26.7486-8.8322-24.7838V-13.0733C-8.8322-11.1085-7.234-9.51-5.2696-9.51H-5.1324V3.297C-5.1324 5.3302-4.0627 6.8615-2.644 6.8615H3.5028C4.9236 6.8615 5.9936 5.3303 5.9936 3.297V-9.51H6.1299C8.0941-9.51 9.6938-11.1084 9.6938-13.0733V-24.7839C9.6932-26.7486 8.094-28.3483 6.1299-28.3483Z",
+          fillColor: "#00D100",
+          fillOpacity: 1
+        }
+      };
+      this.mapMarkers.push(this.newMapMarker);
       this.newMapMarker = {
         location: {
           Latitude: this.addressLat,
@@ -291,7 +301,7 @@ export default class PropertyListMap extends NavigationMixin(LightningElement) {
 
   // When property marker selected
   handleMarkerSelect(event) {
-    if (event.target.selectedMarkerValue !== "userLocation") {
+    if (event.target.selectedMarkerValue !== "userLocation" && event.target.selectedMarkerValue !== "thisAddress") {
       this.selectedMarkerValue = event.target.selectedMarkerValue;
       this.getPropertyInfo(this.selectedMarkerValue);
     }

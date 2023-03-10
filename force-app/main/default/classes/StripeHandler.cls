@@ -84,7 +84,7 @@ public without sharing class StripeHandler {
 
     //Create a token for the payment method
     @AuraEnabled
-    public static String createToken(Id accountId, String cardNumber, String expMonth, String expYear, String cvc) {
+    public static String createToken(String cardNumber, String expMonth, String expYear, String cvc) {
         // Set up the HTTP request
         Http http = new Http();
         HttpRequest request = new HttpRequest();

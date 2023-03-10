@@ -25,14 +25,7 @@
                     </ul>
                 </div>
                 <div class="card-action">
-                    <!-- <lightning-button
-                        style="border-radius: 0;"
-                        variant="brand"
-                        label="Get Basic"
-                        title="Get Basic"
-                        onclick={submitForm}>
-                    </lightning-button> -->
-                    <button type="button" onclick={testing}>Get Basic</button>
+                    <button type="button" data-key="Basic" onclick={showModal}>Get Basic</button>
                 </div>
             </div>
             <div class="card popular">
@@ -58,7 +51,7 @@
                     </ul>
                 </div>
                 <div class="card-action">
-                    <button type="button">Get Pro</button>
+                    <button type="button" data-key="Pro" onclick={showModal}>Get Pro</button>
                 </div>
             </div>
             <div class="card">
@@ -81,10 +74,12 @@
                     </ul>
                 </div>
                 <div class="card-action">
-                    <button type="button">Get
+                    <button  type="button" data-key="Premium" onclick={showModal}>Get
                         Premium</button>
                 </div>
             </div>
         </div>
     </div>
+    <c-pricing-table-modal showmodal={openModal} modal-class="slds-modal slds-fade-in-open slds-modal_medium" onchildmethod={handleCloseModal}></c-pricing-table-modal>
+    <div class="backdropDiv slds-backdrop"></div>
 </template>

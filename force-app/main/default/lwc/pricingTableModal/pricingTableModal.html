@@ -1,0 +1,140 @@
+<template>
+    <template if:true={showmodal}>
+        <section role="dialog" tabindex="-1" class={modalClass} aria-labelledby="modal-heading-01" aria-modal="true">
+            <div class="slds-modal__container">
+                <div class="slds-modal__header">
+                    <slot name="headercontent"></slot>
+                    <h1>{paymentPlan} Payment Plan:</h1>
+                    <lightning-button-icon 
+                        class="slds-modal__close" 
+                        title="Close" 
+                        label="Close" 
+                        icon-name="utility:close"
+                        icon-class="slds-button_icon-inverse" 
+                        onclick={closemodal}>
+                        <label>Close</label>
+                    </lightning-button-icon>
+                </div>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <template if:false={validCard}>
+                        <lightning-input 
+                            type="text" 
+                            pattern="[0-9]{16}" 
+                            label="Card Number:"
+                            onchange={cardNumHandler} 
+                            data-id="reset" 
+                            placeholder="Enter Card Number"
+                            message-when-pattern-mismatch="Card number must be a numeric value and 16 characters long"
+                            maxlength="16"
+                            minlength="16"
+                            required
+                        ></lightning-input>
+                        <lightning-input
+                            type="number"
+                            label="Expiration Month:"
+                            onchange={expMonthHandler} 
+                            data-id="reset" 
+                            placeholder="Enter Expiration Month"
+                            max="12"
+                            min="1"
+                            maxlength="2"
+                            required
+                        ></lightning-input>
+                        <lightning-input
+                            type="text"
+                            pattern="[2-9]{1}[0-9]{1}[2-9]{1}[3-9]{1}"
+                            message-when-pattern-mismatch="Expiration year must be a numeric value and 2023 or later"
+                            label="Expiration Year:"
+                            onchange={expYearHandler} 
+                            data-id="reset" 
+                            placeholder="Enter Expiration Year"
+                            maxlength="4"
+                            minlength="4"
+                            class="inputYear"
+                            required
+                        ></lightning-input>
+                        <lightning-input
+                            type="number"
+                            label="CVC:"
+                            onchange={cvcHandler} 
+                            data-id="reset" 
+                            placeholder="Enter CVC"
+                            maxlength="3"
+                            required
+                        ></lightning-input>
+                    </template>
+                    <template if:true={validCard}>
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input
+                                    type="text"
+                                    label="First Name:"
+                                    onchange={fNameHandler}
+                                    placeholder="Enter First Name"
+                                    class="slds-p-horizontal_small slds-p-vertical_xx-small"
+                                    required>
+                                </lightning-input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input
+                                    type="text"
+                                    label="Last Name:"
+                                    onchange={lNameHandler}
+                                    placeholder="Enter Last Name"
+                                    class="slds-p-horizontal_small slds-p-vertical_xx-small"
+                                    required>
+                                </lightning-input>
+                            </div>
+                        </div>
+                        <lightning-input
+                            type="text"
+                            label="Email:"
+                            onchange={emailHandler}
+                            placeholder="Enter Email"
+                            class="slds-p-horizontal_small slds-p-vertical_xx-small"
+                            required>
+                        </lightning-input>
+                        <lightning-input
+                            type="text"
+                            label="Nickname:"
+                            onchange={nicknameHandler}
+                            placeholder="Enter Nickname"
+                            class="slds-p-horizontal_small slds-p-vertical_xx-small"
+                            required>
+                        </lightning-input>
+                        <lightning-input
+                            type="tel"
+                            label="Phone Number:"
+                            onchange={phoneHandler}
+                            placeholder="Enter Phone Number"
+                            class="slds-p-horizontal_small slds-p-vertical_xx-small"
+                            pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
+                            required>
+                        </lightning-input>
+                    </template>
+                </div>
+                <div class="slds-modal__footer">
+                    <slot name="footercontent"></slot>
+                    <template if:false={validCard}>
+                        <lightning-button
+                            variant="brand"
+                            label="Continue"
+                            title="Continue"
+                            onclick={submitCard}>
+                        </lightning-button>
+                    </template>
+                    <template if:true={validCard}>
+                        <lightning-button
+                            variant="brand"
+                            label="Submit"
+                            title="Submit"
+                            onclick={submitForm}>
+                        </lightning-button>
+                    </template>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+    </template>
+    
+</template>

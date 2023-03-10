@@ -367,7 +367,6 @@ export default class StripePayment extends LightningElement {
         if(this.cardFormValidation) {
             //create token and then convert token into a payment method on the customer
             createToken({
-                accountId: this.accountId,
                 cardNumber: this.cardNum, 
                 expMonth: this.expMonth, 
                 expYear: this.expYear, 
@@ -486,7 +485,6 @@ export default class StripePayment extends LightningElement {
         if(this.cardFormValidation) {
             //create token and then convert token into a payment method on the customer
             createToken({
-                accountId: this.accountId,
                 cardNumber: this.cardNum, 
                 expMonth: this.expMonth, 
                 expYear: this.expYear, 

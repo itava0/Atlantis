@@ -3,7 +3,7 @@
         <div class="wrapper">
             <template if:true={show}>
                 <div class="header">
-                    <h3>Tenant Application </h3>
+                    <h3>Tenant Applicantion </h3>
                 </div>
                 <div class="form">
                     <form action="">
@@ -14,7 +14,8 @@
                             </label>
                             <lightning-input type="text"
                                 id="single-form-element-id-01"
-                                data-id="reset"
+                                class="validate"
+                                data-id="reset" required
                                 onchange={firstNameHandler}>
                             </lightning-input>
                         </p>
@@ -25,7 +26,8 @@
                             </label>
                             <lightning-input type="text"
                                 id="single-form-element-id-02"
-                                data-id="reset"
+                                class="validate"
+                                data-id="reset" required
                                 onchange={lastNameHandler}>
                             </lightning-input>
                         </p>
@@ -35,8 +37,11 @@
                                 Phone number
                             </label>
                             <lightning-input type="tel"
-                                id="ingle-form-element-id-03"
-                                data-id="reset"
+                                id="single-form-element-id-03"
+                                class="validate"
+                                data-id="reset" required
+                                pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}$"
+                                message-when-pattern-mismatch="Please enter a valid phone number"
                                 onchange={phoneHandler}>
                             </lightning-input>
                         </p>
@@ -47,7 +52,8 @@
                             </label>
                             <lightning-input type="number"
                                 id="single-form-element-id-04"
-                                data-id="reset"
+                                class="validate"
+                                data-id="reset" required
                                 onchange={socialSecurityHandler}>
                             </lightning-input>
                         </p>
@@ -58,7 +64,8 @@
                             </label>
                             <lightning-input type="date"
                                 id="single-form-element-id-05"
-                                data-id="reset"
+                                class="validate"
+                                data-id="reset" required
                                 onchange={dateBirthHandler}>
                             </lightning-input>
                         </p>
@@ -70,8 +77,11 @@
                             <lightning-input type="email"
                                 id="single-form-element-id-06"
                                 data-id="reset"
-                                onchange={emailHandler}>
-                            </lightning-input>
+                                class="validate"
+                                onchange={emailHandler}
+                                pattern="[A-Za-z0-9._-]+@[a-z0-9-]+\.[a-z]{2,}$"
+                                message-when-pattern-mismatch="Please enter a valid email"
+                                required></lightning-input>
                         </p>
                         <p>
                             <label
@@ -80,8 +90,10 @@
                             </label>
                             <lightning-input type="test"
                                 id="single-form-element-id-07"
+                                class="validate"
                                 data-id="reset"
-                                onchange={driverLicenseHandler}>
+                                onchange={driverLicenseHandler}
+                                required>
                             </lightning-input>
                         </p>
                         <p>
@@ -90,8 +102,9 @@
                                 Monthly Income
                             </label>
                             <lightning-input type="number"
+                                class="validate"
                                 id="single-form-element-id-08"
-                                data-id="reset"
+                                data-id="reset" required
                                 onchange={monthlyIncomeHandler}>
                             </lightning-input>
                         </p>
@@ -102,7 +115,8 @@
                             </label>
                             <lightning-input type="number"
                                 id="single-form-element-id-09"
-                                data-id="reset"
+                                class="validate"
+                                data-id="reset" required
                                 onchange={leaseTermHandler}>
                             </lightning-input>
                         </p>
@@ -113,8 +127,10 @@
                             </label>
                             <lightning-input type="date"
                                 id="single-form-element-id-10"
+                                class="validate"
                                 data-id="reset"
-                                onchange={moveInHandler}>
+                                onchange={moveInHandler}
+                                required>
                             </lightning-input>
                         </p>
                         <p>
@@ -123,13 +139,12 @@
                                 Are you a veteran?
                             </label>
                             <lightning-combobox
-                                name="status"
-                                value=""
+                                name="status" value=""
+                                class="validate"
                                 placeholder="Select Status"
                                 options={options}
                                 onchange={handleChange}
-                                required
-                            ></lightning-combobox>
+                                required></lightning-combobox>
                         </p>
                         <p class="full-width">
                             <lightning-button

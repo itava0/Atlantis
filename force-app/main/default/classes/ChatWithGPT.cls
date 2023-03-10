@@ -33,7 +33,7 @@ public static List < IssueOutput > fetchChatGPTResponse( List < IssueInput > lis
   // Send the request, and return a response
   HttpResponse res = h.send(req);
 
- // Parse JSON response to get all the totalPrice field values.
+ // Parse JSON response to get text field value.
  JSONParser parser = JSON.createParser(res.getBody());
  String result;
  while (parser.nextToken() != null) {

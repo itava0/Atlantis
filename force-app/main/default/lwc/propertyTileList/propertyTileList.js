@@ -59,6 +59,7 @@ export default class PropertyTileList extends LightningElement {
             if (!this.locGot) this.getLocation();
             this.error = undefined;
         } else if (result.error) {
+            console.log("ERROR", this.error, result.error, this.properties.error);
             this.error = result.error;
             this.curProperties = [];
         }

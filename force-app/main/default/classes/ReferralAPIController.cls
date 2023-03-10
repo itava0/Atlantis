@@ -16,6 +16,6 @@ global with sharing class ReferralAPIController {
     referralUser.Property__c = propertyId;
     referralUser.message__c = message;
     insert referralUser;
-    return referralUser.Id;
+    return 'Thank you for requesting a tour ID:' +referralUser.Id;
   }
 }

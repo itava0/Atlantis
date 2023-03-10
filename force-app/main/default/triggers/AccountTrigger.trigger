@@ -5,9 +5,9 @@ trigger AccountTrigger on Account (after insert) {
         .getRecordTypeInfosByName()
         .get('Person Account')
         .getRecordTypeId();
-    List<Contact> cons=new List<Contact>();  
+    List<Contact> cons=new List<Contact>();
     for(Account a: Trigger.New){
-        if(a.RecordTypeId != RecTypeId)
+        if(a.RecordTypeId != RecTypeId && a.RecordTypeId != Id.ValueOf('012Dn000000gsCuIAI'))
         {
             Contact c = new Contact();
             c.accountid=a.id;

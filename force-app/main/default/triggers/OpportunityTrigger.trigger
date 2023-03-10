@@ -1,10 +1,4 @@
 trigger OpportunityTrigger on Opportunity (before insert, before update, after insert, after update) {
-     if (Trigger.isBefore) {
-         for(Opportunity opp: trigger.new){
-             opp.Rent_Amount__c = 1500.00;
-             opp.Credit_Score__c= 700;
-         }
-        }
     
     if(trigger.isAfter) {
         List<Contract> newLease = new List<Contract>();
@@ -14,10 +8,10 @@ trigger OpportunityTrigger on Opportunity (before insert, before update, after i
             if(opp.Veteran__c =='yes') {
             Contract con = new Contract();
             con.AccountId = opp.AccountId;
-            con.OwnerId = opp.AccountId;
+            con.OwnerId = opp.OwnerId;
             con.Status = 'Draft';
             con.StartDate = opp.Lease_Start_Date__c;
-            con.ContractTerm = 12;
+            con.ContractTerm = opp.Lease_Term_Months__c.intValue();
             con.Property__c = opp.Property__c;
             con.Monthly_Rent__c = opp.Rent_Amount__c;
             con.Veteran_Discount__c = 10;
@@ -25,10 +19,10 @@ trigger OpportunityTrigger on Opportunity (before insert, before update, after i
             } else if ( opp.DOB__c.year() <= 1957) {
             Contract con = new Contract();
             con.AccountId = opp.AccountId;
-            con.OwnerId = opp.AccountId;
+            con.OwnerId = opp.OwnerId;
             con.Status = 'Draft';
             con.StartDate = opp.Lease_Start_Date__c;
-            con.ContractTerm = 12;
+            con.ContractTerm = opp.Lease_Term_Months__c.intValue();
             con.Property__c = opp.Property__c;
             con.Monthly_Rent__c = opp.Rent_Amount__c;
             con.Senior_Discount__c = 10;
@@ -36,10 +30,10 @@ trigger OpportunityTrigger on Opportunity (before insert, before update, after i
             } else {
             Contract con = new Contract();
             con.AccountId = opp.AccountId;
-            con.OwnerId = opp.AccountId;
+            con.OwnerId = opp.OwnerId;
             con.Status = 'Draft';
             con.StartDate = opp.Lease_Start_Date__c;
-            con.ContractTerm = 12;
+            con.ContractTerm = opp.Lease_Term_Months__c.intValue();
             con.Property__c = opp.Property__c;
             con.Monthly_Rent__c = opp.Rent_Amount__c;
             newLease.add(con);

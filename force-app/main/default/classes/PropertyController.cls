@@ -10,11 +10,12 @@ public without sharing class PropertyController {
    * @param minBedrooms Minimum number of bedrooms
    * @param minBathrooms Minimum number of bathrooms
    * @param minRating Minimum score (rating)
-   * @param streets Streets array (that matches a set distance)
-   * @param cities Cities array (that matches a set distance)
+   * @param propsInDistance Properties in distance
    * @param mapMarkers Map markers for list map
    * @param pageSize Number of properties per page
    * @param pageNumber Page number
+   * @param companies Determines which partners to include
+   * @param filteringDistance Determines if distance should be filtered
    * @return PagedResult object holding the paged and filtered list of properties
    */
   @AuraEnabled(cacheable=true scope='global')
@@ -29,7 +30,8 @@ public without sharing class PropertyController {
     Object[] mapMarkers,
     Integer pageSize,
     Integer pageNumber,
-    List<String> companies
+    List<String> companies,
+    Boolean filteringDistance
   ) {
     // Normalize inputs
     Decimal safeMaxPrice = (maxPrice == null ? DEFAULT_MAX_PRICE : maxPrice);
@@ -38,18 +40,19 @@ public without sharing class PropertyController {
     Integer safeMinRating = (minRating == null ? 0 : minRating);
     Integer safePageSize = (pageSize == null ? DEFAULT_PAGE_SIZE : pageSize);
     Integer safePageNumber = (pageNumber == null ? 1 : pageNumber);
+    Boolean safeFilteringDistance = (filteringDistance == null ? false : filteringDistance);
 
     String searchPattern = '%' + searchKey + '%';
     Integer offset = (safePageNumber - 1) * safePageSize;
-    String[] filterStreets = new List<String>();
-    String[] filterCities = new List<String>();
 
     PagedResult result = new PagedResult();
     result.pageSize = safePageSize;
     result.pageNumber = safePageNumber;
+      
+    String test = 'test';
 
     if (recordType != null && recordType != '' && recordType != 'Any') {
-      if (propsInDistance.size() > 0) {
+      if (safeFilteringDistance == true) {
         // VARIATION 1: Record Type Filter = YES, Distance Filter = YES
         result.totalItemCount = [
           SELECT COUNT()
@@ -68,8 +71,8 @@ public without sharing class PropertyController {
           WHERE
             (Name LIKE :searchPattern OR Billing_Street__c LIKE :searchPattern OR Billing_City__c LIKE :searchPattern OR Billing_State__c LIKE :searchPattern
             OR Billing_Postal_Code__c LIKE :searchPattern OR RecordType.Name LIKE :searchPattern) AND RecordType.Name = :recordType AND Rent__c <= :safeMaxPrice
-            AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available' AND Approval_Status__c = 'Approved'
-            AND Id IN :propsInDistance AND Origin_Company__c IN :companies
+            AND Bedrooms__c >= :safeMinBedrooms AND Bathrooms__c >= :safeMinBathrooms AND Score__c >= :safeMinRating AND Status__c = 'Available'
+            AND Id IN :propsInDistance AND Approval_Status__c = 'Approved' AND Origin_Company__c IN :companies
           WITH SECURITY_ENFORCED
           ORDER BY Rent__c
           LIMIT :safePageSize
@@ -103,7 +106,7 @@ public without sharing class PropertyController {
         ];
       }
     } else {
-      if (propsInDistance.size() > 0) {
+      if (safeFilteringDistance == true) {
         // VARIATION 3: Record Type Filter = NO, Distance Filter = YES
         result.totalItemCount = [
           SELECT COUNT()

@@ -1,38 +1,38 @@
 <template>
         <template if:true={isPropertyOwner}>
             <template if:true={recordTypeId}>
-                <div class="slds-align_absolute-center">
-                    <!--<p><strong>Welcome, property owner!</strong></p>-->
-                </div>
                 <template if:true={searchedProperties}>
-                    <article class="slds-card">
-                        <!-- HEADER -->
-                        <div class="slds-card__header slds-grid">
-                          <header class="slds-media slds-media_center slds-has-flexi-truncate">
-                            <div class="slds-media__figure">
-                              <span class="slds-icon_container slds-icon-standard-account" title="property">
-                                <svg class="slds-icon slds-icon_small" aria-hidden="true">
-                                  <use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#account"></use>
-                                </svg>
-                                <span class="slds-assistive-text">property</span>
-                              </span>
-                            </div>
+                    <!-- HEADER -->
+                    <div class="slds-card__header slds-grid">
+                        <header class="slds-media slds-media_center slds-has-flexi-truncate">
                             <div class="slds-media__body slds-align_absolute-center">
-                              <h2 class="slds-card__header-title">
-                                <template if:false={oneProperty}>
-                                    <h2 class="slds-card__header-title">
-                                        Welcome, {userFirstName} {userLastName}!<br>You have {numProperties} properties.
-                                    </h2>
-                                </template>
-                                <template if:true={oneProperty}>
-                                    <h2 class="slds-card__header-title">
-                                        Welcome, {userFirstName} {userLastName}!<br>You have {numProperties} property.
-                                    </h2>
-                                </template>
-                              </h2>
+                                <h2 class="slds-card__header-title">
+                                    My Portfolio
+                                </h2>
                             </div>
-                          </header>
+                        </header>
+                    </div>
+                    <article class="slds-card">
+                        <!-- CHARTS -->
+                        <div class="slds-grid">
+                            <div class="slds-col slds-size_1-of-3">
+                                <div class="slds-align_absolute-center">
+                                    <h2 class="slds-card__header-title">
+                                        <br /><br />
+                                        <template if:false={oneProperty}>
+                                            Welcome, {userFirstName}!<br>You have {numProperties} properties in your portfolio.
+                                        </template>
+                                        <template if:true={oneProperty}>
+                                            Welcome, {userFirstName}!<br>You have {numProperties} property in your portfolio.
+                                        </template>
+                                    </h2>
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_2-of-3">
+                                <c-property-chart-parent user-id={userId}></c-property-chart-parent>
+                            </div>
                         </div>
+                        <hr />
                         <!-- SEARCH AND SORT OPTIONS -->
                         <div class="slds-card__body slds-card__body_inner">
                             <lightning-input type="text" label ="Search Portfolio by Name, Address, or Type:" onchange={handleSearch} style="margin-bottom:10px"></lightning-input>
@@ -90,14 +90,11 @@
                     </article>
                 </template>
                 <template if:false={searchedProperties}>
-                    <p><strong>Looks like you don't have any properties. Select "Submit Property" to get started.</strong></p>
+                    <p><strong>Looks like you don't have any properties yet. Select "Submit Property" to get started.</strong></p>
                 </template>
             </template>
             <template if:false={recordTypeId}>
                 <p><strong>An error has occurred in verifying user is a property owner. :(</strong></p>
             </template>
-        </template>
-        <template if:false={isPropertyOwner}>
-            <!--<p><strong>This user is NOT a property owner.</strong></p>-->
         </template>
 </template>
