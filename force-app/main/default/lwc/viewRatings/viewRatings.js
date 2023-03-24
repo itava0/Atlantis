@@ -19,6 +19,11 @@ export default class ViewRatings extends LightningElement {
     propertyObj = PROPERTY_OBJECT;
     overallRating = OVERALL_RATING_FIELD;
     hasRating = false;
+
+    // For toggling table visibility
+    viewTable = false;
+    btnLabel = 'Show';
+    btnVariant = 'brand';
     
     // For columns and sorting
     columns = columns;
@@ -82,4 +87,10 @@ export default class ViewRatings extends LightningElement {
         this.sortedBy = sortedBy;
     }
 
+    // Toggle visibility of table
+    handleTable() {
+        this.viewTable = !this.viewTable;
+        this.btnLabel = this.viewTable == true ? 'Hide' : 'Show';
+        this.btnVariant = this.viewTable == true ? 'brand-outline' : 'brand';
+    }
 }

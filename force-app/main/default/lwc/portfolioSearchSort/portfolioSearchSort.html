@@ -1,0 +1,28 @@
+<template>
+    <div class="slds-align_absolute-center" style="margin-bottom:10px">
+        <lightning-input type="text" label ="Search Portfolio by Name, Address, or Type:" onchange={handleSearch} style="display:grid; width:70%;"></lightning-input>
+    </div>
+    <div class="slds-align_absolute-center" style="margin-bottom:10px">
+        <lightning-button-group>
+            <lightning-button icon-name="utility:shortcuts" variant="brand-outline" label="Reset Search" onclick={handleClear}></lightning-button>
+            <lightning-button icon-name="utility:text" variant={nameSort} label="Sort by Name" onclick={handleSort} value="name"></lightning-button>
+            <lightning-button icon-name="utility:rating" variant={ratingSort} label="Sort by Rating" onclick={handleSort} value="rating"></lightning-button>
+            <lightning-button icon-name="utility:money" variant={rentSort} label="Sort by Rent" onclick={handleSort} value="rent"></lightning-button>
+            <lightning-button icon-name="utility:monthlyview" variant={dateListedSort} label="Sort by Date Listed" value="datelisted" onclick={handleSort}></lightning-button>
+            <lightning-button icon-name="utility:travel_and_places" variant={distanceSort} label="Sort by Distance" value="distance" onclick={handleSort} disabled={locationNotFound}></lightning-button>
+        </lightning-button-group>
+        <template if:true={locationNotFound}>
+            <lightning-helptext icon-name="utility:info" style="margin-left:3px" content="In order to sort portfolio by the distance from your location, please update your address information"></lightning-helptext>
+        </template>
+    </div>
+    <template if:true={amountFound}>
+        <div class="slds-align_absolute-center" style="margin-bottom:3px">
+            <p>{amountFound} result(s) found</p>
+        </div>
+    </template>
+    <template if:true={sortText}>
+        <div class="slds-align_absolute-center" style="margin-bottom:3px">
+            <p>{sortText}</p>
+        </div>
+    </template>
+</template>

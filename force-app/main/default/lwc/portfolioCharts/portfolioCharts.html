@@ -1,0 +1,20 @@
+<template>
+    <div class="slds-grid">
+        <div class="slds-col slds-size_1-of-3">
+            <div class="slds-align_absolute-center">
+                <h2 class="slds-card__header-title">
+                    <br /><br />
+                    <template if:false={singleProperty}>
+                        Welcome, {userFirstName}!<br>You have {numProperties} properties in your portfolio.
+                    </template>
+                    <template if:true={singleProperty}>
+                        Welcome, {userFirstName}!<br>You have {numProperties} property in your portfolio.
+                    </template>
+                </h2>
+            </div>
+        </div>
+        <div class="slds-col slds-size_2-of-3">
+            <c-property-chart-parent user-id={userId}></c-property-chart-parent>
+        </div>
+    </div>
+</template>

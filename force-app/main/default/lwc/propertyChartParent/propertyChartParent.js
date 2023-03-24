@@ -150,9 +150,6 @@ export default class PropertyChartParent extends LightningElement {
                 colors.push(colorGroup[i]);
             }
 
-            console.log(communityData);
-            console.log(spaceData);
-
             this.communalSpaceConfig = this.setupChart('pie', communityData, colors, ['Communal Spaces'], spaceData);
 
         } else if (error) {

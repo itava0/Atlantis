@@ -1,0 +1,21 @@
+<template>
+    <template for:each={searchedProperties} for:item="property">
+        <div key={property.Id} class="slds-box">
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_2-of-4">
+                    <c-property-info-card property-id={property.Id} name={property.Name} street={property.Billing_Street__c} city={property.Billing_City__c}
+                    type={property.RecordType.Name} status={property.Status__c} state={property.Billing_State__c} postal-code={property.Billing_Postal_Code__c}
+                    lat={property.Geolocation__Latitude__s} lon={property.Geolocation__Longitude__s} country={property.Billing_Country__c rent={property.Rent__c}
+                    market-price={property.Market_Price__c} date-listed={property.Date_Listed__c} days-on-market={property.Days_On_Market__c}
+                    bedrooms={property.Bedrooms__c} bathrooms={property.Bathrooms__c} picture={property.Picture__c}></c-property-info-card>
+                </div>
+                <div class="slds-col slds-size_1-of-4">
+                    <c-view-ratings property-id={property.Id}></c-view-ratings>
+                </div>
+                <div class="slds-col slds-size_1-of-4">
+                    <c-manage-staff record-id={property.Id} portfolio={myProperties}></c-manage-staff>
+                </div>
+            </div>
+        </div>
+    </template>
+</template>

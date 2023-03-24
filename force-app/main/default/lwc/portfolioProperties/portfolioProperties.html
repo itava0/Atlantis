@@ -1,4 +1,5 @@
 <template>
+        <!-- Despite its name, this is the parent component for all the portfolio components. For the component that displays the list of properties, see portfolioContent -->
         <template if:true={isPropertyOwner}>
             <template if:true={recordTypeId}>
                 <template if:true={searchedProperties}>
@@ -14,78 +15,14 @@
                     </div>
                     <article class="slds-card">
                         <!-- CHARTS -->
-                        <div class="slds-grid">
-                            <div class="slds-col slds-size_1-of-3">
-                                <div class="slds-align_absolute-center">
-                                    <h2 class="slds-card__header-title">
-                                        <br /><br />
-                                        <template if:false={oneProperty}>
-                                            Welcome, {userFirstName}!<br>You have {numProperties} properties in your portfolio.
-                                        </template>
-                                        <template if:true={oneProperty}>
-                                            Welcome, {userFirstName}!<br>You have {numProperties} property in your portfolio.
-                                        </template>
-                                    </h2>
-                                </div>
-                            </div>
-                            <div class="slds-col slds-size_2-of-3">
-                                <c-property-chart-parent user-id={userId}></c-property-chart-parent>
-                            </div>
-                        </div>
+                        <c-portfolio-charts user-id={userId} single-property={oneProperty} num-properties={numProperties} user-first-name={userFirstName}></c-portfolio-charts>
                         <hr />
-                        <!-- SEARCH AND SORT OPTIONS -->
                         <div class="slds-card__body slds-card__body_inner">
-                            <lightning-input type="text" label ="Search Portfolio by Name, Address, or Type:" onchange={handleSearch} style="margin-bottom:10px"></lightning-input>
-                            <div class="slds-align_absolute-center" style="margin-bottom:10px">
-                                <lightning-button icon-name="utility:shortcuts" variant="brand-outline" label="Reset Search" onclick={handleClear} style="margin-right:10px"></lightning-button>
-                                <lightning-button icon-name="utility:text" variant={nameSort} label="Sort by Name" onclick={handleSortName} style="margin-right:10px"></lightning-button>
-                                <lightning-button icon-name="utility:rating" variant={ratingSort} label="Sort by Rating" onclick={handleSortRating} style="margin-right:10px"></lightning-button>
-                                <lightning-button icon-name="utility:money" variant={rentSort} label="Sort by Rent" onclick={handleSortRent} style="margin-right:10px"></lightning-button>
-                                <lightning-button icon-name="utility:monthlyview" variant={dateListedSort} label="Sort by Date Listed" onclick={handleSortDateListed} style="margin-right:10px"></lightning-button>
-                                <template if:true={locationFound}>
-                                    <lightning-button icon-name="utility:travel_and_places" variant={distanceSort} label="Sort by Distance" onclick={handleSortDistance}></lightning-button>
-                                </template>
-                                <template if:false={locationFound}>
-                                    <lightning-button icon-name="utility:travel_and_places" variant="brand-outline" label="Sort by Distance" onclick={handleSortDistance} disabled></lightning-button>
-                                    <lightning-helptext icon-name="utility:info" style="margin-left:3px" content="In order to sort portfolio by the distance from your location, please update your address information"></lightning-helptext>
-                                </template>
-                            </div>
-                            <template if:true={amountFound}>
-                                <div class="slds-align_absolute-center" style="margin-bottom:3px">
-                                    <p>{amountFound} result(s) found</p>
-                                </div>
-                            </template>
-                            <template if:true={sortText}>
-                                <div class="slds-align_absolute-center" style="margin-bottom:3px">
-                                    <p>{sortText}</p>
-                                </div>
-                            </template>
+                            <!-- SEARCH AND SORT OPTIONS -->
+                            <c-portfolio-search-sort my-properties={myProperties} onsearchsort={handleSearchSort} location-not-found={locationNotFound}
+                            user-lat={userLat} user-lon={userLon}></c-portfolio-search-sort>
                             <!-- INFO CARD, RATING COMPONENT, AND STAFF COMPONENT FOR EACH PORTFOLIO PROPERTY -->
-                            <template for:each={searchedProperties} for:item="property">
-                                <div key={property.Id} class="slds-box">
-                                    <div class="slds-grid slds-gutters">
-                                        <div class="slds-col slds-size_2-of-4">
-                                            <c-property-info-card property-id={property.Id} name={property.Name} street={property.Billing_Street__c} city={property.Billing_City__c}
-                                            type={property.RecordType.Name} status={property.Status__c} state={property.Billing_State__c} postal-code={property.Billing_Postal_Code__c}
-                                            lat={property.Geolocation__Latitude__s} lon={property.Geolocation__Longitude__s} country={property.Billing_Country__c rent={property.Rent__c}
-                                            market-price={property.Market_Price__c} date-listed={property.Date_Listed__c} days-on-market={property.Days_On_Market__c}
-                                            bedrooms={property.Bedrooms__c} bathrooms={property.Bathrooms__c} picture={property.Picture__c}></c-property-info-card>
-                                        </div>
-                                        <div class="slds-col slds-size_1-of-4">
-                                            <div class="slds-text-heading_medium">
-                                                <p>Rating</p>
-                                            </div>
-                                            <div class="slds-box">
-                                                <lightning-formatted-rich-text value={property.Rating__c}></lightning-formatted-rich-text>
-                                                <p><strong>Total Ratings:</strong> {property.Rating_Count__c}</p>
-                                            </div>
-                                        </div>
-                                        <div class="slds-col slds-size_1-of-4">
-                                            <c-manage-staff record-id={property.Id} portfolio={myProperties}></c-manage-staff>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
+                            <c-portfolio-content searched-properties={searchedProperties}></c-portfolio-content>
                         </div>
                     </article>
                 </template>

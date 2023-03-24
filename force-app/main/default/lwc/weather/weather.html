@@ -1,0 +1,113 @@
+<template>
+    <lightning-card title="Local Weather" icon-name="custom:custom3">
+        <template if:true={weather}>
+            <lightning-tabset>
+                <lightning-tab label="Current">
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_1-of-6">
+                            <img src={weather.cur_icon} style="min-width:75px; min-height:75px">
+                        </div>
+                        <div class="slds-col slds-size_3-of-6">
+                            <div class="slds-text-heading_large slds-text-align_left" style="margin-left:5px">
+                                {temperatureLabel}
+                            </div>
+                            <div class="slds-text-heading_small slds-text-align_left" style="margin-left:5px">
+                                {weather.cur_condition}
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_2-of-6 slds-text-heading_small">
+                            <lightning-button-group>
+                                <lightning-button label="°F" variant={fVariant} value="f" onclick={handleSwitch}></lightning-button>
+                                <lightning-button label="°C" variant={cVariant} value="c" onclick={handleSwitch}></lightning-button>
+                            </lightning-button-group>
+                            <!-- <lightning-helptext icon-name="utility:info" style="margin-left:5px"
+                            content="Toggles temperature between Fahrenheit and Celsius. Will also toggle other measurements between Imperial and Metric."></lightning-helptext> -->
+                        </div>
+                    </div>
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_1-of-4">
+                            <div class="slds-text-heading_small">
+                                <p><b>Wind:</b></p>
+                                <p><b>Pressure:</b></p>
+                                <p><b>Humidity:</b></p>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-4">
+                            <div class="slds-text-heading_small">
+                                <p>{windLabel}</p>
+                                <p>{pressureLabel}</p>
+                                <p>{humidityLabel}</p>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-4">
+                            <div class="slds-text-heading_small">
+                                <p><b>Precipitation:</b></p>
+                                <p><b>Visibility:</b></p>
+                                <p><b>UV Index:</b></p>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-4">
+                            <div class="slds-text-heading_small">
+                                <p>{precipitationLabel}</p>
+                                <p>{visibilityLabel}</p>
+                                <p>{uvsLabel}</p>
+                            </div>
+                        </div>
+                    </div>
+                </lightning-tab>
+                <lightning-tab label="Forecast">
+                    <div class="slds-grid slds-wrap slds-text-heading_small">
+                        <div class="slds-col slds-size_1-of-4"></div>
+                        <div class="slds-col slds-size_1-of-4 slds-align_absolute-center"><b>{date1}</b></div>
+                        <div class="slds-col slds-size_1-of-4 slds-align_absolute-center"><b>{date2}</b></div>
+                        <div class="slds-col slds-size_1-of-4 slds-align_absolute-center"><b>{date3}</b></div>
+                        <div class="slds-col slds-size_1-of-4">
+                            <lightning-button-group>
+                                <lightning-button label="°F" variant={fVariant} value="f" onclick={handleSwitch}></lightning-button>
+                                <lightning-button label="°C" variant={cVariant} value="c" onclick={handleSwitch}></lightning-button>
+                            </lightning-button-group> 
+                        </div>
+                        <div class="slds-col slds-size_1-of-4 slds-align_absolute-center"><img src={weather.cast_icon_1} style="min-width:75px; min-height:75px"></div>
+                        <div class="slds-col slds-size_1-of-4 slds-align_absolute-center"><img src={weather.cast_icon_2} style="min-width:75px; min-height:75px"></div>
+                        <div class="slds-col slds-size_1-of-4 slds-align_absolute-center"><img src={weather.cast_icon_3} style="min-width:75px; min-height:75px"></div>
+                        <div class="slds-col slds-size_1-of-4"></div>
+                        <div class="slds-col slds-size_1-of-4 slds-align_absolute-center">{weather.cast_condition_1}</div>
+                        <div class="slds-col slds-size_1-of-4 slds-align_absolute-center">{weather.cast_condition_2}</div>
+                        <div class="slds-col slds-size_1-of-4 slds-align_absolute-center">{weather.cast_condition_3}</div>
+                        <div class="slds-col slds-size_1-of-4"><b>Temperature</b></div>
+                        <template for:each={forecastTemp} for:item="label">
+                            <div key={label} class="slds-col slds-size_1-of-4 slds-align_absolute-center">{label}</div>
+                        </template>
+                        <div class="slds-col slds-size_1-of-4"><b>Precipitation</b></div>
+                        <template for:each={forecastPrecip} for:item="label">
+                            <div key={label} class="slds-col slds-size_1-of-4 slds-align_absolute-center">{label}</div>
+                        </template>
+                        <div class="slds-col slds-size_1-of-4"><b>Visibility</b></div>
+                        <template for:each={forecastVis} for:item="label">
+                            <div key={label} class="slds-col slds-size_1-of-4 slds-align_absolute-center">{label}</div>
+                        </template>
+                        <div class="slds-col slds-size_1-of-4"><b>Humidity</b></div>
+                        <template for:each={forecastHum} for:item="label">
+                            <div key={label} class="slds-col slds-size_1-of-4 slds-align_absolute-center">{label}</div>
+                        </template>
+                        <div class="slds-col slds-size_1-of-4"><b>UV Index</b></div>
+                        <template for:each={forecastUvs} for:item="label">
+                            <div key={label} class="slds-col slds-size_1-of-4 slds-align_absolute-center">{label}</div>
+                        </template>
+                        <div class="slds-col slds-size_1-of-4"><b>Rain Chance</b></div>
+                        <template for:each={forecastRain} for:item="label">
+                            <div key={label} class="slds-col slds-size_1-of-4 slds-align_absolute-center">{label}</div>
+                        </template>
+                        <div class="slds-col slds-size_1-of-4"><b>Snow Chance</b></div>
+                        <template for:each={forecastSnow} for:item="label">
+                            <div key={label} class="slds-col slds-size_1-of-4 slds-align_absolute-center">{label}</div>
+                        </template>
+                    </div>
+                </lightning-tab>
+            </lightning-tabset>
+        </template>
+        <template if:false={weather}>
+            <lightning-spinner alternative-text="Loading..." variant="brand"></lightning-spinner>
+        </template>
+    </lightning-card>
+</template>

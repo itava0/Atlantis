@@ -78,8 +78,6 @@ export default class LeaseApplication extends LightningElement {
   connectedCallback() {
     if (sessionStorage.getItem("id")) {
       this.propertyId = sessionStorage.getItem("id");
-
-      sessionStorage.clear();
     }
 
     getToken()
@@ -111,14 +109,15 @@ export default class LeaseApplication extends LightningElement {
   handleProperty(id) {
     getProperty({ propertyId: id })
       .then((result) => {
-        this.rent = result.rent__c;
+        this.rent = result.Rent__c;
+        console.log("Property rent", this.rent);
       })
       .catch((error) => {
         console.log("error message: ", error);
       });
   }
 
-  //isInputvalid checks
+  //isInputvalid checks validity of each input fields 
 
   isInputValid() {
     let isValid = true;

@@ -2,20 +2,22 @@
     <template if:true={hasRating}>
         <lightning-card title="Ratings" icon-name="standard:reward">
             <div class="slds-align_absolute-center">
-                <lightning-record-view-form record-id={propertyId} object-api-name={propertyObj}>
-                    <lightning-output-field field-name={overallRating}></lightning-output-field>
-                </lightning-record-view-form>
+                <div class="slds-grid">
+                    <div class="slds-col">
+                        <lightning-record-view-form record-id={propertyId} object-api-name={propertyObj}>
+                            <lightning-output-field field-name={overallRating}></lightning-output-field>
+                        </lightning-record-view-form>
+                    </div>
+                    <div class="slds-col">
+                        <br />
+                        <lightning-button label={btnLabel} variant={btnVariant} onclick={handleTable} icon-name="utility:record_lookup"></lightning-button>
+                    </div>
+                </div>
             </div>
-            <lightning-datatable
-                data={ratings}
-                columns={columns}
-                key-field="Id"
-                hide-checkbox-column
-                default-sort-direction={defaultSort}
-                sorted-direction={sortDirection}
-                sorted-by={sortedBy}
-                onsort={onHandleSort}>
-            </lightning-datatable>
+            <template if:true={viewTable}>
+                <lightning-datatable data={ratings} columns={columns} key-field="Id" hide-checkbox-column default-sort-direction={defaultSort}
+                sorted-direction={sortDirection} sorted-by={sortedBy} onsort={onHandleSort}></lightning-datatable>
+            </template>
         </lightning-card>
     </template>
 </template>
